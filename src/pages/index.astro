@@ -2,147 +2,228 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 
-// 合作伙伴/赞助商数据
-const partners = ["Google", "PlayStation", "Astro", "Apple", "GitHub", "Vercel", "Intel", "Adobe", "Figma"];
+// 3. 自动遍历图片
+const images = await Astro.glob('/src/photos/*.{jpg,jpeg,png,webp,avif}');
+
+// 2 & 6. 在 const 中定义图片注释
+// 你可以按顺序写下每张图片的注释，如果图片多于注释，后面会默认留空
+const photoCaptions = [
+    "Shenzhen, China, Apr 2023",
+    "Dali, China,Jul 2023",
+    "Lijiang, China, Jul 2023",
+    "Nanning, China, Feb 2024",
+    "Robloxia, Jun 2024",
+    "New York, Robloxia, Jul 2024",
+	"Bangkok, Thailand, Aug 2024",
+	"Chiang Mai, Thailand, Aug 2024",
+	"Robloxia, Nov 2024",
+	"Frappe, Robloxia, Oct 2024",
+	"Sara, Robloxia, Dec 2024",
+	"Greenville, Robloxia, Jan 2025",
+	"Shanghai, China, Aug 2025",
+	"Changsha, China, May 2025",
+	"Nanning, China, Jun 2025",
+	"Beihai, China, Oct 2025",
+	"Slong City, Cities: Skylines, Dec 2025",
+	"Chongqing, China, Feb 2026",
+	"Guangxi, China, Feb 2026",
+];
+
+const partners = ["Paramecium", "Hydrolight", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
+const pr_web = [
+    "https://paramecium2010.top", "https://hydrolight.top", "https://www.roblox.com",
+    "https://www.google.com", "https://www.cloudflare.com", "https://astro.build",
+    "https://github.com", "https://gemini.google.com", "./sponsor"
+];
+
+const galleryQuote = "It doesn't matter where you start, it's how you progress from there.";
 ---
 
-<Layout title="CREPUS VILLA | 首页">
+<Layout title="Crepuscular's Villa">
     <Header />
     
     <main class="main-content">
-        <div class="scrolling-text" id="scrollText">CREPUS VILLA</div>
+        <div class="scrolling-text" id="scrollText">CREPUSCULAR'S VILLA, ENJOY LIFE STYLES</div>
 
         <section class="content-section reveal">
-            <div class="container">
+            <div class="container safe-zone">
                 <h1 class="hero-title">
-                    创意，<span id="typewriter" class="accent-text"></span><span class="cursor"></span>
+                    Where Ideas <span id="lineBreak"></span><span id="typewriter" class="accent-text"></span><span class="cursor"></span>
                 </h1>
-                <p class="sub-text">在这里，探索数字世界的无限可能。</p>
+                <p class="sub-text">Relax, and enjoy.</p>
             </div>
         </section>
 
-        <section class="horizontal-scroll-section" id="horizontalWrapper">
-            <div class="sticky-container">
-                <div class="horizontal-content" id="horizontalContent">
-                    <div class="partner-intro">
-                        <h2 class="partner-title">PARTNERS<br/>& SPONSORS</h2>
-                        <p>协作共赢，<br/>定义未来。</p>
-                    </div>
-                    {partners.map(p => (
-                        <div class="logo-card">
-                            <span class="logo-name">{p}</span>
+        <section class="photo-gallery-section safe-zone">
+            <div class="gallery-stack">
+                
+                {images.map((img, index) => {
+                    // 1. 动态计算尺寸与位置
+                    const isEven = index % 2 === 0;
+                    // 循环定义三种大小档位
+                    const sizes = ['size-s', 'size-m', 'size-l'];
+                    const sizeClass = sizes[index % 3];
+                    const alignClass = isEven ? 'align-left' : 'align-right';
+                    
+                    return (
+                        <div class={`photo-container ${sizeClass} ${alignClass}`}>
+                            {/* 6. 图片旁的注释小字 */}
+                            {photoCaptions[index] && (
+                                <span class="photo-annotation">{photoCaptions[index]}</span>
+                            )}
+                            <div class="photo-wrapper">
+                                <img src={img.default.src} alt={`Gallery item ${index}`} loading="lazy" />
+                            </div>
                         </div>
-                    ))}
+                    );
+                })}
+
+                <div class="gallery-quote-box">
+                    <p class="quote-text">{galleryQuote}</p>
+                    <span class="quote-author">— CREPUSCULAR</span>
                 </div>
             </div>
         </section>
 
-        <section class="content-section">
-            <div class="container text-center">
-                <p class="huge-text">追求极致，<br/>不留余力。</p>
+        <section class="auto-scroll-section">
+            <div class="horizontal-view">
+                <div class="partner-intro safe-zone">
+                    <h2 class="partner-sub-title">PARTNERS & SPONSORS</h2>
+                    <p class="partner-desc">Simply Lovely!</p>
+                </div>
+                
+                <div class="infinite-scroll-container">
+                    <div class="partner-list">
+                        {partners.map((p, i) => (
+                            <a href={pr_web[i]} class="logo-card" target="_blank" rel="noopener noreferrer">
+                                <span class="logo-name">{p}</span>
+                            </a>
+                        ))}
+                        {partners.map((p, i) => (
+                            <a href={pr_web[i]} class="logo-card" target="_blank" rel="noopener noreferrer">
+                                <span class="logo-name">{p}</span>
+                            </a>
+                        ))}
+                    </div>
+                </div>
             </div>
         </section>
+        
+        <footer class="site-footer safe-zone">
+            <div class="footer-divider"></div>
+            <p>Powered By CloudFlare & Crepuscular</p>
+        </footer>
     </main>
 </Layout>
 
 <style>
-    /* 4. 颜色与基础样式 */
-    .accent-text {
-        color: #f7c46c; /* 替换为你的新审美颜色 */
-        /* 移除渐变，使用纯色更加高端 */
+    :root {
+        --safe-area: clamp(20px, 6vw, 80px);
+        --accent-color: #f7c46c;
+        --sub-title-size: clamp(34px, 7vw, 85px); 
     }
 
-    .main-content {
-        background-color: #f5f5f7;
-    }
+    .main-content { background-color: #f5f5f7; overflow-x: hidden; }
 
-    .scrolling-text {
-        position: fixed;
-        top: 25%;
-        left: 0;
-        font-size: 20vw;
-        font-weight: 900;
-        color: rgba(247, 196, 108, 0.08); /* 使用强调色的极淡透明版 */
-        white-space: nowrap;
-        pointer-events: none;
-        z-index: 0;
-        line-height: 1;
-    }
-
-    .container {
-        position: relative;
-        z-index: 1;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 40px;
-    }
-
-    /* 2. 横向滚动核心 CSS */
-    .horizontal-scroll-section {
-        position: relative;
-        height: 300vh; /* 这里的倍数决定了滚动的时长感 */
-        background: transparent;
-    }
-
-    .sticky-container {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        overflow: hidden; /* 隐藏溢出内容 */
-    }
-
-    .horizontal-content {
-        display: flex;
-        padding: 0 10vw;
-        will-change: transform;
-        gap: 80px;
-        align-items: center;
-    }
-
-    .partner-intro {
-        min-width: 400px;
-    }
-
-    .partner-title {
-        font-size: clamp(32px, 5vw, 64px);
-        font-weight: 800;
-        line-height: 1;
-        color: var(--text-main);
-    }
-
-    .logo-card {
-        min-width: 300px;
-        height: 200px;
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(0,0,0,0.03);
-        border-radius: 24px;
+    /* --- 新图片模块样式 --- */
+    .photo-gallery-section {
+        padding: 15vh 0;
         display: flex;
         justify-content: center;
-        align-items: center;
-        backdrop-filter: blur(5px);
     }
 
-    .logo-name {
-        font-size: 32px;
-        font-weight: 600;
+    .gallery-stack {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 2000px;
+        gap: 12vh; /* 使用视口高度单位控制间距，更具动态感 */
+    }
+
+    .photo-container {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        /* 5. 左右摆放逻辑 */
+        &.align-left { align-self: flex-start; }
+        &.align-right { align-self: flex-end; }
+    }
+
+    /* 1. 动态大小控制：基于视口宽度 (vw) */
+    .size-s { width: 35vw; min-width: 250px; max-width: 650px; }
+    .size-m { width: 45vw; min-width: 300px; max-width: 750px; }
+    .size-l { width: 55vw; min-width: 350px; max-width: 850px; }
+
+    .photo-wrapper {
+        width: 100%;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    .photo-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+        /* 5. 不用圆角 */
+        border-radius: 0;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .photo-container:hover img {
+        transform: scale(1.05);
+    }
+
+    /* 2 & 6. 注释小字样式 */
+    .photo-annotation {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
         color: #86868b;
+        margin-bottom: 8px;
+        font-weight: 500;
     }
 
-    /* 其余样式保持简约 */
-    .content-section { min-height: 100vh; display: flex; align-items: center; }
-    .hero-title { font-size: clamp(40px, 8vw, 90px); font-weight: 800; }
-    .cursor { display: inline-block; width: 3px; height: 0.8em; background: #f7c46c; margin-left: 4px; animation: blink 1s step-end infinite; }
+    .gallery-quote-box {
+        margin: 10vh auto;
+        text-align: center;
+        max-width: 1600px;
+    }
+
+    .quote-text {
+        font-family: serif;
+        font-size: clamp(20px, 3vw, 32px);
+        font-style: italic;
+        line-height: 1.3;
+        margin-bottom: 15px;
+        color: #1d1d1f;
+    }
+
+    /* --- 原有样式兼容 --- */
+    .logo-name { font-family: 'RAGE', cursive; font-size: 48px; font-weight: 600; color: #1d1d1f; }
+    .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; }
+    .safe-zone { padding-left: var(--safe-area); padding-right: var(--safe-area); }
+    .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
+    .hero-title { font-size: clamp(44px, 12vw, 130px); font-weight: 800; line-height: 1.1; }
+    .accent-text { color: var(--accent-color); }
+    .auto-scroll-section { padding: 100px 0; background: #f5f5f7; overflow: hidden; }
+    .horizontal-view { display: flex; flex-direction: column; gap: 60px; }
+    .partner-sub-title { font-size: var(--sub-title-size); font-weight: 800; line-height: 1; margin: 0; }
+    .infinite-scroll-container { width: 100%; overflow: hidden; display: flex; -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+    .partner-list { display: flex; gap: 40px; padding: 20px 0; animation: scroll-left 30s linear infinite; width: max-content; }
+    .logo-card { width: 320px; height: 200px; background: #fff; border-radius: 30px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex-shrink: 0; transition: all 0.3s ease; text-decoration: none; }
+    .logo-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+    .site-footer { padding: 80px 0 40px; text-align: center; color: #86868b; font-size: 13px; }
+    .footer-divider { width: 100%; height: 1px; background: rgba(0,0,0,0.1); margin-bottom: 24px; }
+    .cursor { display: inline-block; width: 3px; height: 0.8em; background: var(--accent-color); margin-left: 4px; vertical-align: middle; animation: blink 1s step-end infinite; }
     @keyframes blink { 50% { background: transparent; } }
-    
+    @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
     .reveal.active { opacity: 1; transform: translateY(0); }
 </style>
 
 <script>
-    // 1. 打字机逻辑
-    const words = ["由此开始。", "由你定义。", "永不止步。"];
+    // 打字机与滚动逻辑保持不变
+    const words = ["Define.", "Twlight.", "Design.", "Innovate.", "Inspire."];
     let wordIndex = 0, charIndex = 0, isDeleting = false;
     
     function type() {
@@ -157,46 +238,18 @@ const partners = ["Google", "PlayStation", "Astro", "Apple", "GitHub", "Vercel",
         setTimeout(type, delta);
     }
 
-    // 2. 滚动动效逻辑 (包含背景大字和横向滚动)
-    const horizontalWrapper = document.getElementById('horizontalWrapper');
-    const horizontalContent = document.getElementById('horizontalContent');
-    const scrollText = document.getElementById('scrollText');
-
-    window.addEventListener('scroll', () => {
+    function handleScroll() {
         const scrolled = window.scrollY;
-
-        // 背景文字平移
-        if (scrollText) {
-            scrollText.style.transform = `translateX(-${scrolled * 0.3}px)`;
-        }
-
-        // 横向滚动逻辑
-        if (horizontalWrapper && horizontalContent) {
-            const wrapperTop = horizontalWrapper.offsetTop;
-            const wrapperHeight = horizontalWrapper.offsetHeight;
-            const windowHeight = window.innerHeight;
-
-            // 计算进入该区域后的百分比
-            if (scrolled >= wrapperTop && scrolled <= (wrapperTop + wrapperHeight - windowHeight)) {
-                const offset = scrolled - wrapperTop;
-                const maxScroll = horizontalContent.scrollWidth - window.innerWidth;
-                const scrollPercentage = offset / (wrapperHeight - windowHeight);
-                
-                // 将纵向滚动距离映射到横向偏移
-                horizontalContent.style.transform = `translateX(-${scrollPercentage * maxScroll}px)`;
-            }
-        }
-    });
-
-    // 3. 入场观察
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('active');
-        });
-    }, { threshold: 0.1 });
+        const scrollText = document.getElementById('scrollText');
+        if (scrollText) scrollText.style.transform = `translateX(-${scrolled * 0.4}px)`;
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         type();
+        window.addEventListener('scroll', handleScroll);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     });
 </script>

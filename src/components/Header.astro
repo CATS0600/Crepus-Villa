@@ -1,77 +1,44 @@
 ---
+// src/components/Header.astro
 ---
 <header class="apple-header">
-	<nav>
-		<a href="/" class="logo"> MyBlog</a>
-		<div class="links">
-			<a href="/blog">文章</a>
-			<a href="/about">关于</a>
-			<a href="/sponsor" class="sponsor-btn">赞助</a>
-		</div>
-	</nav>
+    <nav class="safe-zone">
+        <a href="/" class="logo">Crepuscular's Villa</a>
+        <div class="links">
+            <a href="/blog">文章</a>
+            <a href="/about">关于</a>
+            <a href="/sponsor">赞助</a> </div>
+    </nav>
 </header>
 
 <style>
-	.apple-header {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 52px;
-		background: rgba(251, 251, 253, 0.8);
-		backdrop-filter: blur(12px); /* 核心：毛玻璃效果 */
-		-webkit-backdrop-filter: blur(12px);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-		z-index: 1000;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.logo { font-weight: 600; text-decoration: none; color: var(--text-main); }
-    .links { display: flex; align-items: center; gap: 30px; }
+    .apple-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 52px;
+        background: rgba(251, 251, 253, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    nav {
+        width: 100%;
+        max-width: 1400px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .logo { font-weight: 600; text-decoration: none; color: #1d1d1f; }
+    .links { display: flex; gap: 30px; }
     .links a { 
         text-decoration: none; 
-        color: var(--text-muted); 
+        color: #86868b; 
         font-size: 14px; 
         transition: color 0.3s;
     }
-    .links a:hover { color: var(--text-main); }
-	nav {
-		width: 100%;
-		max-width: 980px;
-		display: flex;
-		justify-content: space-between;
-		padding: 0 20px;
-		font-size: 14px;
-		font-weight: 400;
-	}
-
-	a {
-		color: var(--text-main);
-		text-decoration: none;
-		transition: opacity 0.2s ease;
-	}
-
-	a:hover {
-		opacity: 0.7;
-	}
-
-	.logo {
-		font-weight: 600;
-		font-size: 16px;
-	}
-
-	.links a {
-		margin-left: 24px;
-		color: var(--text-muted);
-	}
-	.sponsor-btn {
-        background: #0071e3;
-        color: #fff !important;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: 500;
-    }
-    .sponsor-btn:hover { background: #0077ed; }
-</style>
+    .links a:hover { color: #1d1d1f; }
 </style>

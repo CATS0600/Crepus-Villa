@@ -32,7 +32,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="cn-zh">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro Apple Style Blog" />
@@ -76,7 +76,14 @@ const { title } = Astro.props;
 			--accent-color: #f7c46c;
 		}
 	}
-
+	/* 在 Layout.astro 的 <style is:global> 中添加 */
+	@font-face {
+    	font-family: 'RAGE';
+    	src: url('/fonts/RAGE.woff2') format('woff2');
+    	font-weight: normal;
+    	font-style: normal;
+    	font-display: swap;
+	}
 	html {
 		font-family: 'Noto Sans TC Variable';
 		/* 确保路径指向你 public/fonts/ 文件夹下的文件 */
