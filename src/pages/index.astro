@@ -82,6 +82,26 @@ const posts = [
 		transform: scale(1.015);
 		box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 	}
+	.hero h1 {
+		font-weight: var(--fw-bold); /* 巨大的粗体标题 */
+	}
+
+	.hero p {
+		font-weight: var(--fw-medium); /* 副标题用中等粗细，增加质感 */
+	}
+
+	.bento-card h3 {
+		font-weight: var(--fw-medium); /* 卡片标题 */
+	}
+
+	.bento-card p {
+		font-weight: var(--fw-light); /* 卡片摘要用细体，显得干净 */
+	}
+
+	.bento-card .date {
+		font-weight: var(--fw-regular);
+		letter-spacing: 0.1em;
+	}
 
 	/* 移动端适配：全部变为单列 */
 	@media (max-width: 768px) {

@@ -65,16 +65,28 @@ const { title } = Astro.props;
 			--card-bg: #1c1c1e;
 			--card-border: rgba(255, 255, 255, 0.1);
 			--nav-bg: rgba(0, 0, 0, 0.8);
+			--fw-light: 300;
+			--fw-regular: 400;
+			--fw-medium: 500;
+			--fw-bold: 700;
 		}
 	}
 
 	html {
-		font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+		font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
 		background: var(--bg-color);
 		color: var(--text-main);
+		-webkit-font-smoothing: antialiased;
 		transition: background 0.3s ease;
 	}
-
+	h1, h2, h3 {
+		font-weight: var(--fw-bold);
+		letter-spacing: -0.02em;
+	}
+	p {
+		font-weight: var(--fw-light); /* 苹果风常在长文本使用较细的字重来营造呼吸感 */
+		line-height: 1.6;
+	}
 	body {
 		margin: 0;
 		padding: 0;
