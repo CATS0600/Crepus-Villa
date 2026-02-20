@@ -8,12 +8,16 @@ import Header from '../components/Header.astro';
     <main class="container sponsor-page">
         <section class="reveal active">
             <h1>Support My Work If You Like To</h1>
-            <p>如果你觉得我的内容对你有帮助，欢迎通过以下方式支持我。<br/>btw，对于每一位赞赏的Bro，我都会将您的名字添加到合作伙伴和赞助商名单中（如果您愿意，请附上您的姓名和网站）。<br/>If you find my content helpful, please support me through the following methods.<br/>btw,for every person who gives a tip, we will add your name to PARTNERS & SPONSORS list (please include your name and website if you wish).</p>
+            <h2>如果你觉得我的内容对你有帮助，欢迎通过以下方式支持我。</h2>
+            <p>btw，对于每一位赞赏的Bro，我都会将您的名字添加到合作伙伴和赞助商名单中（如果您愿意，请附上您的姓名和网站）。</p>
+            <h2>If you find my content helpful, please support me through the following methods.</h2>
+            <p>btw,for every person who gives a tip, we will add your name to PARTNERS & SPONSORS list (please include your name and website if you wish).</p>
             <div class="sponsor-options">
-                <div class="option-card">
-                    <h3>支付宝赞赏码</h3>
-                    <p>Alipay Tip QR Code</p>
-                    <img src="/src/sponsor/test.png" alt="Alipay Tip QR Code" style="width: 100%; margin-top: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" />
+                <div class="links">
+                    <a href="https://qr.alipay.com/fkx14778gmv86oc2fjnar31" class="option-card">
+                        <h3>Alipay</h3>
+                        <!-- <span class="link-text">Alipay Tip QR Code</span> -->
+                    </a>
                 </div>
             </div>
         </section>
@@ -30,5 +34,20 @@ import Header from '../components/Header.astro';
         border-radius: 24px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         max-width: 400px;
+    }
+     nav {
+        width: 100%;
+        max-width: 1400px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .logo { font-weight: 600; text-decoration: none; color: #1d1d1f; }
+    .links { display: flex; gap: 30px; }
+    .links a { 
+        text-decoration: none; 
+        color: #86868b; 
+        font-size: 14px; 
+        transition: color 0.3s;
     }
 </style>
