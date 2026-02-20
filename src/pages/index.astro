@@ -1,11 +1,105 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// 模拟博客数据
+const posts = [
+	{ title: "介绍 Apple Vision Pro 的设计哲学", excerpt: "空间计算时代的第一步...", date: "2026-02-20" },
+	{ title: "为什么选择 Astro 构建博客", excerpt: "零 JS，极速体验...", date: "2026-02-18" },
+	{ title: "极简主义编程指南", excerpt: "少即是多（Less is more）。", date: "2026-02-15" }
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="我的苹果风博客">
+	<Header />
+	
+	<main class="container">
+		<section class="hero">
+			<h1>创意，<br/>由此开始。</h1>
+			<p>分享关于代码、设计与生活的点滴思考。</p>
+		</section>
+
+		<section class="bento-grid">
+			{posts.map((post) => (
+				<article class="bento-card">
+					<h3>{post.title}</h3>
+					<p>{post.excerpt}</p>
+					<span class="date">{post.date}</span>
+				</article>
+			))}
+		</section>
+	</main>
 </Layout>
+
+<style>
+	.container {
+		max-width: 980px;
+		margin: 0 auto;
+		padding: 100px 20px 40px; /* 顶部留白，避开固定导航栏 */
+	}
+
+	.hero {
+		text-align: center;
+		padding: 80px 0;
+	}
+
+	.hero h1 {
+		font-size: 56px;
+		font-weight: 700;
+		letter-spacing: -0.015em;
+		line-height: 1.05;
+		margin: 0 0 20px 0;
+	}
+
+	.hero p {
+		font-size: 24px;
+		color: var(--text-muted);
+		font-weight: 400;
+		margin: 0;
+	}
+
+	.bento-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 24px;
+		padding-top: 40px;
+	}
+
+	.bento-card {
+		background: var(--card-bg);
+		border-radius: 18px; /* 苹果常用的圆角大小 */
+		padding: 32px;
+		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); /* 非常柔和的阴影 */
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		cursor: pointer;
+	}
+
+	.bento-card:hover {
+		transform: scale(1.02);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+	}
+
+	.bento-card h3 {
+		font-size: 20px;
+		margin: 0 0 12px 0;
+	}
+
+	.bento-card p {
+		color: var(--text-muted);
+		line-height: 1.5;
+		margin: 0 0 24px 0;
+	}
+
+	.bento-card .date {
+		font-size: 12px;
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	/* 响应式调整 */
+	@media (max-width: 768px) {
+		.hero h1 { font-size: 40px; }
+		.hero p { font-size: 18px; }
+	}
+</style>

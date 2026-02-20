@@ -1,3 +1,4 @@
+<!--
 <!doctype html>
 <html lang="en">
 	<head>
@@ -19,5 +20,54 @@
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+</style>
+-->
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro Apple Style Blog" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	/* 引入苹果系统默认字体，确保原汁原味的体验 */
+	:root {
+		--bg-color: #fbfbfd; /* 苹果常用的极其浅的灰白色 */
+		--text-main: #1d1d1f; /* 苹果常用的深灰色，比纯黑更柔和 */
+		--text-muted: #86868b;
+		--card-bg: #ffffff;
+	}
+
+	html {
+		font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		background: var(--bg-color);
+		color: var(--text-main);
+		-webkit-font-smoothing: antialiased; /* 让字体在 Mac 上渲染更平滑 */
+	}
+
+	body {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	* {
+		box-sizing: inherit;
 	}
 </style>
