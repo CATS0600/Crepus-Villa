@@ -124,6 +124,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
 
     .main-content { background-color: #f5f5f7; overflow-x: hidden; }
+    @media (prefers-color-scheme: dark) {
+        .main-content { background-color: #000000; }
+    }
 
     /* --- 新图片模块样式 --- */
     .photo-gallery-section {
@@ -208,6 +211,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     .hero-title { font-size: clamp(44px, 12vw, 130px); font-weight: 800; line-height: 1.1; }
     .accent-text { color: var(--accent-color); }
     .auto-scroll-section { padding: 100px 0; background: #f5f5f7; overflow: hidden; }
+    @media (prefers-color-scheme: dark) {
+        .auto-scroll-section { background: #000000; }
+    }
     .horizontal-view { display: flex; flex-direction: column; gap: 60px; }
     .partner-sub-title { font-size: var(--sub-title-size); font-weight: 800; line-height: 1; margin: 0; }
     .infinite-scroll-container { width: 100%; overflow: hidden; display: flex; -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
