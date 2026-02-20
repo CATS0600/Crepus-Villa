@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="赞助我">
+    <Header />
+    <main class="container sponsor-page">
+        <section class="reveal active">
+            <h1>支持我的创作</h1>
+            <p>如果你觉得我的内容对你有帮助，欢迎通过以下方式支持我。</p>
+            <div class="sponsor-options">
+                <div class="option-card">
+                    <h3>☕️ 请我喝杯咖啡</h3>
+                    <p>通过微信或支付宝扫码支持。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .sponsor-page { padding-top: 150px; text-align: center; }
+    h1 { font-size: 48px; font-weight: 800; margin-bottom: 20px; }
+    .sponsor-options { margin-top: 50px; display: flex; justify-content: center; }
+    .option-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        max-width: 400px;
+    }
+</style>

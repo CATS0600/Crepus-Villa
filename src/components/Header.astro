@@ -6,6 +6,7 @@
 		<div class="links">
 			<a href="/blog">文章</a>
 			<a href="/about">关于</a>
+			<a href="/sponsor" class="sponsor-btn">赞助</a>
 		</div>
 	</nav>
 </header>
@@ -26,7 +27,15 @@
 		justify-content: center;
 		align-items: center;
 	}
-
+	.logo { font-weight: 600; text-decoration: none; color: var(--text-main); }
+    .links { display: flex; align-items: center; gap: 30px; }
+    .links a { 
+        text-decoration: none; 
+        color: var(--text-muted); 
+        font-size: 14px; 
+        transition: color 0.3s;
+    }
+    .links a:hover { color: var(--text-main); }
 	nav {
 		width: 100%;
 		max-width: 980px;
@@ -56,4 +65,13 @@
 		margin-left: 24px;
 		color: var(--text-muted);
 	}
+	.sponsor-btn {
+        background: #0071e3;
+        color: #fff !important;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    .sponsor-btn:hover { background: #0077ed; }
+</style>
 </style>

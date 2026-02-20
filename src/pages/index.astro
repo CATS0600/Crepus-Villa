@@ -2,117 +2,201 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 
-// 模拟博客数据
-const posts = [
-	{ title: "介绍 Apple Vision Pro 的设计哲学", excerpt: "空间计算时代的第一步...", date: "2026-02-20" },
-	{ title: "为什么选择 Astro 构建博客", excerpt: "零 JS，极速体验...", date: "2026-02-18" },
-	{ title: "极简主义编程指南", excerpt: "少即是多（Less is more）。", date: "2026-02-15" }
-];
+// 合作伙伴/赞助商数据
+const partners = ["Google", "PlayStation", "Astro", "Apple", "GitHub", "Vercel", "Intel", "Adobe", "Figma"];
 ---
 
-<Layout title="我的苹果风博客">
-	<Header />
-	
-	<main class="container">
-		<section class="hero">
-			<h1>创意，<br/>由此开始。</h1>
-			<p>分享关于代码、设计与生活的点滴思考。</p>
-		</section>
+<Layout title="CREPUS VILLA | 首页">
+    <Header />
+    
+    <main class="main-content">
+        <div class="scrolling-text" id="scrollText">CREPUS VILLA</div>
 
-		<section class="bento-grid">
-			{posts.map((post) => (
-				<article class="bento-card">
-					<h3>{post.title}</h3>
-					<p>{post.excerpt}</p>
-					<span class="date">{post.date}</span>
-				</article>
-			))}
-		</section>
-	</main>
+        <section class="content-section reveal">
+            <div class="container">
+                <h1 class="hero-title">
+                    创意，<span id="typewriter" class="accent-text"></span><span class="cursor"></span>
+                </h1>
+                <p class="sub-text">在这里，探索数字世界的无限可能。</p>
+            </div>
+        </section>
+
+        <section class="horizontal-scroll-section" id="horizontalWrapper">
+            <div class="sticky-container">
+                <div class="horizontal-content" id="horizontalContent">
+                    <div class="partner-intro">
+                        <h2 class="partner-title">PARTNERS<br/>& SPONSORS</h2>
+                        <p>协作共赢，<br/>定义未来。</p>
+                    </div>
+                    {partners.map(p => (
+                        <div class="logo-card">
+                            <span class="logo-name">{p}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container text-center">
+                <p class="huge-text">追求极致，<br/>不留余力。</p>
+            </div>
+        </section>
+    </main>
 </Layout>
 
 <style>
-	.container {
-		max-width: 1100px; /* 稍微放宽一点，给 Bento 更多发挥空间 */
-		margin: 0 auto;
-		padding: 100px 20px;
-	}
+    /* 4. 颜色与基础样式 */
+    .accent-text {
+        color: #f7c46c; /* 替换为你的新审美颜色 */
+        /* 移除渐变，使用纯色更加高端 */
+    }
 
-	.bento-grid {
-		display: grid;
-		/* 创建 3 列响应式网格 */
-		grid-template-columns: repeat(3, 1fr);
-		grid-auto-rows: 240px; /* 定义基础行高 */
-		gap: 20px;
-	}
+    .main-content {
+        background-color: #f5f5f7;
+    }
 
-	.bento-card {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
-		border-radius: 22px; /* 典型的苹果大圆角 */
-		padding: 30px;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-		overflow: hidden;
-		position: relative;
-	}
+    .scrolling-text {
+        position: fixed;
+        top: 25%;
+        left: 0;
+        font-size: 20vw;
+        font-weight: 900;
+        color: rgba(247, 196, 108, 0.08); /* 使用强调色的极淡透明版 */
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 0;
+        line-height: 1;
+    }
 
-	/* 让第一个卡片占据 2列 x 2行 (大 Banner) */
-	.bento-card:nth-child(1) {
-		grid-column: span 2;
-		grid-row: span 2;
-		background: linear-gradient(135deg, #0071e3, #42b4ff); /* 蓝色渐变 */
-		color: white;
-	}
-	
-	.bento-card:nth-child(1) .date, 
-	.bento-card:nth-child(1) p {
-		color: rgba(255, 255, 255, 0.8);
-	}
+    .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
 
-	/* 让第二个卡片占据 1列 x 2行 (纵向长卡片) */
-	.bento-card:nth-child(2) {
-		grid-row: span 2;
-	}
+    /* 2. 横向滚动核心 CSS */
+    .horizontal-scroll-section {
+        position: relative;
+        height: 300vh; /* 这里的倍数决定了滚动的时长感 */
+        background: transparent;
+    }
 
-	/* 悬停效果：轻微放大并加深阴影 */
-	.bento-card:hover {
-		transform: scale(1.015);
-		box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-	}
-	.hero h1 {
-		font-weight: var(--fw-bold); /* 巨大的粗体标题 */
-	}
+    .sticky-container {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden; /* 隐藏溢出内容 */
+    }
 
-	.hero p {
-		font-weight: var(--fw-medium); /* 副标题用中等粗细，增加质感 */
-	}
+    .horizontal-content {
+        display: flex;
+        padding: 0 10vw;
+        will-change: transform;
+        gap: 80px;
+        align-items: center;
+    }
 
-	.bento-card h3 {
-		font-weight: var(--fw-medium); /* 卡片标题 */
-	}
+    .partner-intro {
+        min-width: 400px;
+    }
 
-	.bento-card p {
-		font-weight: var(--fw-light); /* 卡片摘要用细体，显得干净 */
-	}
+    .partner-title {
+        font-size: clamp(32px, 5vw, 64px);
+        font-weight: 800;
+        line-height: 1;
+        color: var(--text-main);
+    }
 
-	.bento-card .date {
-		font-weight: var(--fw-regular);
-		letter-spacing: 0.1em;
-	}
+    .logo-card {
+        min-width: 300px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(0,0,0,0.03);
+        border-radius: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
 
-	/* 移动端适配：全部变为单列 */
-	@media (max-width: 768px) {
-		.bento-grid {
-			grid-template-columns: 1fr;
-			grid-auto-rows: auto;
-		}
-		.bento-card:nth-child(1),
-		.bento-card:nth-child(2) {
-			grid-column: span 1;
-			grid-row: span 1;
-		}
-	}
+    .logo-name {
+        font-size: 32px;
+        font-weight: 600;
+        color: #86868b;
+    }
+
+    /* 其余样式保持简约 */
+    .content-section { min-height: 100vh; display: flex; align-items: center; }
+    .hero-title { font-size: clamp(40px, 8vw, 90px); font-weight: 800; }
+    .cursor { display: inline-block; width: 3px; height: 0.8em; background: #f7c46c; margin-left: 4px; animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { background: transparent; } }
+    
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
 </style>
+
+<script>
+    // 1. 打字机逻辑
+    const words = ["由此开始。", "由你定义。", "永不止步。"];
+    let wordIndex = 0, charIndex = 0, isDeleting = false;
+    
+    function type() {
+        const target = document.getElementById('typewriter');
+        if (!target) return;
+        const currentWord = words[wordIndex];
+        if (isDeleting) charIndex--; else charIndex++;
+        target.textContent = currentWord.substring(0, charIndex);
+        let delta = isDeleting ? 80 : 150;
+        if (!isDeleting && charIndex === currentWord.length) { delta = 2000; isDeleting = true; }
+        else if (isDeleting && charIndex === 0) { isDeleting = false; wordIndex = (wordIndex + 1) % words.length; delta = 500; }
+        setTimeout(type, delta);
+    }
+
+    // 2. 滚动动效逻辑 (包含背景大字和横向滚动)
+    const horizontalWrapper = document.getElementById('horizontalWrapper');
+    const horizontalContent = document.getElementById('horizontalContent');
+    const scrollText = document.getElementById('scrollText');
+
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+
+        // 背景文字平移
+        if (scrollText) {
+            scrollText.style.transform = `translateX(-${scrolled * 0.3}px)`;
+        }
+
+        // 横向滚动逻辑
+        if (horizontalWrapper && horizontalContent) {
+            const wrapperTop = horizontalWrapper.offsetTop;
+            const wrapperHeight = horizontalWrapper.offsetHeight;
+            const windowHeight = window.innerHeight;
+
+            // 计算进入该区域后的百分比
+            if (scrolled >= wrapperTop && scrolled <= (wrapperTop + wrapperHeight - windowHeight)) {
+                const offset = scrolled - wrapperTop;
+                const maxScroll = horizontalContent.scrollWidth - window.innerWidth;
+                const scrollPercentage = offset / (wrapperHeight - windowHeight);
+                
+                // 将纵向滚动距离映射到横向偏移
+                horizontalContent.style.transform = `translateX(-${scrollPercentage * maxScroll}px)`;
+            }
+        }
+    });
+
+    // 3. 入场观察
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+    }, { threshold: 0.1 });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        type();
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    });
+</script>
