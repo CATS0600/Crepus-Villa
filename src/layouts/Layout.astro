@@ -54,6 +54,10 @@ const { title } = Astro.props;
 		--card-bg: rgba(255, 255, 255, 0.8);
 		--card-border: rgba(0, 0, 0, 0.05);
 		--nav-bg: rgba(251, 251, 253, 0.8);
+		--fw-light: 300;
+		--fw-regular: 400;
+		--fw-medium: 500;
+		--fw-bold: 700;
 	}
 
 	@media (prefers-color-scheme: dark) {
@@ -73,7 +77,13 @@ const { title } = Astro.props;
 	}
 
 	html {
-		font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+		font-family: 'Noto Sans TC Variable';
+		/* 确保路径指向你 public/fonts/ 文件夹下的文件 */
+		src: url('/fonts/NotoSansTC-VF.woff2') format('woff2-supports-variations'),
+		     url('/fonts/NotoSansTC-VF.woff2') format('woff2');
+		font-weight: 100 900; /* 关键：声明支持 100 到 900 的所有字重 */
+		font-style: normal;
+		font-display: swap;
 		background: var(--bg-color);
 		color: var(--text-main);
 		-webkit-font-smoothing: antialiased;
