@@ -33,73 +33,66 @@ const posts = [
 
 <style>
 	.container {
-		max-width: 980px;
+		max-width: 1100px; /* 稍微放宽一点，给 Bento 更多发挥空间 */
 		margin: 0 auto;
-		padding: 100px 20px 40px; /* 顶部留白，避开固定导航栏 */
-	}
-
-	.hero {
-		text-align: center;
-		padding: 80px 0;
-	}
-
-	.hero h1 {
-		font-size: 56px;
-		font-weight: 700;
-		letter-spacing: -0.015em;
-		line-height: 1.05;
-		margin: 0 0 20px 0;
-	}
-
-	.hero p {
-		font-size: 24px;
-		color: var(--text-muted);
-		font-weight: 400;
-		margin: 0;
+		padding: 100px 20px;
 	}
 
 	.bento-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 24px;
-		padding-top: 40px;
+		/* 创建 3 列响应式网格 */
+		grid-template-columns: repeat(3, 1fr);
+		grid-auto-rows: 240px; /* 定义基础行高 */
+		gap: 20px;
 	}
 
 	.bento-card {
 		background: var(--card-bg);
-		border-radius: 18px; /* 苹果常用的圆角大小 */
-		padding: 32px;
-		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); /* 非常柔和的阴影 */
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
-		cursor: pointer;
+		border: 1px solid var(--card-border);
+		border-radius: 22px; /* 典型的苹果大圆角 */
+		padding: 30px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		overflow: hidden;
+		position: relative;
 	}
 
+	/* 让第一个卡片占据 2列 x 2行 (大 Banner) */
+	.bento-card:nth-child(1) {
+		grid-column: span 2;
+		grid-row: span 2;
+		background: linear-gradient(135deg, #0071e3, #42b4ff); /* 蓝色渐变 */
+		color: white;
+	}
+	
+	.bento-card:nth-child(1) .date, 
+	.bento-card:nth-child(1) p {
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	/* 让第二个卡片占据 1列 x 2行 (纵向长卡片) */
+	.bento-card:nth-child(2) {
+		grid-row: span 2;
+	}
+
+	/* 悬停效果：轻微放大并加深阴影 */
 	.bento-card:hover {
-		transform: scale(1.02);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+		transform: scale(1.015);
+		box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 	}
 
-	.bento-card h3 {
-		font-size: 20px;
-		margin: 0 0 12px 0;
-	}
-
-	.bento-card p {
-		color: var(--text-muted);
-		line-height: 1.5;
-		margin: 0 0 24px 0;
-	}
-
-	.bento-card .date {
-		font-size: 12px;
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	/* 响应式调整 */
+	/* 移动端适配：全部变为单列 */
 	@media (max-width: 768px) {
-		.hero h1 { font-size: 40px; }
-		.hero p { font-size: 18px; }
+		.bento-grid {
+			grid-template-columns: 1fr;
+			grid-auto-rows: auto;
+		}
+		.bento-card:nth-child(1),
+		.bento-card:nth-child(2) {
+			grid-column: span 1;
+			grid-row: span 1;
+		}
 	}
 </style>

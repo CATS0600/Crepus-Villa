@@ -48,17 +48,31 @@ const { title } = Astro.props;
 <style is:global>
 	/* 引入苹果系统默认字体，确保原汁原味的体验 */
 	:root {
-		--bg-color: #fbfbfd; /* 苹果常用的极其浅的灰白色 */
-		--text-main: #1d1d1f; /* 苹果常用的深灰色，比纯黑更柔和 */
+		--bg-color: #fbfbfd;
+		--text-main: #1d1d1f;
 		--text-muted: #86868b;
-		--card-bg: #ffffff;
+		--card-bg: rgba(255, 255, 255, 0.8);
+		--card-border: rgba(0, 0, 0, 0.05);
+		--nav-bg: rgba(251, 251, 253, 0.8);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			/* 自动切换深色模式变量 */
+			--bg-color: #000000;
+			--text-main: #f5f5f7;
+			--text-muted: #a1a1a6;
+			--card-bg: #1c1c1e;
+			--card-border: rgba(255, 255, 255, 0.1);
+			--nav-bg: rgba(0, 0, 0, 0.8);
+		}
 	}
 
 	html {
-		font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 		background: var(--bg-color);
 		color: var(--text-main);
-		-webkit-font-smoothing: antialiased; /* 让字体在 Mac 上渲染更平滑 */
+		transition: background 0.3s ease;
 	}
 
 	body {
