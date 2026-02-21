@@ -29,9 +29,9 @@ const photoCaptions = [
 	"Guangxi, China, Feb 2026",
 ];
 
-const partners = ["Paramecium", "Hydrolight", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
+const partners = ["Paramecium", "Hydrolight", "Odysphere", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
 const pr_web = [
-    "https://paramecium2010.top", "https://hydrolight.top", "https://www.roblox.com",
+    "https://paramecium2010.top", "https://hydrolight.top", "https://www.roblox.com", "https://www.odysphere.tech/",
     "https://www.google.com", "https://www.cloudflare.com", "https://astro.build",
     "https://github.com", "https://gemini.google.com", "./sponsor"
 ];
@@ -108,10 +108,47 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 </div>
             </div>
         </section>
+
+        <section class="contact-section">
+            <div class="contact-container safe-zone">
+                <h2 class="contact-title">WHAT'S UP ON INTERNET</h2>
+                <p class="partner-desc">Follow Me on socials</p>
+                <div class="social-links">
+                    <a href="https://qm.qq.com/q/Qme3jDzp2G" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">🐧</span>
+                        <span class="social-name">QQ</span>
+                    </a>
+                    <a href="https://www.youtube.com/@Crepuscular_official" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">▶</span>
+                        <span class="social-name">Youtube</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@crepuscu1ar" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">🎶</span>
+                        <span class="social-name">Tiktok</span>
+                    </a>
+                    <a href="https://www.douyin.com/user/MS4wLjABAAAAqaOxzbO4yrIUjNbo3HLSUkM3D4RzArWCi9DnFTtQNPlogqyIL6gnrRnzmPwB3WZ7?from_tab_name=main" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">🎵</span>
+                        <span class="social-name">Douyin</span>
+                    </a>
+                    <a href="https://www.roblox.com/users/3328635171/profile" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">✨</span>
+                        <span class="social-name">Roblox</span>
+                    </a>
+                </div>
+                <p class="partner-desc" style="margin-top: 80px; margin-bottom: 30px;">Radio check? send me</p>
+                <div class="email-container">
+                    <a href="mailto:E-Crepuscular@outlook.com" class="email-button">
+                        <span class="email-icon">✉</span>
+                        <span class="email-text">E-Crepuscular@outlook.com</span>
+                    </a>
+                </div>
+            </div>
+        </section>
         
         <footer class="site-footer safe-zone">
             <div class="footer-divider"></div>
-            <p>Powered By CloudFlare & Crepuscular</p>
+            <p>Powered By CloudFlare & Crepuscular, Designed and Developed by Claude, Gemini and Cyril</p>
+            <p>Copyright © 2026 Crepuscular's Villa. All rights reserved.</p>
         </footer>
     </main>
 </Layout>
@@ -216,10 +253,48 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
     .horizontal-view { display: flex; flex-direction: column; gap: 60px; }
     .partner-sub-title { font-size: var(--sub-title-size); font-weight: 800; line-height: 1; margin: 0; }
+    .partner-desc { font-size: clamp(16px, 2vw, 24px); color: #86868b; margin: 0 0 60px 0; font-weight: var(--fw-light); line-height: 1.6; }
     .infinite-scroll-container { width: 100%; overflow: hidden; display: flex; -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
     .partner-list { display: flex; gap: 40px; padding: 20px 0; animation: scroll-left 30s linear infinite; width: max-content; }
     .logo-card { width: 320px; height: 200px; background: #fff; border-radius: 30px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex-shrink: 0; transition: all 0.3s ease; text-decoration: none; }
     .logo-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+    .contact-section { padding: 100px 0; background: #f5f5f7; }
+    @media (prefers-color-scheme: dark) {
+        .contact-section { background: #000000; }
+    }
+    .contact-container { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 1000px; margin: 0 auto; }
+    .contact-title { font-size: var(--sub-title-size); font-weight: 800; line-height: 1.2; margin: 0 0 20px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    @media (max-width: 1024px) {
+        .contact-title { white-space: normal; overflow: visible; }
+    }
+    .email-container { width: 100%; display: flex; justify-content: center; }
+    .email-button { display: flex; align-items: center; justify-content: center; gap: 12px; width: calc(100% - (var(--safe-area) * 2)); height: clamp(48px, 10vw, 80px); background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); text-decoration: none; transition: all 0.3s ease; color: #1d1d1f; }
+    .email-button:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+    .email-button:hover .email-icon { color: var(--accent-color); }
+    .email-button:hover .email-text { color: var(--accent-color); }
+    .email-icon { font-size: 24px; font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif; color: #1d1d1f; transition: color 0.3s ease; flex-shrink: 0; }
+    .email-text { font-size: 16px; font-weight: 600; color: #1d1d1f; transition: color 0.3s ease; }
+    @media (min-width: 768px) {
+        .email-icon { font-size: clamp(24px, 2vw, 32px); }
+        .email-text { font-size: clamp(16px, 1.5vw, 20px); }
+    }
+    @media (prefers-color-scheme: dark) {
+        .email-button { background: #1d1d1f; color: #f5f5f7; }
+        .email-icon { color: #f5f5f7; }
+        .email-text { color: #f5f5f7; }
+    }
+    .social-links { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(12px, 3vw, 24px); width: 100%; max-width: 1000px; margin: 0 auto; }
+    .social-card { width: 100%; aspect-ratio: 1; background: #fff; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: all 0.3s ease; text-decoration: none; border: none; cursor: pointer; }
+    .social-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+    .social-card:hover .social-icon { color: var(--accent-color); }
+    .social-card:hover .social-name { color: var(--accent-color); }
+    .social-icon { font-size: 32px; font-weight: 700; color: #1d1d1f; margin-bottom: 10px; font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif; transition: color 0.3s ease; }
+    .social-name { font-size: 14px; font-weight: 600; color: #86868b; transition: color 0.3s ease; }
+    @media (prefers-color-scheme: dark) {
+        .social-card { background: #1d1d1f; }
+        .social-name { color: #a1a1a6; }
+        .social-icon { color: #f5f5f7; }
+    }
     .site-footer { padding: 80px 0 40px; text-align: center; color: #86868b; font-size: 13px; }
     .footer-divider { width: 100%; height: 1px; background: rgba(0,0,0,0.1); margin-bottom: 24px; }
     .cursor { display: inline-block; width: 3px; height: 0.8em; background: var(--accent-color); margin-left: 4px; vertical-align: middle; animation: blink 1s step-end infinite; }
@@ -227,11 +302,20 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
     .reveal.active { opacity: 1; transform: translateY(0); }
+    @media (max-width: 768px) {
+        .social-links { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 600px) {
+        .social-links { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 450px) {
+        .social-links { grid-template-columns: repeat(2, 1fr); }
+    }
 </style>
 
 <script>
     // 打字机与滚动逻辑保持不变
-    const words = ["Define.", "Twlight.", "Design.", "Innovate.", "Inspire."];
+    const words = ["Define.", "Spark.", "Breathe.", "Manifest.", "Endure."];
     let wordIndex = 0, charIndex = 0, isDeleting = false;
     
     function type() {
