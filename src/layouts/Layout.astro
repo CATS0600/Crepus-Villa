@@ -41,6 +41,7 @@ const { title } = Astro.props;
 		--fw-bold: 700;
 		--container-padding: 1.5rem; /* 移动端安全距离 */
     	--container-max-width: 1000px; /* 正文最大宽度 */
+    	--safe-area: clamp(20px, 6vw, 80px); /* 全站安全区距离 */
 	}
 
 	@media (prefers-color-scheme: dark) {
@@ -109,8 +110,29 @@ const { title } = Astro.props;
 		box-sizing: border-box;
 	}
 
+	/* 确保固定 header 不会遮盖内容 */
+	main {
+		padding-top: 52px; /* 与 .apple-header height 保持一致 */
+	}
+
+	/* 全局安全区类 */
+	.safe-zone { padding-left: var(--safe-area); padding-right: var(--safe-area); }
+
+	/* 锚点跳转时预留 header 高度 */
+	h1, h2, h3 { scroll-margin-top: calc(52px + 1rem); }
+
 	* {
 		box-sizing: inherit;
+	}
+
+	/* 统一的布局样式 */
+	.main-content { background-color: var(--bg-color); overflow-x: hidden; }
+	.content-section {
+		min-height: 100vh;
+		display: flex;
+		align-items: center;
+		position: relative;
+		z-index: 1;
 	}
 
 	/* link style for privacy policy, keep normal color */

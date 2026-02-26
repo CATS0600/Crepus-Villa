@@ -108,17 +108,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 </div>
             </div>
         </section>
-        <!-- sponsor-area footer copy -->
-        <section class="sponsor-footer-section">
-            <div class="safe-zone" style="text-align:center; margin-top:40px;">
-                <p>Powered By CloudFlare & Crepuscular, Designed and Developed by Claude, Gemini and Cyril</p>
-                <p>Copyright © 2026 Crepuscular's Villa. All rights reserved. 
-                    <a class="privacy-link" href="/privacy" rel="external">Privacy Policy</a>
-                </p>
-            </div>
-        </section>
-
-        <section class="contact-section">
             <div class="contact-container safe-zone">
                 <h2 class="contact-title">WHAT'S UP ON INTERNET</h2>
                 <p class="partner-desc">Follow Me on socials</p>
@@ -166,7 +155,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
 <style>
     :root {
-        --safe-area: clamp(20px, 6vw, 80px);
         --accent-color: #f7c46c;
         --sub-title-size: clamp(34px, 7vw, 85px); 
     }
@@ -178,7 +166,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
     /* --- 新图片模块样式 --- */
     .photo-gallery-section {
-        padding: 15vh 0;
+        padding: 15vh var(--safe-area); /* 增加左右安全区 */
         display: flex;
         justify-content: center;
     }
@@ -254,8 +242,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     /* --- 原有样式兼容 --- */
     .logo-name { font-family: 'RAGE', cursive; font-size: 48px; font-weight: 600; color: #1d1d1f; }
     .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; }
-    .safe-zone { padding-left: var(--safe-area); padding-right: var(--safe-area); }
-    .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
+        .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
     .hero-title { font-size: clamp(44px, 12vw, 130px); font-weight: 800; line-height: 1.1; }
     .accent-text { color: var(--accent-color); }
     .auto-scroll-section { padding: 100px 0; background: #f5f5f7; overflow: hidden; }
