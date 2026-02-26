@@ -1,0 +1,13 @@
+---
+import { redirect } from 'astro';
+export const prerender = false; // ensure page is rendered at request time
+export const ssr = true; // allow server-side logic (redirect) to run
+
+export function get({ request }) {
+  const country = request.headers.get('cf-ipcountry') ?? '';
+  if (country.toUpperCase() === 'CN') {
+    return redirect('/privacy/zh', 302);
+  }
+  return redirect('/privacy/eu', 302);
+}
+---
