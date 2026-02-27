@@ -61,3 +61,21 @@
         .links a { font-size: 13px; }
     }
 </style>
+
+<script is="client:load">
+let clickTimes = [];
+const logoLink = document.querySelector('.logo');
+if (logoLink) {
+  logoLink.addEventListener('click', (e) => {
+    const now = Date.now();
+    clickTimes.push(now);
+    // keep only clicks within last 10 seconds
+    clickTimes = clickTimes.filter(ts => now - ts <= 10000);
+    if (clickTimes.length > 10) {
+      e.preventDefault();
+      alert('Bro you should get a job');
+      window.location.href = 'https://www.bing.com';
+    }
+  });
+}
+</script>
