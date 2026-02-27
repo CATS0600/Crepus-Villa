@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+
+// 获取 Cloudflare 注入的国家代码
+const country = Astro.request.headers.get('cf-ipcountry') ?? '';
+
+if (country.toUpperCase() === 'CN') {
+  return Astro.redirect('/about/zh', 302);
+}
+
+return Astro.redirect('/about/en', 302);
+---
