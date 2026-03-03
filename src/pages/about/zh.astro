@@ -180,6 +180,16 @@ import Header from '../../components/Header.astro';
         font-weight: 400;
     }
 
+    @media (prefers-color-scheme: dark) {
+        .about-title {
+            color: #f5f5f7;
+        }
+
+        .about-subtitle {
+            color: #a1a1a6;
+        }
+    }
+
     .about-section {
         margin-bottom: 60px;
         padding: 60px 40px;
@@ -197,6 +207,17 @@ import Header from '../../components/Header.astro';
         letter-spacing: -0.01em;
     }
 
+    @media (prefers-color-scheme: dark) {
+        .about-section {
+            background: rgba(32, 32, 34, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: #f5f5f7;
+        }
+    }
+
     .section-content {
         display: flex;
         flex-direction: column;
@@ -208,6 +229,12 @@ import Header from '../../components/Header.astro';
         line-height: 1.8;
         color: #424245;
         margin: 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .section-text {
+            color: #e0e0e2;
+        }
     }
 
     .interests-grid {
@@ -246,6 +273,19 @@ import Header from '../../components/Header.astro';
         border-color: rgba(0, 0, 0, 0.15);
     }
 
+    @media (prefers-color-scheme: dark) {
+        .music-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(200, 200, 200, 0.05) 100%);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .music-card:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(200, 200, 200, 0.1) 100%);
+            box-shadow: 0 12px 32px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+    }
+
     .music-card-icon {
         font-size: 2.5rem;
         display: inline-block;
@@ -263,6 +303,16 @@ import Header from '../../components/Header.astro';
         color: #86868b;
         margin: 0;
         font-weight: 400;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .music-category {
+            color: #f5f5f7;
+        }
+
+        .music-desc {
+            color: #a1a1a6;
+        }
     }
 
     .interest-item {
@@ -292,6 +342,25 @@ import Header from '../../components/Header.astro';
         margin: 0;
     }
 
+    @media (prefers-color-scheme: dark) {
+        .interest-item {
+            background: rgba(44, 44, 46, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .interest-item:hover {
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+        }
+
+        .interest-title {
+            color: #f5f5f7;
+        }
+
+        .interest-desc {
+            color: #a1a1a6;
+        }
+    }
+
     .button-container {
         margin-top: 30px;
         display: flex;
@@ -317,6 +386,17 @@ import Header from '../../components/Header.astro';
     .cta-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(29, 29, 31, 0.25);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .cta-button {
+            background: linear-gradient(135deg, #f5f5f7 0%, #d1d1d6 100%);
+            color: #000000;
+        }
+
+        .cta-button:hover {
+            box-shadow: 0 8px 24px rgba(245, 245, 247, 0.25);
+        }
     }
 
     @media (max-width: 768px) {
