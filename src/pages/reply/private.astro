@@ -1,0 +1,292 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+---
+
+<Layout title="私密留言 - Crepus Villa">
+    <Header />
+    
+    <main class="main-content">
+        <section class="content-section reveal">
+            <div class="container safe-zone" style="max-width: 600px; margin: 2rem auto;">
+                <h1 style="text-align: center; margin-bottom: 2rem;">我的私密留言</h1>
+                
+                <div id="tokenInputForm" class="form-container">
+                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem;">
+                        输入你的 Token 查看私密留言及其回复
+                    </p>
+                    
+                    <form id="tokenForm">
+                        <div class="form-group">
+                            <label for="token">Token（不包含 -）</label>
+                            <input 
+                                type="text" 
+                                id="token" 
+                                name="token" 
+                                required 
+                                placeholder="输入 8 位 Token..."
+                                maxlength="8"
+                            />
+                        </div>
+                        <button type="submit" class="submit-btn">查询留言</button>
+                    </form>
+
+                    <div id="errorMessage" class="error-message" style="display: none;">
+                        <p id="errorText"></p>
+                    </div>
+                </div>
+
+                <div id="messageDisplay" style="display: none;">
+                    <div id="messageList" class="message-list"></div>
+                    <div style="text-align: center; margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button type="button" onclick="resetForm()" class="action-btn">查询其他 Token</button>
+                        <a href="/send" class="action-btn">写新留言</a>
+                        <a href="/reply" class="action-btn">查看公开留言</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .form-container {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 1.1rem;
+        background: var(--bg-color);
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+        outline: none;
+        border-color: var(--text-main);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        background: var(--text-main);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .submit-btn:hover {
+        opacity: 0.8;
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .error-message {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        color: var(--text-main);
+    }
+
+    .message-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .message-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: box-shadow 0.2s;
+    }
+
+    .message-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-content {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .reply-section {
+        background: var(--bg-color);
+        border-left: 3px solid var(--text-main);
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+    }
+
+    .reply-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .reply-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .message-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        padding-top: 1rem;
+        border-top: 1px solid var(--card-border);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+    }
+
+    .action-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: var(--text-main);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .action-btn:hover {
+        opacity: 0.8;
+    }
+</style>
+
+<script>
+    const tokenForm = document.getElementById('tokenForm');
+    const tokenInput = document.getElementById('token');
+    const errorMsg = document.getElementById('errorMessage');
+    const tokenInputForm = document.getElementById('tokenInputForm');
+    const messageDisplay = document.getElementById('messageDisplay');
+    const messageList = document.getElementById('messageList');
+    const submitBtn = tokenForm.querySelector('button[type="submit"]');
+
+    tokenForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const token = tokenInput.value.trim().toUpperCase();
+
+        if (!token || token.length !== 8) {
+            showError('Token 必须是 8 位');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        errorMsg.style.display = 'none';
+
+        try {
+            const response = await fetch(`/api/get-messages?token=${encodeURIComponent(token)}`);
+            const data = await response.json();
+
+            if (data.messages.length === 0) {
+                messageList.innerHTML = `
+                    <div class="empty-state">
+                        <p>😢</p>
+                        <p>未找到该 Token 的留言</p>
+                        <p style="font-size: 0.9rem;">请检查 Token 是否正确</p>
+                    </div>
+                `;
+            } else {
+                messageList.innerHTML = data.messages.map(msg => {
+                    const date = new Date(msg.created_at);
+                    const formattedDate = date.toLocaleString('zh-CN');
+                    
+                    return `
+                        <div class="message-card">
+                            <div class="message-content">${escapeHtml(msg.content)}</div>
+                            ${msg.reply ? `
+                                <div class="reply-section">
+                                    <div class="reply-label">💬 管理员回复</div>
+                                    <div class="reply-text">${escapeHtml(msg.reply)}</div>
+                                </div>
+                            ` : `
+                                <div class="empty-state" style="padding: 1rem;">
+                                    <p style="font-size: 0.9rem;">⏳ 管理员还没有回复呢...</p>
+                                </div>
+                            `}
+                            <div class="message-meta">
+                                <span>ID: ${msg.id}</span>
+                                <span>${formattedDate}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            tokenInputForm.style.display = 'none';
+            messageDisplay.style.display = 'block';
+        } catch (error) {
+            showError('查询失败，请重试');
+            console.error(error);
+        }
+
+        submitBtn.disabled = false;
+    });
+
+    function showError(message) {
+        document.getElementById('errorText').textContent = message;
+        errorMsg.style.display = 'block';
+    }
+
+    function resetForm() {
+        tokenForm.reset();
+        tokenInputForm.style.display = 'block';
+        messageDisplay.style.display = 'none';
+        errorMsg.style.display = 'none';
+        tokenInput.focus();
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>

@@ -1,0 +1,197 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="公开留言 - Crepus Villa">
+    <Header />
+    
+    <main class="main-content">
+        <section class="content-section reveal">
+            <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
+                <h1 style="text-align: center; margin-bottom: 2rem;">公开留言板</h1>
+                
+                <div id="messageList" class="message-list">
+                    <p style="text-align: center; color: var(--text-muted);">加载中...</p>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/send" class="action-btn">写新留言</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .message-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .message-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: box-shadow 0.2s;
+    }
+
+    .message-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-content {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .reply-section {
+        background: var(--bg-color);
+        border-left: 3px solid var(--text-main);
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+    }
+
+    .reply-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .reply-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .message-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        padding-top: 1rem;
+        border-top: 1px solid var(--card-border);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state p:first-child {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: var(--text-main);
+        color: var(--bg-color);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: opacity 0.2s;
+    }
+
+    .action-btn:hover {
+        opacity: 0.8;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .nav-link {
+        padding: 0.5rem 1rem;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--text-main);
+        transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+        background: var(--text-main);
+        color: var(--bg-color);
+    }
+</style>
+
+<script>
+    async function loadMessages() {
+        const messageList = document.getElementById('messageList');
+        
+        try {
+            const response = await fetch('/api/get-messages');
+            const data = await response.json();
+
+            if (data.messages.length === 0) {
+                messageList.innerHTML = `
+                    <div class="empty-state">
+                        <p>📭</p>
+                        <p>还没有公开留言呢...</p>
+                        <p style="font-size: 0.9rem;">快来写第一条吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            messageList.innerHTML = data.messages.map(msg => {
+                const date = new Date(msg.created_at);
+                const formattedDate = date.toLocaleString('zh-CN');
+                
+                return `
+                    <div class="message-card">
+                        <div class="message-content">${escapeHtml(msg.content)}</div>
+                        ${msg.reply ? `
+                            <div class="reply-section">
+                                <div class="reply-label">💬 回复</div>
+                                <div class="reply-text">${escapeHtml(msg.reply)}</div>
+                            </div>
+                        ` : ''}
+                        <div class="message-meta">
+                            <span>ID: ${msg.id}</span>
+                            <span>${formattedDate}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 添加导航链接
+            const nav = document.createElement('div');
+            nav.className = 'nav-links';
+            nav.innerHTML = `
+                <a href="/send" class="nav-link">✍️ 写新留言</a>
+                <a href="/reply/private" class="nav-link">🔐 查看私密留言</a>
+                <a href="/" class="nav-link">🏠 回到首页</a>
+            `;
+            messageList.parentElement.appendChild(nav);
+        } catch (error) {
+            messageList.innerHTML = '<p style="color: red;">加载失败，请刷新重试</p>';
+            console.error(error);
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadMessages);
+</script>
