@@ -9,14 +9,14 @@ import Header from '../components/Header.astro';
     <main class="main-content">
         <section class="content-section reveal">
             <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
-                <h1 style="text-align: center; margin-bottom: 2rem;">公开留言板</h1>
+                <h1 style="text-align: center; margin-bottom: 2rem;">公开留言板 Public Message Board</h1>
                 
                 <div id="messageList" class="message-list">
-                    <p style="text-align: center; color: var(--text-muted);">加载中...</p>
+                    <p style="text-align: center; color: var(--text-muted);">Loading...</p>
                 </div>
 
                 <div style="text-align: center; margin-top: 2rem;">
-                    <a href="/send" class="action-btn">写新留言</a>
+                    <a href="/send" class="action-btn">写新留言 Write New Message</a>
                 </div>
             </div>
         </section>
@@ -144,8 +144,8 @@ import Header from '../components/Header.astro';
                 messageList.innerHTML = `
                     <div class="empty-state">
                         <p>📭</p>
-                        <p>还没有公开留言呢...</p>
-                        <p style="font-size: 0.9rem;">快来写第一条吧！</p>
+                        <p>还没有公开留言呢... No Public Messages Yet</p>
+                        <p style="font-size: 0.9rem;">快来写第一条吧！Write the first one!</p>
                     </div>
                 `;
                 return;
@@ -160,7 +160,7 @@ import Header from '../components/Header.astro';
                         <div class="message-content">${escapeHtml(msg.content)}</div>
                         ${msg.reply ? `
                             <div class="reply-section">
-                                <div class="reply-label">💬 回复</div>
+                                <div class="reply-label">💬 回复 Reply</div>
                                 <div class="reply-text">${escapeHtml(msg.reply)}</div>
                             </div>
                         ` : ''}
@@ -176,9 +176,9 @@ import Header from '../components/Header.astro';
             const nav = document.createElement('div');
             nav.className = 'nav-links';
             nav.innerHTML = `
-                <a href="/send" class="nav-link">✍️ 写新留言</a>
-                <a href="/reply/private" class="nav-link">🔐 查看私密留言</a>
-                <a href="/" class="nav-link">🏠 回到首页</a>
+                <a href="/send" class="nav-link">✍️ 写新留言 Write New Message</a>
+                <a href="/reply/private" class="nav-link">🔐 查看私密留言 View Private Messages</a>
+                <a href="/" class="nav-link">🏠 回到首页 Return to lobby</a>
             `;
             messageList.parentElement.appendChild(nav);
         } catch (error) {

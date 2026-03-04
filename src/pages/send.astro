@@ -12,7 +12,7 @@ import Header from '../components/Header.astro';
                 <div class="send-header">
                     <h1 style="text-align: center; margin-bottom: 0.5rem;">✨ Send Anything ✨</h1>
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
-                        分享你的想法、建议或任何你想说的话。我们会认真对待每一条留言。
+                        分享你的想法、建议或任何话。我们会认真对待每一条留言。 <br/> Share your thoughts, suggestions, or anything you like. We take every message seriously.
                     </p>
                 </div>
                 
@@ -21,13 +21,13 @@ import Header from '../components/Header.astro';
                         <div class="form-group-large">
                             <label for="content">
                                 <span class="label-icon">💭</span>
-                                <span>你的想法</span>
+                                <span>你的想法 Your Thoughts</span>
                             </label>
                             <textarea 
                                 id="content" 
                                 name="content" 
                                 required 
-                                placeholder="在这里尽情表达你的想法吧...&#10;支持最多1000字"
+                                placeholder="支持最多1000字   Up to 1000 characters"
                                 maxlength="1000"
                             ></textarea>
                             <small id="charCount">0/1000</small>
@@ -37,10 +37,10 @@ import Header from '../components/Header.astro';
                             <div class="form-group-inline">
                                 <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                                     <input type="checkbox" id="is_public" name="is_public" />
-                                    <span>让所有人看到这条留言</span>
+                                    <span>让所有人看到这条留言 Public it</span>
                                 </label>
                                 <small style="display: block; margin-top: 0.25rem; color: var(--text-muted);">
-                                    ✓ 公开 - 其他人可以在回复板看到
+                                    ✓ 公开 - 其他人可以在回复板看到<br/>✓ PUBLIC - Others may see it on the reply board.<br/>若不启用，留言将仅对你可见，并且只能通过私密 Token 查看 (FULL PRIVATE)<br/> If not enabled, the message will be private and can only be viewed with a private token (FULL PRIVATE)
                                 </small>
                             </div>
 
@@ -62,32 +62,35 @@ import Header from '../components/Header.astro';
                                 type="email" 
                                 id="email" 
                                 name="email" 
-                                placeholder="你的邮箱地址（收到回复时会发送通知）"
+                                placeholder="Your Email 你的邮箱地址"
                             />
+                            <small style="display: block; margin-top: 0.25rem; color: var(--text-muted);">
+                                ⚠️ 我们可能通过邮箱地址得知你是谁 We might find out who you are through your email address.
+                            </small>
                         </div>
 
-                        <button type="submit" class="submit-btn-large">📤 发送留言</button>
+                        <button type="submit" class="submit-btn-large">📤 SEND</button>
                     </form>
 
                     <div id="successMessage" class="success-message-large" style="display: none;">
                         <div class="success-content">
-                            <h3>✅ 留言已发送！</h3>
-                        <p>感谢你的留言！我会尽快查看并回复。</p>
+                            <h3>✅ SENT SUCCESSFULLY!</h3>
+                        <p>感谢你的留言！我会尽快查看并回复。<br/>Thank you for your message! I will check and reply asap.</p>
                             <div id="tokenDisplay" style="display: none;">
                                 <div class="token-box">
-                                    <p><strong>🔐 你的私密 Token:</strong></p>
+                                    <p><strong>🔐 你的私密 Token / Your Private Token:</strong></p>
                                     <code id="tokenValue"></code>
                                     <button type="button" class="copy-btn-large" onclick="copyToken()">📋 复制 Token</button>
                                 </div>
                                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 1rem;">
-                                    ⚠️ 这个 Token 只有你知道，丢失后无法找回。请妥善保管！
+                                    ⚠️ 这个 Token 只有你知道，丢失后无法找回。请妥善保管！ This token is known only to you and cannot be recovered if lost. Please keep it safe!
                                 </p>
                             </div>
                         </div>
                         <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                            <a href="/reply" class="action-link-btn">👀 查看公开回复</a> 
-                            <a href="/reply/private" class="action-link-btn">🔐 查看私密回复</a>
-                            <a href="/" class="action-link-btn">🏠 回到首页</a>
+                            <a href="/reply" class="action-link-btn">👀 查看公开回复 View Public Replies</a> 
+                            <a href="/reply/private" class="action-link-btn">🔐 查看私密回复 View Private Replies</a>
+                            <a href="/" class="action-link-btn">🏠 回到首页 Return to lobby</a>
                         </div>
                     </div>
 
@@ -417,23 +420,14 @@ import Header from '../components/Header.astro';
     replyMethodField.addEventListener('change', updateReplyMethodUI);
 
     function updateReplyMethodUI() {
-        const isPublic = isPublicField.checked;
         const replyMethod = replyMethodField.value;
 
-        if (!isPublic) {
-            // Private 模式下，强制 Web 查看
-            replyMethodField.value = 'web';
-            replyMethodField.disabled = true;
-            emailGroup.style.display = 'none';
+        if (replyMethod === 'email') {
+            emailGroup.style.display = 'block';
+            emailField.required = true;
         } else {
-            replyMethodField.disabled = false;
-            if (replyMethod === 'email') {
-                emailGroup.style.display = 'block';
-                emailField.required = true;
-            } else {
-                emailGroup.style.display = 'none';
-                emailField.required = false;
-            }
+            emailGroup.style.display = 'none';
+            emailField.required = false;
         }
     }
 
@@ -451,7 +445,7 @@ import Header from '../components/Header.astro';
             return;
         }
 
-        if (reply_method === 'email' && is_public === 1) {
+        if (reply_method === 'email') {
             if (!email || !validateEmail(email)) {
                 showError('请输入有效的邮箱地址');
                 return;
@@ -470,7 +464,7 @@ import Header from '../components/Header.astro';
                     content, 
                     is_public,
                     reply_method,
-                    email: is_public && reply_method === 'email' ? email : null
+                    email: reply_method === 'email' ? email : null
                 })
             });
 
