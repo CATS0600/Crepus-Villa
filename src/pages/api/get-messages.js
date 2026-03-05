@@ -1,10 +1,10 @@
-export const GET = async (context) => {
+export const GET = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
-    const url = new URL(context.request.url);
+    const url = new URL(request.url);
     const token = url.searchParams.get('token');
 
     let messages;

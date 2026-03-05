@@ -1,6 +1,6 @@
-export const GET = async (context) => {
+export const GET = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
@@ -22,13 +22,13 @@ export const GET = async (context) => {
   }
 }
 
-export const PUT = async (context) => {
+export const PUT = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
-    const data = await context.request.json();
+    const data = await request.json();
     const { id, reply } = data;
 
     if (!id || reply === undefined) {
@@ -51,13 +51,13 @@ export const PUT = async (context) => {
   }
 }
 
-export const DELETE = async (context) => {
+export const DELETE = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
-    const data = await context.request.json();
+    const data = await request.json();
     const { id } = data;
 
     if (!id) {

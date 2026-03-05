@@ -26,20 +26,20 @@ function validateAdminPassword(context, adminPassword) {
   return { valid: true };
 }
 
-export const GET = async (context) => {
+export const GET = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
     
     // 密码验证
-    const passwordValidation = validateAdminPassword(context, env.ADMIN_PASSWORD);
+    const passwordValidation = validateAdminPassword(request, env.ADMIN_PASSWORD);
     if (!passwordValidation.valid) {
       return passwordValidation.response;
     }
 
-    const url = new URL(context.request.url);
+    const url = new URL(request.url);
     const group = url.searchParams.get('group');
 
     if (!group) {
@@ -67,20 +67,20 @@ export const GET = async (context) => {
   }
 }
 
-export const PATCH = async (context) => {
+export const PATCH = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
     
     // 密码验证
-    const passwordValidation = validateAdminPassword(context, env.ADMIN_PASSWORD);
+    const passwordValidation = validateAdminPassword(request, env.ADMIN_PASSWORD);
     if (!passwordValidation.valid) {
       return passwordValidation.response;
     }
 
-    const data = await context.request.json();
+    const data = await request.json();
     const { id, status } = data;
 
     if (!id || !status) {

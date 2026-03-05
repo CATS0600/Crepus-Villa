@@ -1,10 +1,10 @@
-export const POST = async (context) => {
+export const POST = async ({ request, locals }) => {
   try {
-    const env = context.locals.runtime?.env;
+    const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
     }
-    const data = await context.request.json();
+    const data = await request.json();
     const { username, social_id, answers, group_id } = data;
 
     // 字段验证
