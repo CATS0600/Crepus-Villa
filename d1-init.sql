@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS messages (
   reply TEXT,
   is_public INTEGER DEFAULT 0,
   token TEXT,
+  reply_method TEXT DEFAULT 'web',
+  email TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
