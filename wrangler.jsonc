@@ -10,6 +10,13 @@
 		"binding": "ASSETS",
 		"directory": "./dist"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "crepus-villa",
+			"database_id": "e3dfa794-4fcd-4b15-9222-c53b74af6f47"
+		}
+	],
 	"observability": {
     "enabled": true
   }

@@ -1,5 +1,3 @@
-import { getRuntime } from '@astrojs/cloudflare/runtime';
-
 // 密码验证中间件
 function validateAdminPassword(context, adminPassword) {
   const passwordHeader = context.request.headers.get('X-Admin-Password');
@@ -28,9 +26,12 @@ function validateAdminPassword(context, adminPassword) {
   return { valid: true };
 }
 
-export async function GET(context) {
+export const GET = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     
     // 密码验证
     const passwordValidation = validateAdminPassword(context, env.ADMIN_PASSWORD);
@@ -66,9 +67,12 @@ export async function GET(context) {
   }
 }
 
-export async function PATCH(context) {
+export const PATCH = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     
     // 密码验证
     const passwordValidation = validateAdminPassword(context, env.ADMIN_PASSWORD);
@@ -105,4 +109,4 @@ export async function PATCH(context) {
     console.error('Exam admin PATCH error:', error);
     return new Response(JSON.stringify({ error: '服务器错误' }), { status: 500 });
   }
-}
+};

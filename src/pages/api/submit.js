@@ -1,8 +1,9 @@
-import { getRuntime } from '@astrojs/cloudflare/runtime';
-
-export async function POST(context) {
+export const POST = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     const data = await context.request.json();
     const { content, is_public, reply_method, email } = data;
 
@@ -68,7 +69,7 @@ export async function POST(context) {
     console.error('Submit error:', error);
     return new Response(JSON.stringify({ error: 'Internal server error', details: error.message }), { status: 500 });
   }
-}
+};
 
 // 邮箱验证函数
 function validateEmail(email) {

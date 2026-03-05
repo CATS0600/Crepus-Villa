@@ -1,8 +1,9 @@
-import { getRuntime } from '@astrojs/cloudflare/runtime';
-
-export async function POST(context) {
+export const POST = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     const data = await context.request.json();
     const { username, social_id, answers, group_id } = data;
 
@@ -57,4 +58,4 @@ export async function POST(context) {
     console.error('Exam submission error:', error);
     return new Response(JSON.stringify({ error: '服务器错误，请重试', details: error.message }), { status: 500 });
   }
-}
+};

@@ -1,8 +1,9 @@
-import { getRuntime } from '@astrojs/cloudflare/runtime';
-
-export async function GET(context) {
+export const GET = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     const url = new URL(context.request.url);
     const token = url.searchParams.get('token');
 
@@ -36,4 +37,4 @@ export async function GET(context) {
     console.error('Get messages error:', error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
-}
+};

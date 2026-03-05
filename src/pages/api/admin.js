@@ -1,8 +1,9 @@
-import { getRuntime } from '@astrojs/cloudflare/runtime';
-
-export async function GET(context) {
+export const GET = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     const stmt = env.DB.prepare(
       'SELECT id, content, reply, is_public, token, reply_method, email, created_at FROM messages ORDER BY created_at DESC'
     );
@@ -21,9 +22,12 @@ export async function GET(context) {
   }
 }
 
-export async function PUT(context) {
+export const PUT = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     const data = await context.request.json();
     const { id, reply } = data;
 
@@ -47,9 +51,12 @@ export async function PUT(context) {
   }
 }
 
-export async function DELETE(context) {
+export const DELETE = async (context) => {
   try {
-    const { env } = getRuntime(context);
+    const env = context.locals.runtime?.env;
+    if (!env?.DB) {
+      throw new Error('Database not available');
+    }
     const data = await context.request.json();
     const { id } = data;
 
