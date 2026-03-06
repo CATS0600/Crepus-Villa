@@ -5,18 +5,17 @@ import Header from '../components/Header.astro';
 
 <Layout title="发送消息 - Crepus Villa">
     <Header />
-    <!-- test -->
     <main class="main-content">
         <section class="content-section reveal">
             <div class="container" style="margin: 2rem auto; padding: 0 var(--container-padding, 1.5rem);">
                 <div class="send-header">
                     <h1 style="text-align: center; margin-bottom: 0.5rem;">✨ Send Anything ✨</h1>
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
-                        分享你的想法、建议或任何话。我们会认真对待每一条留言。 <br/> Share your thoughts, suggestions, or anything you like. We take every message seriously.
+                        分享你的想法、建议或任何话。我们会认真对待每一条留言。 <br/> Share your thoughts, suggestions, or anything you like.
                     </p>
                 </div>
                 
-                <div id="submitForm" class="form-container-large">
+                <div id="submitFormContainer" class="form-container-large">
                     <form id="messageForm">
                         <div class="form-group-large">
                             <label for="content">
@@ -39,8 +38,8 @@ import Header from '../components/Header.astro';
                                     <input type="checkbox" id="is_public" name="is_public" />
                                     <span>让所有人看到这条留言 Public it</span>
                                 </label>
-                                <small style="display: block; margin-top: 0.25rem; color: var(--text-muted);">
-                                    ✓ 公开 - 其他人可以在回复板看到<br/>✓ PUBLIC - Others may see it on the reply board.<br/>若不启用，留言将仅对你可见，并且只能通过私密 Token 查看 (FULL PRIVATE)<br/> If not enabled, the message will be private and can only be viewed with a private token (FULL PRIVATE)
+                                <small style="display: block; margin-top: 0.25rem; color: var(--text-muted); font-size: 0.8rem;">
+                                    若不启用，留言将仅对你可见，需通过私密 Token 查看。
                                 </small>
                             </div>
 
@@ -56,41 +55,29 @@ import Header from '../components/Header.astro';
                         <div class="form-group-large" id="emailGroup" style="display: none;">
                             <label for="email">
                                 <span class="label-icon">📧</span>
-                                <span>你的邮箱</span>
+                                <span>你的邮箱 Email</span>
                             </label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                placeholder="Your Email 你的邮箱地址"
-                            />
-                            <small style="display: block; margin-top: 0.25rem; color: var(--text-muted);">
-                                ⚠️ 我们可能通过邮箱地址得知你是谁 We might find out who you are through your email address.
-                            </small>
+                            <input type="email" id="email" name="email" placeholder="Your Email address" />
                         </div>
 
-                        <button type="submit" class="submit-btn-large">📤 SEND</button>
+                        <button type="submit" id="submitBtn" class="submit-btn-large">📤 SEND</button>
                     </form>
 
                     <div id="successMessage" class="success-message-large" style="display: none;">
                         <div class="success-content">
                             <h3>✅ SENT SUCCESSFULLY!</h3>
-                        <p>感谢你的留言！我会尽快查看并回复。<br/>Thank you for your message! I will check and reply asap.</p>
+                            <p>感谢你的留言！我会尽快查看并回复。</p>
                             <div id="tokenDisplay" style="display: none;">
                                 <div class="token-box">
                                     <p><strong>🔐 你的私密 Token / Your Private Token:</strong></p>
                                     <code id="tokenValue"></code>
-                                    <button type="button" class="copy-btn-large" onclick="copyToken()">📋 复制 Token</button>
+                                    <button type="button" class="copy-btn-large" id="copyBtn">📋 复制 Token</button>
                                 </div>
-                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 1rem;">
-                                    ⚠️ 这个 Token 只有你知道，丢失后无法找回。请妥善保管！ This token is known only to you and cannot be recovered if lost. Please keep it safe!
-                                </p>
                             </div>
                         </div>
-                        <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                            <a href="/reply" class="action-link-btn">👀 查看公开回复 View Public Replies</a> 
-                            <a href="/reply/private" class="action-link-btn">🔐 查看私密回复 View Private Replies</a>
-                            <a href="/" class="action-link-btn">🏠 回到首页 Return to lobby</a>
+                        <div class="success-actions">
+                            <a href="/reply" class="action-link-btn">👀 查看公开回复</a> 
+                            <a href="/" class="action-link-btn">🏠 回到首页</a>
                         </div>
                     </div>
 
@@ -104,616 +91,125 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <style>
-    .main-content {
-        background: var(--bg-color);
-        min-height: 100vh;
-    }
-
-    .send-header {
-        animation: fadeInDown 0.6s ease-out;
-    }
-
-    .send-header h1 {
-        font-size: clamp(2rem, 5vw, 3rem);
-        font-weight: 700;
-        background: linear-gradient(135deg, #1d1d1f 0%, #86868b 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 1rem;
-    }
-
+    /* 样式合并与优化 */
+    .main-content { background: var(--bg-color); min-height: 100vh; }
     .form-container-large {
         background: var(--card-bg);
         border: 1px solid var(--card-border);
         border-radius: 16px;
         padding: clamp(1.5rem, 4vw, 3rem);
         backdrop-filter: blur(10px);
-        max-width: 95vw;
-        animation: fadeInUp 0.6s ease-out 0.2s both;
+        max-width: 800px;
+        margin: 0 auto;
     }
-
-    .form-group-large {
-        margin-bottom: 2rem;
-    }
-
-    .label-icon {
-        font-size: 1.2em;
-        margin-right: 0.5rem;
-    }
-
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        color: var(--text-main);
-        font-size: 1.05rem;
-    }
-
-    textarea, input[type="text"], input[type="email"], select {
-        width: 100%;
-        padding: 1rem;
-        border: 2px solid var(--card-border);
-        border-radius: 12px;
-        font-family: inherit;
-        font-size: 1rem;
-        background: var(--bg-color);
-        color: var(--text-main);
-        transition: all 0.2s;
-        line-height: 1.6;
-    }
-
-    textarea:focus, input:focus, select:focus {
-        outline: none;
-        border-color: var(--text-main);
-        box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.1);
-    }
-
+    .form-group-large { margin-bottom: 2rem; }
     textarea {
-        resize: vertical;
-        min-height: 250px;
-        max-height: 60vh;
+        width: 100%; min-height: 200px; padding: 1rem;
+        border: 2px solid var(--card-border); border-radius: 12px;
+        background: var(--bg-color); color: var(--text-main); font-family: inherit;
     }
-
-    select {
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231d1d1f' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        padding-right: 2.5rem;
-    }
-
-    #charCount {
-        display: block;
-        text-align: right;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        margin-top: 0.5rem;
-        font-weight: 500;
-    }
-
     .options-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem; margin-bottom: 2rem;
     }
-
-    .form-group-inline {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .form-group-inline label {
-        margin-bottom: 0;
-    }
-
     .submit-btn-large {
-        width: 100%;
-        padding: 1rem 2rem;
+        width: 100%; padding: 1rem; border-radius: 12px; border: none;
         background: linear-gradient(135deg, #1d1d1f 0%, #424245 100%);
-        color: var(--bg-color);
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 8px 24px rgba(29, 29, 31, 0.15);
+        color: white; font-weight: 700; cursor: pointer; transition: all 0.3s;
     }
-
-    .submit-btn-large:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(29, 29, 31, 0.25);
-    }
-
-    .submit-btn-large:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .success-message-large, .error-message-large {
-        margin-top: 2rem;
-        padding: 2rem;
-        border-radius: 12px;
-        animation: slideIn 0.4s ease-out;
-    }
-
-    .success-message-large {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-        border: 2px solid rgba(34, 197, 94, 0.3);
-        color: var(--text-main);
-    }
-
-    .success-message-large h3 {
-        color: #22c55e;
-        margin-top: 0;
-        font-size: 1.5rem;
-    }
-
-    .error-message-large {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-        border: 2px solid rgba(239, 68, 68, 0.3);
-        color: var(--text-main);
-    }
-
-    .success-content {
-        margin-bottom: 1rem;
-    }
-
-    .token-box {
-        background: var(--bg-color);
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin: 1rem 0;
-        border-left: 4px solid #22c55e;
-    }
-
-    .token-box code {
-        display: block;
-        background: var(--card-bg);
-        padding: 1rem;
-        border-radius: 6px;
-        margin: 0.75rem 0;
-        font-family: 'Courier New', monospace;
-        word-break: break-all;
-        user-select: all;
-        font-weight: 600;
-        letter-spacing: 2px;
-    }
-
-    .copy-btn-large {
-        padding: 0.75rem 1.5rem;
-        background: #22c55e;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.2s;
-    }
-
-    .copy-btn-large:hover {
-        background: #16a34a;
-        transform: translateY(-2px);
-    }
-
-    .action-link-btn {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        background: var(--text-main);
-        color: var(--bg-color);
-        border: none;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .action-link-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(29, 29, 31, 0.2);
-    }
-
+    .submit-btn-large:disabled { opacity: 0.5; cursor: not-allowed; }
+    .token-box { background: var(--bg-color); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #22c55e; }
+    code { display: block; padding: 1rem; background: #f4f4f4; border-radius: 4px; margin: 0.5rem 0; word-break: break-all; }
+    .success-actions { margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .action-link-btn { padding: 0.75rem 1.5rem; background: #1d1d1f; color: white; border-radius: 8px; text-decoration: none; }
+    
     @media (prefers-color-scheme: dark) {
-        .send-header h1 {
-            background: linear-gradient(135deg, #f5f5f7 0%, #a1a1a6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .submit-btn-large {
-            background: linear-gradient(135deg, #f5f5f7 0%, #d1d1d6 100%);
-            color: #1d1d1f;
-        }
-
-        select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f5f5f7' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-        }
-    }
-
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            max-height: 0;
-        }
-        to {
-            opacity: 1;
-            max-height: 1000px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .form-container-large {
-            padding: 1.5rem;
-        }
-
-        textarea {
-            min-height: 200px;
-            max-height: 50vh;
-        }
-
-        .options-row {
-            grid-template-columns: 1fr;
-        }
+        .submit-btn-large { background: linear-gradient(135deg, #f5f5f7 0%, #d1d1d6 100%); color: #1d1d1f; }
+        code { background: #2d2d2d; color: #efefef; }
     }
 </style>
 
 <script>
-    const form = document.getElementById('messageForm');
-    const contentField = document.getElementById('content');
-    const charCount = document.getElementById('charCount');
-    const isPublicField = document.getElementById('is_public');
-    const replyMethodField = document.getElementById('reply_method');
-    const emailField = document.getElementById('email');
-    const emailGroup = document.getElementById('emailGroup');
-    const successMsg = document.getElementById('successMessage');
-    const errorMsg = document.getElementById('errorMessage');
-    const tokenDisplay = document.getElementById('tokenDisplay');
-    const tokenValue = document.getElementById('tokenValue');
-    const submitBtn = form.querySelector('button[type="submit"]');
+    // @ts-nocheck
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('messageForm');
+        const contentField = document.getElementById('content');
+        const charCount = document.getElementById('charCount');
+        const replyMethodField = document.getElementById('reply_method');
+        const emailGroup = document.getElementById('emailGroup');
+        const emailField = document.getElementById('email');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMsg = document.getElementById('successMessage');
+        const errorMsg = document.getElementById('errorMessage');
+        const tokenDisplay = document.getElementById('tokenDisplay');
+        const tokenValue = document.getElementById('tokenValue');
+        const copyBtn = document.getElementById('copyBtn');
 
-    // 实时字数统计
-    contentField.addEventListener('input', (e) => {
-        const length = e.target.value.length;
-        charCount.textContent = `${length}/1000`;
-        
-        // 视觉反馈
-        if (length > 900) {
-            charCount.style.color = '#ef4444';
-        } else if (length > 700) {
-            charCount.style.color = '#f59e0b';
-        } else {
-            charCount.style.color = 'var(--text-muted)';
-        }
-    });
-
-    // 回复方式改变时的逻辑
-    isPublicField.addEventListener('change', updateReplyMethodUI);
-    replyMethodField.addEventListener('change', updateReplyMethodUI);
-
-    function updateReplyMethodUI() {
-        const replyMethod = replyMethodField.value;
-
-        if (replyMethod === 'email') {
-            emailGroup.style.display = 'block';
-            emailField.required = true;
-        } else {
-            emailGroup.style.display = 'none';
-            emailField.required = false;
-        }
-    }
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const content = contentField.value.trim();
-        const is_public = isPublicField.checked ? 1 : 0;
-        const reply_method = replyMethodField.value;
-        const email = emailField.value.trim();
-
-        // 验证
-        if (!content) {
-            showError('请输入你的留言');
-            return;
-        }
-
-        if (reply_method === 'email') {
-            if (!email || !validateEmail(email)) {
-                showError('请输入有效的邮箱地址');
-                return;
-            }
-        }
-
-        submitBtn.disabled = true;
-        successMsg.style.display = 'none';
-        errorMsg.style.display = 'none';
-
-        try {
-            const response = await fetch('/api/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    content, 
-                    is_public,
-                    reply_method,
-                    email: reply_method === 'email' ? email : null
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                form.style.display = 'none';
-                
-                if (!is_public) {
-                    tokenValue.textContent = data.token;
-                    tokenDisplay.style.display = 'block';
-                } else {
-                    tokenDisplay.style.display = 'none';
-                }
-                
-                successMsg.style.display = 'block';
-            } else {
-                showError(data.error || '发送失败，请重试');
-            }
-        } catch (error) {
-            showError('网络错误，请重试');
-            console.error(error);
-        }
-
-        submitBtn.disabled = false;
-    });
-
-    function showError(message) {
-        document.getElementById('errorText').textContent = message;
-        errorMsg.style.display = 'block';
-    }
-
-    function copyToken() {
-        const token = tokenValue.textContent;
-        navigator.clipboard.writeText(token).then(() => {
-            alert('✅ Token 已复制到剪贴板！');
-        }).catch(() => {
-            alert('❌ 复制失败，请手动复制');
+        // 1. 字数统计
+        contentField.addEventListener('input', () => {
+            const len = contentField.value.length;
+            charCount.textContent = `${len}/2000`;
+            charCount.style.color = len > 1800 ? '#ef4444' : 'var(--text-muted)';
         });
-    }
 
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-</script>
-
-<style>
-    .form-container {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
-        padding: 2rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-main);
-    }
-
-    textarea, input[type="text"], input[type="password"] {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        font-family: inherit;
-        font-size: 1rem;
-        background: var(--bg-color);
-        color: var(--text-main);
-        transition: border-color 0.2s;
-    }
-
-    textarea:focus, input:focus {
-        outline: none;
-        border-color: var(--text-main);
-    }
-
-    textarea {
-        resize: vertical;
-        min-height: 150px;
-    }
-
-    #charCount {
-        display: block;
-        text-align: right;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
-    }
-
-    .submit-btn {
-        width: 100%;
-        padding: 0.75rem 1.5rem;
-        background: var(--text-main);
-        color: var(--bg-color);
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.2s;
-    }
-
-    .submit-btn:hover {
-        opacity: 0.8;
-    }
-
-    .submit-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .success-message, .error-message {
-        margin-top: 1.5rem;
-        padding: 1rem;
-        border-radius: 8px;
-    }
-
-    .success-message {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        color: var(--text-main);
-    }
-
-    .error-message {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        color: var(--text-main);
-    }
-
-    code {
-        display: block;
-        background: var(--bg-color);
-        padding: 0.75rem;
-        border-radius: 6px;
-        margin: 0.5rem 0;
-        font-family: 'Courier New', monospace;
-        word-break: break-all;
-        user-select: all;
-    }
-
-    .copy-btn {
-        padding: 0.5rem 1rem;
-        background: var(--text-main);
-        color: var(--bg-color);
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: opacity 0.2s;
-    }
-
-    .copy-btn:hover {
-        opacity: 0.8;
-    }
-
-    .action-link {
-        color: var(--text-main);
-        text-decoration: underline;
-        font-weight: 600;
-    }
-
-    .action-link:hover {
-        opacity: 0.7;
-    }
-
-    input[type="checkbox"] {
-        cursor: pointer;
-        width: 1.2em;
-        height: 1.2em;
-    }
-</style>
-
-<script>
-    const form = document.getElementById('messageForm');
-    const contentField = document.getElementById('content');
-    const charCount = document.getElementById('charCount');
-    const successMsg = document.getElementById('successMessage');
-    const errorMsg = document.getElementById('errorMessage');
-    const tokenDisplay = document.getElementById('tokenDisplay');
-    const tokenValue = document.getElementById('tokenValue');
-    const submitBtn = form.querySelector('button[type="submit"]');
-
-    contentField.addEventListener('input', (e) => {
-        const length = e.target.value.length;
-        charCount.textContent = `${length}/1000`;
-    });
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const content = contentField.value.trim();
-        const is_public = document.getElementById('is_public').checked ? 1 : 0;
-
-        if (!content) {
-            showError('请输入消息内容');
-            return;
-        }
-
-        submitBtn.disabled = true;
-        successMsg.style.display = 'none';
-        errorMsg.style.display = 'none';
-
-        try {
-            const response = await fetch('/api/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, is_public })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                form.style.display = 'none';
-                
-                if (data.token) {
-                    tokenValue.textContent = data.token;
-                    tokenDisplay.style.display = 'block';
-                } else {
-                    tokenDisplay.style.display = 'none';
-                }
-                
-                successMsg.style.display = 'block';
-            } else {
-                showError(data.error || '发送失败，请重试');
-            }
-        } catch (error) {
-            showError('网络错误，请重试');
-            console.error(error);
-        }
-
-        submitBtn.disabled = false;
-    });
-
-    function showError(message) {
-        document.getElementById('errorText').textContent = message;
-        errorMsg.style.display = 'block';
-    }
-
-    function copyToken() {
-        const token = tokenValue.textContent;
-        navigator.clipboard.writeText(token).then(() => {
-            alert('Token 已复制到剪贴板！');
+        // 2. 回复方式切换
+        replyMethodField.addEventListener('change', () => {
+            const isEmail = replyMethodField.value === 'email';
+            emailGroup.style.display = isEmail ? 'block' : 'none';
+            emailField.required = isEmail;
         });
-    }
+
+        // 3. 提交逻辑 (唯一监听)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (submitBtn.disabled) return;
+
+            const content = contentField.value.trim();
+            const is_public = document.getElementById('is_public').checked ? 1 : 0;
+            const reply_method = replyMethodField.value;
+            const email = emailField.value.trim();
+
+            // 基础验证
+            if (!content) return alert('请填写内容');
+            if (reply_method === 'email' && !email) return alert('请填写邮箱');
+
+            // 锁定按钮
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⌛ SENDING...';
+            errorMsg.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, is_public, reply_method, email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    form.style.display = 'none';
+                    successMsg.style.display = 'block';
+                    if (!is_public && data.token) {
+                        tokenValue.textContent = data.token;
+                        tokenDisplay.style.display = 'block';
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(data.error || 'Server Error');
+                }
+            } catch (err) {
+                document.getElementById('errorText').textContent = err.message;
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 SEND';
+            }
+        });
+
+        // 4. 复制功能
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(tokenValue.textContent);
+            alert('✅ Token 已复制');
+        });
+    });
 </script>
