@@ -3,22 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import villav4icon from '../v4icon/villav4icon.jpg';
 
-// 随机跳转网站列表
-const jumpWebsites = [
-    "https://www.google.com",
-    "https://github.com",
-    "https://www.cloudflare.com",
-    "https://astro.build",
-    "https://www.roblox.com",
-    "https://paramecium2010.top",
-    "https://hydrolight.top",
-    "https://www.odysphere.tech",
-    "https://gemini.google.com",
-    "https://stackoverflow.com",
-    "https://example.org",
-    "https://www.youtube.com"
-];
-
 const images = await Astro.glob('/src/photos/*.{jpg,jpeg,png,webp,avif}');
 
 // 2 & 6. 在 const 中定义图片注释
@@ -102,10 +86,16 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <!-- Send Button Section -->
                 <div class="send-section" style="margin: 80px 0; text-align: center;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Have something to say?</p>
-                    <a href="/send" class="send-button">
-                        <span class="send-icon">✍️</span>
-                        <span class="send-text">Share Your Message</span>
-                    </a>
+                    <div class="button-group">
+                        <a href="/send" class="send-button">
+                            <span class="send-icon">✍️</span>
+                            <span class="send-text">Share Your Message</span>
+                        </a>
+                        <a href="/reply" class="send-button">
+                            <span class="send-icon">📫</span>
+                            <span class="send-text">Check The Reply</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -135,7 +125,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         </section>
 
         <!-- Applications Section -->
-        <section class="applications-section" style="padding: 100px 0; background: #f5f5f7;">
+        <section class="applications-section">
             <div class="safe-zone" style="max-width: 1000px; margin: 0 auto;">
                 <div class="app-header" style="text-align: center; margin-bottom: 60px;">
                     <h2 class="partner-sub-title" style="margin-bottom: 10px;">APPLICATIONS</h2>
@@ -148,7 +138,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         <p class="app-card-desc">Disaster Prevention and Mitigation Basic Group</p>
                         <span class="app-arrow">→</span>
                     </a>
-                    <a href="https://example.com" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                    <a href="https://ks.wjx.com/vm/e7vWXP0.aspx#" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                         <div class="app-card-icon">📻</div>
                         <h3 class="app-card-title">EEW Kono Broadcasting Bureau</h3>
                         <p class="app-card-desc">Emergency Early Warning Broadcasting Application</p>
@@ -195,11 +185,11 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <div style="margin-top: 60px; margin-bottom: 60px;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Want to explore something random?</p>
                     <div class="explore-buttons" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
-                        <button id="jumpBtnCN" class="action-button cn-button" onclick="randomJumpCN()">
+                        <button id="jumpBtnCN" class="action-button cn-button">
                             <span class="action-icon">🐍</span>
                             <span class="action-text">China Mainland</span>
                         </button>
-                        <button id="jumpBtnGlobal" class="action-button global-button" onclick="randomJumpGlobal()">
+                        <button id="jumpBtnGlobal" class="action-button global-button">
                             <span class="action-icon">🌍</span>
                             <span class="action-text">Global</span>
                         </button>
@@ -314,7 +304,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
 
     .villa-v4-icon {
-        width: clamp(60px, 10vw, 120px);
+        width: clamp(80px, 15vw, 250px);
         height: auto;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.1);
@@ -338,13 +328,26 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
     
 
+    .button-group {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
     /* Send Button Style */
     .send-button {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 12px;
-        width: calc(100% - (var(--safe-area) * 2));
+        width: auto;
+        min-width: 200px;
+        flex: 1;
+        max-width: 400px;
         height: clamp(48px, 10vw, 80px);
         background: #fff;
         border-radius: 16px;
@@ -356,8 +359,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         border: none;
         font-size: inherit;
         font-family: inherit;
-        margin: 0 auto;
-        display: flex;
     }
 
     .send-button:hover {
@@ -391,6 +392,11 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         .send-icon {
             color: #f5f5f7;
         }
+    }
+
+    .applications-section {
+        padding: 100px 0;
+        background: #f5f5f7;
     }
 
     /* Applications Cards Style */
@@ -476,6 +482,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
         .app-card:hover {
             border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .applications-section {
+            background: #000000;
         }
     }
 
@@ -680,18 +690,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         "https://www.instagram.com"
     ];
 
-    function randomJumpCN() {
-        const randomIndex = Math.floor(Math.random() * jumpWebsiteCN.length);
-        const targetUrl = jumpWebsiteCN[randomIndex];
-        window.location.href = targetUrl;
-    }
-
-    function randomJumpGlobal() {
-        const randomIndex = Math.floor(Math.random() * jumpWebsiteGlobal.length);
-        const targetUrl = jumpWebsiteGlobal[randomIndex];
-        window.location.href = targetUrl;
-    }
-
     // 打字机与滚动逻辑保持不变
     const words = ["Define.", "Spark.", "Breathe.", "Manifest.", "Endure."];
     let wordIndex = 0, charIndex = 0, isDeleting = false;
@@ -721,5 +719,20 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Random Jump Logic
+        const btnCN = document.getElementById('jumpBtnCN');
+        const btnGlobal = document.getElementById('jumpBtnGlobal');
+
+        if (btnCN) {
+            btnCN.addEventListener('click', () => {
+                window.location.href = jumpWebsiteCN[Math.floor(Math.random() * jumpWebsiteCN.length)];
+            });
+        }
+        if (btnGlobal) {
+            btnGlobal.addEventListener('click', () => {
+                window.location.href = jumpWebsiteGlobal[Math.floor(Math.random() * jumpWebsiteGlobal.length)];
+            });
+        }
     });
 </script>

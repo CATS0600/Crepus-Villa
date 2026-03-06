@@ -18,7 +18,7 @@ import Header from '../../components/Header.astro';
                 <h2 class="section-title">About Me</h2>
                 <div class="section-content">
                     <p class="section-text">
-                        As you know, I'm Crepuscular, Although I'm just a 13-year-old (16 April 2012) "that guy," I'm still a passionate creator and enthusiast who loves exploring the intersection of technology, creativity, and earth science.
+                        As you know, I'm Crepuscular, Although I'm just a 14-year-old (16 April 2012) "that guy," I'm still a passionate creator and enthusiast who loves exploring the intersection of technology, creativity, and earth science.
                     </p>
                     <p class="section-text">
                         I believe in optimism and I'm very interested in international net. Whether through code, design, or simply enjoying life's moments, I'm committed to making meaningful contributions to the communities I'm part of.
@@ -30,45 +30,10 @@ import Header from '../../components/Header.astro';
             </div>
         </section>
 
-        <!-- About My Interests & Friends Section -->
+        <!-- About My Section -->
         <section class="about-section content-card scroll-reveal">
             <div class="safe-zone">
                 <h2 class="section-title">About My</h2>
-                <div class="section-content">
-                    <div class="interests-grid">
-                        <div class="interest-item">
-                            <h3 class="interest-title">Technology</h3>
-                            <p class="interest-desc">Passionate about web development, cloud infrastructure, and emerging technologies.</p>
-                        </div>
-                        <div class="interest-item">
-                            <h3 class="interest-title">Traveling</h3>
-                            <p class="interest-desc">Love exploring new places, meeting diverse people, and capturing moments of beauty.</p>
-                        </div>
-                        <div class="interest-item">
-                            <h3 class="interest-title">Earth Science</h3>
-                            <p class="interest-desc">Exploring the wonders of Earth Science and Disaster Prevention / Mitigation.</p>
-                        </div>
-                        <div class="interest-item">
-                            <h3 class="interest-title">Community</h3>
-                            <p class="interest-desc">Inspired by growing communities and building connections that matter.</p>
-                        </div>
-                        <div class="interest-item">
-                            <h3 class="interest-title">Friends</h3>
-                            <p class="interest-desc">I love friends, don't you?</p>
-                        </div>
-                        <div class="interest-item">
-                            <h3 class="interest-title">Music</h3>
-                            <p class="interest-desc">Different genres, different emotions, music connects me across cultures and generations.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- About Interest Section -->
-        <section class="about-section content-card scroll-reveal">
-            <div class="safe-zone">
-                <h2 class="section-title">About Interest</h2>
                 <div class="section-content">
                     <div class="interests-grid">
                         <div class="interest-item">
@@ -76,24 +41,24 @@ import Header from '../../components/Header.astro';
                             <p class="interest-desc">Capturing the world's beauty through the lens, exploring the art of light and shadow.</p>
                         </div>
                         <div class="interest-item">
-                            <h3 class="interest-title">🌐 Internet Culture</h3>
-                            <p class="interest-desc">Exploring online communities, meme culture, and virtual social ecosystems.</p>
+                            <h3 class="interest-title">💻 Technology</h3>
+                            <p class="interest-desc">Passionate about web development, cloud infrastructure, and emerging technologies.</p>
                         </div>
                         <div class="interest-item">
-                            <h3 class="interest-title">🎮 Gaming</h3>
-                            <p class="interest-desc">Whether it's Roblox, Cities Skylines, or other games, enjoying digital entertainment.</p>
+                            <h3 class="interest-title">✈️ Traveling</h3>
+                            <p class="interest-desc">Love exploring new places, meeting diverse people, and capturing moments of beauty.</p>
                         </div>
                         <div class="interest-item">
-                            <h3 class="interest-title">🍕 Cuisine</h3>
-                            <p class="interest-desc">Exploring global food culture and savoring every moment of life.</p>
+                            <h3 class="interest-title">🌍 Earth Science</h3>
+                            <p class="interest-desc">Exploring the wonders of Earth Science and Disaster Prevention / Mitigation.</p>
                         </div>
                         <div class="interest-item">
-                            <h3 class="interest-title">💻 Programming</h3>
-                            <p class="interest-desc">Creating, building, and solving problems through code.</p>
+                            <h3 class="interest-title">🤝 Community</h3>
+                            <p class="interest-desc">Inspired by growing communities and building connections that matter.</p>
                         </div>
                         <div class="interest-item">
-                            <h3 class="interest-title">🎨 Creativity</h3>
-                            <p class="interest-desc">Design, artistic expression, and unlimited creative thinking collisions.</p>
+                            <h3 class="interest-title">👥 Friends</h3>
+                            <p class="interest-desc">I love friends, don't you? Connecting with people is what makes life special.</p>
                         </div>
                     </div>
                 </div>
@@ -181,7 +146,34 @@ import Header from '../../components/Header.astro';
                     </div>
                 </div>
             </div>
-        </section>    </main>
+        </section>
+
+        <!-- About Villa Section -->
+        <section class="about-section content-card scroll-reveal">
+            <div class="safe-zone">
+                <h2 class="section-title">About Villa</h2>
+                <div class="section-content">
+                    <p class="section-text">
+                        A brief timeline of Crepuscular's Villa:
+                    </p>
+                    <ul class="timeline">
+                        <li>
+                            <strong>2023</strong> - Crepuscular's Villa V1.
+                        </li>
+                        <li>
+                            <strong>2024</strong> - Crepuscular's Villa V2 & V3.
+                        </li>
+                        <li>
+                            <strong>2025</strong> - Crepuscular's Villa V3, but with rewrite.
+                        </li>
+                         <li>
+                            <strong>2026</strong> - Crepuscular's Villa V4.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
 </Layout>
 
 <script>
@@ -297,7 +289,7 @@ import Header from '../../components/Header.astro';
 
     .music-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 20px;
         margin-top: 20px;
     }
@@ -410,6 +402,34 @@ import Header from '../../components/Header.astro';
         .interest-desc {
             color: #a1a1a6;
         }
+    }
+
+    .timeline {
+        list-style: none;
+        padding: 0;
+    }
+
+    .timeline li {
+        margin-bottom: 10px;
+        opacity: 0;
+        transform: translateX(-20px);
+        animation: timelineFadeIn 0.5s ease forwards;
+    }
+
+    .timeline li:nth-child(1) { animation-delay: 0.1s; }
+    .timeline li:nth-child(2) { animation-delay: 0.2s; }
+    .timeline li:nth-child(3) { animation-delay: 0.3s; }
+    .timeline li:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes timelineFadeIn {
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+      /* The actual timeline (vertical line) */
+    .timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
     }
 
     .button-container {
