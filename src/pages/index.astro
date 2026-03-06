@@ -400,7 +400,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
 
     /* Applications Cards Style */
-    .app-card {
+    .app-card { 
         background: rgba(255, 255, 255, 0.5);
         border: 1px solid rgba(0, 0, 0, 0.05);
         border-radius: 12px;
@@ -645,6 +645,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
     .reveal.active { opacity: 1; transform: translateY(0); }
     @media (max-width: 768px) {
+        .scrolling-text {
+            font-size: 20vw; /* 调整在小屏幕上的文本大小 */
+        }
+
         .social-links { grid-template-columns: repeat(4, 1fr); }
     }
     @media (max-width: 600px) {
