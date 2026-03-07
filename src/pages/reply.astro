@@ -44,14 +44,14 @@ import Header from '../components/Header.astro';
         min-height: 200px;
     }
 
-    /* 留言卡片动画 */
+    /* 留言卡片基础 */
     .message-card {
         background: var(--card-bg);
         border: 1px solid var(--card-border);
         border-radius: 12px;
         padding: 1.5rem;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        opacity: 0; /* 初始透明，由 JS 控制动画 */
+        opacity: 0; 
         animation: slideUp 0.6s ease forwards;
     }
 
@@ -60,32 +60,53 @@ import Header from '../components/Header.astro';
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
+    /* 状态标签样式 */
+    .status-badge {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        margin-bottom: 0.8rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .badge-sent {
+        background: rgba(var(--text-main-rgb, 0, 0, 0), 0.1);
+        color: var(--text-main);
+    }
+
+    .badge-replied {
+        background: var(--text-main);
+        color: var(--bg-color);
+    }
+
+    /* 内容区块 */
     .message-content {
         font-size: 1.05rem;
         line-height: 1.7;
-        margin-bottom: 1.2rem;
+        margin-bottom: 0.5rem;
         white-space: pre-wrap;
         word-break: break-word;
     }
 
-    /* 回复区块及其特有动画 */
+    /* 回复区块 */
     .reply-section {
         background: rgba(var(--text-main-rgb, 0,0,0), 0.03);
         border-left: 3px solid var(--text-main);
         padding: 1.2rem;
-        border-radius: 6px;
-        margin-top: 1rem;
+        border-radius: 0 6px 6px 0;
+        margin-top: 1.5rem;
         position: relative;
-        overflow: hidden;
         animation: expandReply 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .reply-label {
-        font-weight: 700;
-        font-size: 0.8rem;
+    .reply-text {
+        font-size: 1rem;
+        line-height: 1.6;
         color: var(--text-main);
-        margin-bottom: 0.6rem;
-        opacity: 0.7;
+        white-space: pre-wrap;
     }
 
     /* Meta 信息 */
@@ -144,11 +165,6 @@ import Header from '../components/Header.astro';
         color: var(--bg-color);
     }
 
-    .nav-link.primary {
-        background: var(--text-main);
-        color: var(--bg-color);
-    }
-
     .loading-state {
         text-align: center;
         padding: 2rem;
@@ -157,6 +173,7 @@ import Header from '../components/Header.astro';
 </style>
 
 <script>
+    //@ts-nocheck
     const formatter = new Intl.DateTimeFormat('zh-CN', {
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', hour12: false
@@ -185,24 +202,27 @@ import Header from '../components/Header.astro';
                 return;
             }
 
-            // 使用 DocumentFragment 减少重排
             const fragment = document.createDocumentFragment();
             
             data.messages.forEach((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
                 const card = document.createElement('div');
                 card.className = 'message-card';
-                // 设置交错动画延迟
                 card.style.animationDelay = `${index * 0.1}s`;
                 
                 card.innerHTML = `
-                    <div class="message-content">${escapeHtml(msg.content)}</div>
+                    <div class="sent-container">
+                        <span class="status-badge badge-sent">Sent / 留言</span>
+                        <div class="message-content">${escapeHtml(msg.content)}</div>
+                    </div>
+                    
                     ${msg.reply ? `
                         <div class="reply-section">
-                            <div class="reply-label">REPLY / 回复</div>
+                            <span class="status-badge badge-replied">Replied / 回复</span>
                             <div class="reply-text">${escapeHtml(msg.reply)}</div>
                         </div>
                     ` : ''}
+
                     <div class="message-meta">
                         <span>#${msg.id}</span>
                         <span>${date}</span>
