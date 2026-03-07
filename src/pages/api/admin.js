@@ -1,5 +1,14 @@
+// 1. 在文件最顶部定义你的哈希值（这是你刚才生成的 alpha... 的哈希）
+const ADMIN_HASH = "98757df4549e87f22ede90d906cf20ac8a65a6cacf3e95f02533c23772ea351b";
+
 export const GET = async ({ request, locals }) => {
   try {
+    // 【插入点：每个方法的最开始】
+    const clientToken = request.headers.get('X-Admin-Token');
+    if (clientToken !== ADMIN_HASH) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    }
+
     const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
@@ -24,6 +33,12 @@ export const GET = async ({ request, locals }) => {
 
 export const PUT = async ({ request, locals }) => {
   try {
+    // 【插入点：验证权限后再读取请求体】
+    const clientToken = request.headers.get('X-Admin-Token');
+    if (clientToken !== ADMIN_HASH) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    }
+
     const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');
@@ -53,6 +68,12 @@ export const PUT = async ({ request, locals }) => {
 
 export const DELETE = async ({ request, locals }) => {
   try {
+    // 【插入点：确保没有权限的人无法删除任何数据】
+    const clientToken = request.headers.get('X-Admin-Token');
+    if (clientToken !== ADMIN_HASH) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    }
+
     const env = locals.runtime?.env;
     if (!env?.DB) {
       throw new Error('Database not available');

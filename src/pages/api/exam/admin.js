@@ -1,23 +1,28 @@
-// 密码验证中间件
-function validateAdminPassword(context, adminPassword) {
-  const passwordHeader = context.request.headers.get('X-Admin-Password');
+// 1. 定义硬编码的哈希值
+const ADMIN_HASH = "98757df4549e87f22ede90d906cf20ac8a65a6cacf3e95f02533c23772ea351b";
 
-  if (!passwordHeader || !adminPassword) {
+// 修改后的验证函数
+function validateAdminPassword(request) {
+  // 注意：这里改为获取 'X-Admin-Token'，以匹配你前端发送的 Header 名称
+  const clientToken = request.headers.get('X-Admin-Token');
+
+  if (!clientToken) {
     return {
       valid: false,
       response: new Response(
-        JSON.stringify({ error: '未提供管理员密码或系统配置错误' }), 
+        JSON.stringify({ error: '未提供管理凭证' }), 
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       )
     };
   }
 
-  if (passwordHeader !== adminPassword) {
-    console.warn(`[SECURITY] 管理员密码验证失败 - IP: ${context.request.headers.get('CF-Connecting-IP')}`);
+  // 直接与硬编码的哈希比对
+  if (clientToken !== ADMIN_HASH) {
+    console.warn(`[SECURITY] 越权访问尝试 - IP: ${request.headers.get('CF-Connecting-IP')}`);
     return {
       valid: false,
       response: new Response(
-        JSON.stringify({ error: '管理员密码错误' }), 
+        JSON.stringify({ error: '凭证无效，请检查助记词' }), 
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       )
     };
@@ -33,8 +38,8 @@ export const GET = async ({ request, locals }) => {
       throw new Error('Database not available');
     }
     
-    // 密码验证
-    const passwordValidation = validateAdminPassword(request, env.ADMIN_PASSWORD);
+    // 2. 调用验证（现在只需要传入 request，不再依赖 env.ADMIN_PASSWORD）
+    const passwordValidation = validateAdminPassword(request);
     if (!passwordValidation.valid) {
       return passwordValidation.response;
     }
@@ -74,8 +79,8 @@ export const PATCH = async ({ request, locals }) => {
       throw new Error('Database not available');
     }
     
-    // 密码验证
-    const passwordValidation = validateAdminPassword(request, env.ADMIN_PASSWORD);
+    // 3. 同样调用验证
+    const passwordValidation = validateAdminPassword(request);
     if (!passwordValidation.valid) {
       return passwordValidation.response;
     }
