@@ -8,189 +8,219 @@ import Header from '../components/Header.astro';
     
     <main class="main-content">
         <section class="content-section reveal">
-            <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
-                <h1 style="text-align: center; margin-bottom: 2rem;">公开留言板 Public Message Board</h1>
+            <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto; padding: 0 1rem;">
+                <h1 class="page-title">公开留言板 Public Message Board</h1>
                 
                 <div id="messageList" class="message-list">
-                    <p style="text-align: center; color: var(--text-muted);">Loading...</p>
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
                 </div>
 
-                <div style="text-align: center; margin-top: 2rem;">
-                    <a href="/send" class="action-btn">写新留言 Write New Message</a>
-                </div>
+                <nav class="nav-links fade-in">
+                    <a href="/send" class="nav-link">✍️ 写新留言 Write New Message</a>
+                    <a href="/reply/private" class="nav-link">🔐 查看私密留言 View Private</a>
+                    <a href="/" class="nav-link">🏠 回到首页 Return</a>
+                </nav>
             </div>
         </section>
     </main>
 </Layout>
 
 <style>
+    /* 页面基础 */
+    .page-title {
+        text-align: center; 
+        margin-bottom: 2.5rem;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+
     .message-list {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+        min-height: 200px;
     }
 
+    /* 留言卡片动画 */
     .message-card {
         background: var(--card-bg);
         border: 1px solid var(--card-border);
         border-radius: 12px;
         padding: 1.5rem;
-        transition: box-shadow 0.2s;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        opacity: 0; /* 初始透明，由 JS 控制动画 */
+        animation: slideUp 0.6s ease forwards;
     }
 
     .message-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
     .message-content {
-        font-size: 1rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 1.2rem;
         white-space: pre-wrap;
         word-break: break-word;
     }
 
+    /* 回复区块及其特有动画 */
     .reply-section {
-        background: var(--bg-color);
+        background: rgba(var(--text-main-rgb, 0,0,0), 0.03);
         border-left: 3px solid var(--text-main);
-        padding: 1rem;
-        border-radius: 4px;
+        padding: 1.2rem;
+        border-radius: 6px;
         margin-top: 1rem;
+        position: relative;
+        overflow: hidden;
+        animation: expandReply 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .reply-label {
-        font-weight: 600;
-        font-size: 0.9rem;
-        color: var(--text-muted);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: var(--text-main);
+        margin-bottom: 0.6rem;
+        opacity: 0.7;
     }
 
-    .reply-text {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-
+    /* Meta 信息 */
     .message-meta {
         display: flex;
         justify-content: space-between;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
+        margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid var(--card-border);
+        border-top: 1px solid rgba(var(--card-border-rgb, 0,0,0), 0.1);
     }
 
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-        color: var(--text-muted);
+    /* 动画定义 */
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .empty-state p:first-child {
-        font-size: 2rem;
-        margin-bottom: 1rem;
+    @keyframes expandReply {
+        from { opacity: 0; transform: translateX(-10px); }
+        to { opacity: 1; transform: translateX(0); }
     }
 
-    .action-btn {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        background: var(--text-main);
-        color: var(--bg-color);
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: opacity 0.2s;
+    .fade-in {
+        animation: fadeIn 1s ease forwards;
     }
 
-    .action-btn:hover {
-        opacity: 0.8;
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
+    /* 导航样式 */
     .nav-links {
         display: flex;
-        gap: 1rem;
+        gap: 0.8rem;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 2rem;
+        margin-top: 3rem;
     }
 
     .nav-link {
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1.2rem;
         background: var(--card-bg);
         border: 1px solid var(--card-border);
-        border-radius: 6px;
+        border-radius: 8px;
         text-decoration: none;
         color: var(--text-main);
-        transition: all 0.2s;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
     }
 
     .nav-link:hover {
         background: var(--text-main);
         color: var(--bg-color);
     }
+
+    .nav-link.primary {
+        background: var(--text-main);
+        color: var(--bg-color);
+    }
+
+    .loading-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+    }
 </style>
 
 <script>
+    const formatter = new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false
+    });
+
+    function escapeHtml(text) {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
     async function loadMessages() {
-        const messageList = document.getElementById('messageList');
+        const container = document.getElementById('messageList');
+        if (!container) return;
         
         try {
             const response = await fetch('/api/get-messages');
+            if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
 
-            if (data.messages.length === 0) {
-                messageList.innerHTML = `
-                    <div class="empty-state">
-                        <p>📭</p>
-                        <p>还没有公开留言呢... No Public Messages Yet</p>
-                        <p style="font-size: 0.9rem;">快来写第一条吧！Write the first one!</p>
-                    </div>
-                `;
+            if (!data.messages || data.messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state fade-in" style="text-align: center; padding: 4rem 0;">
+                        <span style="font-size: 3rem;">📭</span>
+                        <p style="margin-top: 1rem; color: var(--text-muted);">还没有公开留言呢... No Messages Yet</p>
+                    </div>`;
                 return;
             }
 
-            messageList.innerHTML = data.messages.map(msg => {
-                const date = new Date(msg.created_at);
-                const formattedDate = date.toLocaleString('zh-CN');
+            // 使用 DocumentFragment 减少重排
+            const fragment = document.createDocumentFragment();
+            
+            data.messages.forEach((msg, index) => {
+                const date = formatter.format(new Date(msg.created_at));
+                const card = document.createElement('div');
+                card.className = 'message-card';
+                // 设置交错动画延迟
+                card.style.animationDelay = `${index * 0.1}s`;
                 
-                return `
-                    <div class="message-card">
-                        <div class="message-content">${escapeHtml(msg.content)}</div>
-                        ${msg.reply ? `
-                            <div class="reply-section">
-                                <div class="reply-label">💬 回复 Reply</div>
-                                <div class="reply-text">${escapeHtml(msg.reply)}</div>
-                            </div>
-                        ` : ''}
-                        <div class="message-meta">
-                            <span>ID: ${msg.id}</span>
-                            <span>${formattedDate}</span>
+                card.innerHTML = `
+                    <div class="message-content">${escapeHtml(msg.content)}</div>
+                    ${msg.reply ? `
+                        <div class="reply-section">
+                            <div class="reply-label">REPLY / 回复</div>
+                            <div class="reply-text">${escapeHtml(msg.reply)}</div>
                         </div>
+                    ` : ''}
+                    <div class="message-meta">
+                        <span>#${msg.id}</span>
+                        <span>${date}</span>
                     </div>
                 `;
-            }).join('');
+                fragment.appendChild(card);
+            });
 
-            // 添加导航链接
-            const nav = document.createElement('div');
-            nav.className = 'nav-links';
-            nav.innerHTML = `
-                <a href="/send" class="nav-link">✍️ 写新留言 Write New Message</a>
-                <a href="/reply/private" class="nav-link">🔐 查看私密留言 View Private Messages</a>
-                <a href="/" class="nav-link">🏠 回到首页 Return to lobby</a>
-            `;
-            messageList.parentElement.appendChild(nav);
+            container.innerHTML = '';
+            container.appendChild(fragment);
+
         } catch (error) {
-            messageList.innerHTML = '<p style="color: red;">加载失败，请刷新重试</p>';
-            console.error(error);
+            container.innerHTML = `
+                <div class="error-state" style="text-align: center; color: #ff6b6b; padding: 2rem;">
+                    <p>⚠️ 无法加载留言板，请稍后再试</p>
+                </div>`;
+            console.error('Fetch error:', error);
         }
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     document.addEventListener('DOMContentLoaded', loadMessages);
