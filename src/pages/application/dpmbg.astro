@@ -15,12 +15,12 @@ import Header from '../../components/Header.astro';
 
                 <h1 style="text-align: center; margin-bottom: 1rem;">
                     <span class="lang-zh">🌍 DPMBG 入群申请</span>
-                    <span class="lang-en">🌍 DPMBG Join Request</span>
+                    <span class="lang-en">🌍 DPMBG Application</span>
                 </h1>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
                     Disaster Prevention and Mitigation Basic Group<br/>
-                    <span class="lang-zh">灾害防减基础群 - 探索地球科学的美妙之处</span>
-                    <span class="lang-en">Earth Science Exploration & Disaster Mitigation</span>
+                    <span class="lang-zh">DPMBG - 探索地球科学的美妙之处</span>
+                    <span class="lang-en">DPMBG - Exploring the wonders of Earth science</span>
                 </p>
                 
                 <div id="examForm" class="form-container">
@@ -44,22 +44,22 @@ import Header from '../../components/Header.astro';
                             </label>
                             <input 
                                 type="text" id="social_id" name="social_id" required maxlength="100"
-                                data-zh-placeholder="如 @twitter 或 QQ号" data-en-placeholder="e.g. @handle or Discord ID"
+                                data-zh-placeholder="如 抖音号 或 @Youtube" data-en-placeholder="e.g. @handle or Discord ID"
                             />
                             <p class="hint-text">
-                                <span class="lang-zh">用于方便群主确认身份</span>
+                                <span class="lang-zh">用于核查你的身份</span>
                                 <span class="lang-en">Used for identity verification by the admin</span>
                             </p>
                         </div>
 
                         <div class="form-group">
                             <label for="answers">
-                                <span class="lang-zh">为什么想加入 DPMBG？你能为群贡献什么？ *</span>
-                                <span class="lang-en">Why join DPMBG? What can you contribute? *</span>
+                                <span class="lang-zh">请简略阐述你加入DPMBG的理由。 *</span>
+                                <span class="lang-en">Please briefly explain your reasons for joining DPMBG. *</span>
                             </label>
                             <textarea 
                                 id="answers" name="answers" required rows="8" maxlength="2000"
-                                data-zh-placeholder="请详细介绍你的动机和兴趣..." data-en-placeholder="Describe your motivation and interests..."
+                                data-zh-placeholder="Start Describe..." data-en-placeholder="Start Describe..."
                             ></textarea>
                             <small id="answersCount">0/2000</small>
                         </div>
