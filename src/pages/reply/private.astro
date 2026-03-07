@@ -179,86 +179,63 @@ import Header from '../../components/Header.astro';
         return text ? text.replace(/[&<>"']/g, m => map[m]) : '';
     }
 
-    // tokenForm.addEventListener('submit', async (e) => {
-    //     e.preventDefault();
-    //     const token = tokenInput.value.trim().toUpperCase();
-
-    //     if (token.length !== 8) {
-    //         showError('Token 格式不正确');
-    //         return;
-    //     }
-
-    //     try {
-    //         // 注意：确保你的 API 支持通过 token 参数查询私密留言
-    //         const response = await fetch(`/api/get-messages?token=${encodeURIComponent(token)}`);
-    //         if (!response.ok) throw new Error('Query failed');
-            
-    //         const data = await response.json();
-
-    //         if (!data.messages || data.messages.length === 0) {
-    //             showError('未找到该 Token 对应的留言，请检查输入');
-    //             return;
-    //         }
-
-    //         messageList.innerHTML = data.messages.map(msg => `
-    //             <div class="message-card">
-    //                 <div class="sent-container">
-    //                     <span class="status-badge badge-sent">Private Sent / 私密留言</span>
-    //                     <div class="message-content">${escapeHtml(msg.content)}</div>
-    //                 </div>
-                    
-    //                 ${msg.reply ? `
-    //                     <div class="reply-section">
-    //                         <span class="status-badge badge-replied">Replied / 回复</span>
-    //                         <div class="reply-text" style="white-space: pre-wrap;">${escapeHtml(msg.reply)}</div>
-    //                     </div>
-    //                 ` : `
-    //                     <div style="margin-top: 1rem; opacity: 0.5; font-size: 0.85rem; padding-left: 0.5rem;">
-    //                         ⏳ 正在等待管理员的回应...
-    //                     </div>
-    //                 `}
-
-    //                 <div class="message-meta">
-    //                     <span>ID: ${msg.id}</span>
-    //                     <span>${new Date(msg.created_at).toLocaleString('zh-CN')}</span>
-    //                 </div>
-    //             </div>
-    //         `).join('');
-
-    //         tokenInputForm.style.display = 'none';
-    //         messageDisplay.style.display = 'block';
-
-    //     } catch (error) {
-    //         showError('服务器连接失败，请稍后再试');
-    //         console.error(error);
-    //     }
-    // });
-
-    // function showError(message) {
-    //     document.getElementById('errorText').textContent = message;
-    //     errorMsg.style.display = 'block';
-    // }
     tokenForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const token = tokenInput.value.trim().toUpperCase();
-    
-    try {
-        const response = await fetch(`/api/get-messages?token=${encodeURIComponent(token)}`);
-        const rawText = await response.text(); // 先获取原始文本
-        console.log("服务器原始返回:", rawText);
-        
-        // 尝试解析
-        const data = JSON.parse(rawText);
-        alert("收到消息数量: " + (data.messages ? data.messages.length : 0));
-        
-        if (!data.messages || data.messages.length === 0) {
-            showError(`Token匹配失败。服务器返回：${rawText}`);
+        e.preventDefault();
+        const token = tokenInput.value.trim().toUpperCase();
+
+        if (token.length !== 8) {
+            showError('Token 格式不正确');
             return;
         }
-        
-        // ... 原有的渲染逻辑 ...
-    } catch (error) {
-        showError('解析失败: ' + error.message);
+
+        try {
+            // 注意：确保你的 API 支持通过 token 参数查询私密留言
+            const response = await fetch(`/api/get-messages?token=${encodeURIComponent(token)}`);
+            if (!response.ok) throw new Error('Query failed');
+            
+            const data = await response.json();
+
+            if (!data.messages || data.messages.length === 0) {
+                showError('未找到该 Token 对应的留言，请检查输入');
+                return;
+            }
+
+            messageList.innerHTML = data.messages.map(msg => `
+                <div class="message-card">
+                    <div class="sent-container">
+                        <span class="status-badge badge-sent">Private Sent / 私密留言</span>
+                        <div class="message-content">${escapeHtml(msg.content)}</div>
+                    </div>
+                    
+                    ${msg.reply ? `
+                        <div class="reply-section">
+                            <span class="status-badge badge-replied">Replied / 回复</span>
+                            <div class="reply-text" style="white-space: pre-wrap;">${escapeHtml(msg.reply)}</div>
+                        </div>
+                    ` : `
+                        <div style="margin-top: 1rem; opacity: 0.5; font-size: 0.85rem; padding-left: 0.5rem;">
+                            ⏳ 正在等待管理员的回应...
+                        </div>
+                    `}
+
+                    <div class="message-meta">
+                        <span>ID: ${msg.id}</span>
+                        <span>${new Date(msg.created_at).toLocaleString('zh-CN')}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            tokenInputForm.style.display = 'none';
+            messageDisplay.style.display = 'block';
+
+        } catch (error) {
+            showError('服务器连接失败，请稍后再试');
+            console.error(error);
+        }
+    });
+
+    function showError(message) {
+        document.getElementById('errorText').textContent = message;
+        errorMsg.style.display = 'block';
     }
-});
 </script>
