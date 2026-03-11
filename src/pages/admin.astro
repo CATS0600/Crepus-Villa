@@ -24,15 +24,12 @@ import Header from '../components/Header.astro';
                             进入系统
                         </button>
                         <p id="authError" style="color: #ef4444; margin-top: 1rem; display: none; font-size: 0.9rem;">SU PWD验证失败</p>
-                        <div id="hashHelper" style="margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--card-border); padding-top: 1rem;">
-                            5W需用空格分隔。
-                        </div>
                     </div>
                 </div>
 
                 <div id="dashboardPanel" style="display: none;">
                     <div class="tabs">
-                        <button class="tab-btn active" onclick="switchTab('send')">📬 留言管理 (Send)</button>
+                        <button class="tab-btn active" onclick="switchTab('send')">📬 留言管理 (MLU 10)</button>
                         <button class="tab-btn" onclick="switchTab('exam')">📝 申请管理 (Exam)</button>
                     </div>
 
@@ -68,7 +65,6 @@ import Header from '../components/Header.astro';
     .auth-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .admin-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; }
     
-    /* Tabs 样式 */
     .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
     .tab-btn { padding: 0.8rem 1.5rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-main); transition: all 0.2s; }
     .tab-btn.active { background: var(--text-main); color: var(--bg-color); border-color: var(--text-main); }
@@ -76,45 +72,45 @@ import Header from '../components/Header.astro';
     .panel-header { padding: 1.25rem; border-bottom: 1px solid var(--card-border); background: rgba(0,0,0,0.02); }
     .btn-refresh { padding: 0.6rem 1.2rem; background: var(--text-main); color: var(--bg-color); border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
 
-    /* 通用卡片样式 */
-    .item-card { padding: 1.5rem; border-bottom: 1px solid var(--card-border); transition: background 0.2s; }
+    .item-card { padding: 2rem; border-bottom: 1px solid var(--card-border); transition: background 0.2s; }
     .item-card:hover { background: rgba(0,0,0,0.01); }
-    .item-card:last-child { border-bottom: none; }
     
-    .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
-    .item-meta { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
-    
-    .badge { padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-    .badge.public { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-    .badge.private { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-    .badge.status-ok { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    /* MLU 10 标题样式 */
+    .mlu-title-input { width: 100%; background: transparent; border: none; border-bottom: 2px solid transparent; font-size: 1.75rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; padding: 0.5rem 0; transition: border-color 0.2s; }
+    .mlu-title-input:focus { outline: none; border-color: var(--text-main); }
 
-    .content-box { background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border); margin: 1rem 0; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; }
+    .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .item-meta { font-size: 0.85rem; color: var(--text-muted); }
     
-    /* 回复区 */
-    .reply-area { margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.02); border-radius: 8px; border-left: 4px solid var(--text-main); }
-    .reply-textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--card-border); border-radius: 6px; background: var(--bg-color); color: var(--text-main); min-height: 90px; margin-bottom: 0.5rem; resize: vertical; }
-    
-    .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; }
-    .btn { padding: 0.5rem 1rem; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-    .btn-save { background: #3b82f6; color: white; }
-    .btn-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; }
-    .btn-success { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid #22c55e; }
+    /* Type 选择器样式 */
+    .type-select { padding: 0.4rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer; border: 1px solid var(--card-border); }
+    .type-PENDING { background: #fef3c7; color: #92400e; }
+    .type-COMPLETE { background: #dcfce7; color: #166534; }
+    .type-ARCHIVED { background: #f3f4f6; color: #374151; }
 
-    @media (prefers-color-scheme: dark) { .item-card:hover { background: rgba(255,255,255,0.03); } }
+    .edit-area { margin: 1rem 0; }
+    .label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; display: block; }
+    
+    .content-textarea, .reply-textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--card-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); font-size: 0.95rem; line-height: 1.6; resize: vertical; margin-bottom: 1rem; }
+    .content-textarea { border-style: dashed; } /* 区分正文和回复 */
+
+    .btn-group { display: flex; gap: 0.75rem; }
+    .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+    .btn-save { background: #3b82f6; color: white; flex-grow: 1; }
+    .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+
+    @media (prefers-color-scheme: dark) { 
+        .type-PENDING { background: #451a03; color: #fbbf24; }
+        .type-COMPLETE { background: #064e3b; color: #4ade80; }
+        .type-ARCHIVED { background: #1f2937; color: #9ca3af; }
+    }
 </style>
 
 <script>
-    /** * 安全配置：请将此哈希值替换为您自己的 5 词密码哈希
-     * 生成方式：在浏览器 Console 执行：
-     * await Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode("word1 word2 word3 word4 word5")))).map(b => b.toString(16).padStart(2, '0')).join('')
-     */
     // @ts-nocheck
     const TARGET_HASH = "98757df4549e87f22ede90d906cf20ac8a65a6cacf3e95f02533c23772ea351b"; 
-    
     let adminToken = null;
 
-    // 1. 初始化鉴权检查
     document.addEventListener('DOMContentLoaded', () => {
         const savedToken = sessionStorage.getItem('adminToken');
         if (savedToken === TARGET_HASH) {
@@ -125,25 +121,14 @@ import Header from '../components/Header.astro';
         }
     });
 
-    // 2. 核心加密逻辑
     async function hashMnemonic(words) {
         const msgBuffer = new TextEncoder().encode(words.trim().toLowerCase());
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // 3. 登录验证
     window.authenticate = async function() {
         const input = document.getElementById('adminPassword').value;
-        const errorMsg = document.getElementById('authError');
-        
-        if (!input || input.split(/\s+/).length !== 5) {
-            errorMsg.textContent = '请准确输入5个单词并用空格分隔';
-            errorMsg.style.display = 'block';
-            return;
-        }
-
         const hashed = await hashMnemonic(input);
         if (hashed === TARGET_HASH) {
             adminToken = hashed;
@@ -151,16 +136,13 @@ import Header from '../components/Header.astro';
             document.getElementById('passwordPanel').style.display = 'none';
             showDashboard();
         } else {
-            errorMsg.textContent = '助记词不匹配，拒绝访问';
-            errorMsg.style.display = 'block';
+            document.getElementById('authError').style.display = 'block';
         }
     }
 
-    // 4. 面板切换
     window.switchTab = function(tabName) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
-        
         if (tabName === 'send') {
             document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
             document.getElementById('sendPanel').style.display = 'block';
@@ -177,7 +159,7 @@ import Header from '../components/Header.astro';
         loadMessages(); 
     }
 
-    // 5. Send 管理逻辑
+    // --- MLU 10 核心管理逻辑 ---
     window.loadMessages = async function() {
         const container = document.getElementById('messagesList');
         try {
@@ -186,29 +168,47 @@ import Header from '../components/Header.astro';
             });
             const data = await response.json();
 
-            if (!data.messages || data.messages.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="text-align:center; padding:3rem;">📭 暂无留言记录</div>';
-                return;
-            }
-
             container.innerHTML = data.messages.map(msg => `
-                <div class="item-card">
+                <div class="item-card" id="card-${msg.id}">
                     <div class="item-header">
-                        <div class="item-meta">
-                            <strong>ID: ${msg.id}</strong><br/>
-                            📅 ${new Date(msg.created_at).toLocaleString('zh-CN')}
-                            ${msg.email ? `<br/>📧 ${escapeHtml(msg.email)}` : ''}
+                        <div style="flex-grow: 1;">
+                            <span class="label" style="margin:0">UNIT ${msg.id}</span>
+                            <h2 class="preview-title" id="preview-title-${msg.id}">${escapeHtml(msg.title || 'Untitled')}</h2>
+                            <div class="item-meta">
+                                📅 ${new Date(msg.created_at).toLocaleString()} | 
+                                <span class="type-tag type-${msg.type}">${msg.type}</span>
+                            </div>
                         </div>
-                        <span class="badge ${msg.is_public ? 'public' : 'private'}">
-                            ${msg.is_public ? '🔓 公开' : '🔐 私密'}
-                        </span>
+                        <div class="header-actions">
+                            <button class="btn-toggle" onclick="toggleEdit(${msg.id})">📝 编辑单元</button>
+                        </div>
                     </div>
-                    <div class="content-box">${escapeHtml(msg.content)}</div>
-                    
-                    <div class="reply-area">
-                        <textarea id="reply-input-${msg.id}" class="reply-textarea" placeholder="输入回复内容...">${msg.reply || ''}</textarea>
+
+                    <div id="edit-panel-${msg.id}" class="edit-panel" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--card-border);">
+                        <div class="edit-field">
+                            <span class="label">单元标题 (Title)</span>
+                            <input type="text" id="title-${msg.id}" class="mlu-title-input" value="${escapeHtml(msg.title || 'Untitled')}" />
+                        </div>
+
+                        <div class="edit-field">
+                            <span class="label">当前状态 (Type)</span>
+                            <select id="type-${msg.id}" class="type-select type-${msg.type}" onchange="this.className='type-select type='+this.value">
+                                <option value="PENDING" ${msg.type === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                                <option value="COMPLETE" ${msg.type === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
+                                <option value="ARCHIVED" ${msg.type === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
+                            </select>
+                        </div>
+
+                        <div class="edit-area">
+                            <span class="label">正文内容 (Content)</span>
+                            <textarea id="content-${msg.id}" class="content-textarea">${msg.content || ''}</textarea>
+                            
+                            <span class="label">站长回复 (Reply)</span>
+                            <textarea id="reply-${msg.id}" class="reply-textarea" placeholder="在此输入回复...">${msg.reply || ''}</textarea>
+                        </div>
+                        
                         <div class="btn-group">
-                            <button class="btn btn-save" onclick="saveReply(${msg.id})">💾 保存回复</button>
+                            <button class="btn btn-save" onclick="updateMessage(${msg.id})">🚀 保存并同步云端</button>
                             <button class="btn btn-danger" onclick="deleteData('send', ${msg.id})">🗑️ 删除</button>
                         </div>
                     </div>
@@ -217,87 +217,59 @@ import Header from '../components/Header.astro';
         } catch (e) { container.innerHTML = '<p style="color:red; text-align:center;">加载失败</p>'; }
     }
 
-    window.saveReply = async function(id) {
-        const content = document.getElementById(`reply-input-${id}`).value;
+    // 新增：切换编辑区显示
+    window.toggleEdit = function(id) {
+        const panel = document.getElementById(`edit-panel-${id}`);
+        const btn = document.querySelector(`#card-${id} .btn-toggle`);
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            btn.textContent = '收起面板';
+            btn.style.background = 'var(--card-border)';
+        } else {
+            panel.style.display = 'none';
+            btn.textContent = '📝 编辑单元';
+            btn.style.background = 'transparent';
+        }
+    }
+
+    // 更新函数增加 UI 反馈
+    window.updateMessage = async function(id) {
+        const title = document.getElementById(`title-${id}`).value;
+        const type = document.getElementById(`type-${id}`).value;
+        const payload = {
+            id,
+            title: title,
+            content: document.getElementById(`content-${id}`).value,
+            reply: document.getElementById(`reply-${id}`).value,
+            type: type
+        };
+
         try {
             const res = await fetch('/api/admin', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-                body: JSON.stringify({ id, reply: content })
+                body: JSON.stringify(payload)
             });
-            if (res.ok) alert('回复已同步到云端');
-            else alert('保存失败');
-        } catch (e) { alert('网络错误'); }
-    }
-
-    // 6. Exam 管理逻辑
-    window.loadApplications = async function() {
-        const group = document.getElementById('groupFilter').value;
-        const container = document.getElementById('applicationsList');
-        try {
-            const response = await fetch(`/api/exam/admin?group=${encodeURIComponent(group)}`, {
-                headers: { 'X-Admin-Token': adminToken }
-            });
-            const data = await response.json();
-
-            container.innerHTML = (data.applications || []).map(app => `
-                <div class="item-card">
-                    <div class="item-header">
-                        <div class="item-meta">
-                            <strong>申请人: ${escapeHtml(app.username)}</strong> (ID: ${app.id})<br/>
-                            🆔 Social: ${escapeHtml(app.social_id)} | ⏱️ ${new Date(app.created_at).toLocaleDateString()}
-                        </div>
-                        <span class="badge ${app.status === 'approved' ? 'status-ok' : 'private'}">${app.status}</span>
-                    </div>
-                    <div class="content-box" style="font-size:0.85rem;">${escapeHtml(app.answers)}</div>
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="updateExamStatus(${app.id}, 'approved')">通过</button>
-                        <button class="btn btn-danger" onclick="updateExamStatus(${app.id}, 'rejected')">拒绝</button>
-                        <button class="btn btn-danger" style="margin-left:auto" onclick="deleteData('exam', ${app.id})">彻底删除</button>
-                    </div>
-                </div>
-            `).join('') || '<p style="text-align:center; padding:2rem;">无待处理申请</p>';
-        } catch (e) { container.innerHTML = '<p style="color:red; text-align:center;">加载失败</p>'; }
-    }
-
-    window.updateExamStatus = async function(id, status) {
-        await fetch('/api/exam/admin', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-            body: JSON.stringify({ id, status })
-        });
-        loadApplications();
-    }
-
-    // 7. 统一删除功能 (同步云端)
-    window.deleteData = async function(type, id) {
-        if (!confirm(`确定要从云端彻底删除这条 ${type} 记录吗？此操作不可恢复。`)) return;
-
-        const endpoint = type === 'send' ? '/api/admin' : '/api/exam/admin';
-        try {
-            const res = await fetch(endpoint, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-                body: JSON.stringify({ id })
-            });
-
             if (res.ok) {
-                type === 'send' ? loadMessages() : loadApplications();
-            } else {
-                alert('删除失败，请检查后端接口');
+                // 同步更新预览区域的标题和状态色
+                document.getElementById(`preview-title-${id}`).textContent = title;
+                // 提示成功
+                const btn = document.querySelector(`#card-${id} .btn-save`);
+                btn.textContent = "✅ 同步成功";
+                setTimeout(() => { btn.textContent = "🚀 保存并同步云端"; }, 2000);
             }
-        } catch (e) { alert('请求失败'); }
+        } catch (e) { alert('更新失败'); }
     }
-
-    // 工具函数
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text || '';
-        return div.innerHTML;
-    }
-
-    // 绑定回车
-    document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') authenticate();
-    });
 </script>
+<style>
+    /* 增加和优化样式 */
+    .preview-title { font-size: 1.5rem; font-weight: 700; margin: 0.25rem 0; color: var(--text-main); }
+    .btn-toggle { padding: 0.5rem 1rem; border: 1px solid var(--card-border); border-radius: 6px; background: transparent; color: var(--text-main); cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+    .btn-toggle:hover { background: var(--text-main); color: var(--bg-color); }
+    
+    .type-tag { font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; }
+    
+    /* 其他 MLU 10 样式与之前保持一致 */
+    .mlu-title-input { width: 100%; padding: 0.75rem; font-size: 1.25rem; font-weight: bold; border: 1px solid var(--card-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); margin-bottom: 1rem; }
+    .label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; margin-bottom: 0.5rem; text-transform: uppercase; }
+</style>
