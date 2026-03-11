@@ -3,45 +3,60 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 ---
 
-<Layout title="系统综合管理 - Crepus Villa">
+<Layout title="CORE SYSTEM - Crepus Villa">
     <Header />
     
     <main class="main-content">
-        <section class="content-section reveal">
+        <div class="scrolling-text">CORE SYSTEM ADMIN</div>
+
+        <section class="content-section reveal active">
             <div class="container safe-zone" style="max-width: 1000px; margin: 2rem auto;">
-                <h1 style="text-align: center; margin-bottom: 2rem; font-family: 'RAGE', cursive; font-size: 3rem;">🎛️ Admin Dashboard</h1>
                 
                 <div id="passwordPanel" class="auth-panel" style="display: none;">
-                    <div style="text-align: center; padding: 2rem;">
-                        <p style="font-size: 1.1rem; margin-bottom: 1rem;">请输入SU PWD(5W)以解锁管理权限</p>
-                        <input type="password" id="adminPassword" placeholder="word1 word2 word3 word4 word5" class="mlu-title-input" style="text-align: center; max-width: 450px;"/>
-                        <button id="loginBtn" onclick="authenticate()" class="action-button cn-button" style="margin: 1.5rem auto; max-width: 200px;">
-                            <span class="action-text">SIGN IN</span>
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <h2 class="partner-sub-title" style="margin-bottom: 20px;">ACCESS <span class="accent-text">DENIED</span></h2>
+                        <p class="partner-desc">请输入 SU PWD(5W) 以解锁管理权限</p>
+                        <input 
+                            type="password" 
+                            id="adminPassword" 
+                            placeholder="word1 word2 word3 word4 word5"
+                            class="admin-input-field"
+                        />
+                        <button id="loginBtn" onclick="authenticate()" class="send-button" style="margin: 30px auto 0;">
+                            <span class="send-icon">🔑</span>
+                            <span class="send-text">INITIALIZE SYSTEM</span>
                         </button>
-                        <p id="authError" style="color: #ef4444; margin-top: 1rem; display: none;">验证失败</p>
+                        <p id="authError" style="color: #ef4444; margin-top: 1rem; display: none; font-size: 0.9rem; font-weight: 600;">AUTHENTICATION FAILED</p>
                     </div>
                 </div>
 
                 <div id="dashboardPanel" style="display: none;">
-                    <div class="button-group" style="margin-bottom: 2rem;">
+                    <div class="button-group" style="margin-bottom: 40px;">
                         <button class="action-button active-tab" id="tab-send" onclick="switchTab('send')">
                             <span class="action-icon">📬</span>
-                            <span class="action-text">MLU 10 MGMT</span>
+                            <span class="action-text">MANAGE MESSAGES</span>
                         </button>
                         <button class="action-button" id="tab-exam" onclick="switchTab('exam')">
                             <span class="action-icon">📝</span>
-                            <span class="action-text">EXAM MGMT</span>
+                            <span class="action-text">ENROLLMENT APPS</span>
                         </button>
                     </div>
 
-                    <div id="sendPanel" class="tab-content active">
-                        <div id="messagesList" class="admin-grid">
-                            <p style="text-align: center; padding: 2rem; color: var(--text-muted);">Initializing Systems...</p>
-                        </div>
+                    <div id="sendPanel" class="tab-content">
+                        <div id="messagesList" class="admin-list-stack">
+                            </div>
                     </div>
 
                     <div id="examPanel" class="tab-content" style="display: none;">
-                        <div id="applicationsList" class="admin-grid"></div>
+                        <div class="filter-bar">
+                            <select id="groupFilter" onchange="loadApplications()" class="admin-select">
+                                <option value="all">ALL GROUPS</option>
+                                <option value="dpmbg">DPMBG GROUP</option>
+                            </select>
+                            <button onclick="loadApplications()" class="refresh-mini">REFRESH</button>
+                        </div>
+                        <div id="applicationsList" class="admin-list-stack">
+                            </div>
                     </div>
                 </div>
             </div>
@@ -50,71 +65,84 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <style>
-    /* 继承并改良自 Index 的按钮样式 */
-    .admin-grid { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+    /* 基础继承与增强 */
+    .main-content { background-color: #f5f5f7; min-height: 100vh; position: relative; padding-top: 80px; }
+    @media (prefers-color-scheme: dark) { .main-content { background-color: #000000; } }
+
+    .scrolling-text { position: fixed; top: 15%; left: 0; font-size: 12vw; font-weight: 900; color: rgba(247, 196, 108, 0.03); white-space: nowrap; pointer-events: none; z-index: 0; }
     
-    .mlu-unit-wrapper { width: 100%; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-
-    .action-button.mlu-item-btn {
-        display: flex;
-        align-items: center;
-        justify-content: space-between; /* 左右分布 */
-        width: 100%;
-        padding: 0 32px;
-        background: linear-gradient(135deg, #fff 0%, #f5f5f7 100%);
-        border: 2px solid rgba(0,0,0,0.05);
-        border-radius: 16px;
-        height: 70px;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* 登录输入框 */
+    .admin-input-field {
+        width: 100%; max-width: 450px; padding: 18px; 
+        background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 16px; font-size: 1rem; text-align: center; font-weight: 600;
+        transition: all 0.3s;
     }
-
-    /* 状态颜色逻辑 */
-    .status-tag {
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        font-weight: 800;
-        padding: 4px 12px;
-        border-radius: 20px;
-        text-transform: uppercase;
-    }
-    .status-PENDING { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
-    .status-COMPLETE { background: #dcfce7; color: #166534; border: 1px solid #22c55e; }
-    .status-ARCHIVED { background: #f3f4f6; color: #374151; border: 1px solid #9ca3af; }
-
-    .unit-info { display: flex; align-items: center; gap: 15px; }
-    .unit-id-tag { font-family: serif; font-style: italic; font-size: 14px; color: var(--accent-color); }
-
-    /* 展开后的编辑面板 */
-    .edit-panel {
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-top: none;
-        border-radius: 0 0 16px 16px;
-        margin: -10px 10px 10px 10px;
-        padding: 2rem;
-        box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
-    }
-
-    /* 通用样式补丁 */
-    .mlu-title-input, .content-textarea, .reply-textarea {
-        width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;
-        background: #fff; color: #1d1d1f; font-family: inherit; margin-bottom: 1rem;
-    }
-    .label { font-size: 10px; font-weight: 800; color: #86868b; margin-bottom: 5px; display: block; }
-    .btn-group { display: flex; gap: 10px; }
-    .save-btn { background: #1d1d1f; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: 600; }
-    .del-btn { background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-
     @media (prefers-color-scheme: dark) {
-        .action-button.mlu-item-btn { background: linear-gradient(135deg, #1d1d1f 0%, #2a2a2c 100%); color: #f5f5f7; }
-        .edit-panel { background: rgba(32, 32, 34, 0.5); border-color: rgba(255,255,255,0.1); }
-        .mlu-title-input, .content-textarea, .reply-textarea { background: #000; color: #f5f5f7; border-color: rgba(255,255,255,0.1); }
+        .admin-input-field { background: rgba(30,30,32,0.8); color: #fff; border-color: rgba(255,255,255,0.1); }
     }
 
-    /* 按钮样式从你的 index 复制 */
-    .action-button { position: relative; overflow: hidden; cursor: pointer; text-decoration: none; }
-    .action-button:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
-    .active-tab { border-color: var(--accent-color) !important; box-shadow: 0 0 15px rgba(247, 196, 108, 0.2); }
+    /* 模拟 Index 样式的列表按钮 */
+    .admin-item-btn {
+        width: 100%; display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 32px; margin-bottom: 12px;
+        background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer; position: relative;
+    }
+    .admin-item-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+    
+    .item-left { display: flex; align-items: center; gap: 15px; }
+    .unit-tag { font-size: 10px; font-weight: 800; opacity: 0.5; letter-spacing: 1px; }
+    .item-title { font-size: 1.1rem; font-weight: 700; color: #1d1d1f; }
+    
+    /* 状态标签 */
+    .status-tag { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .status-pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+    .status-complete { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-archived { background: #f9fafb; color: #4b5563; border: 1px solid #e5e7eb; }
+
+    /* 编辑面板 (Glassmorphism) */
+    .edit-fold-panel {
+        display: none; margin: -10px 10px 20px 10px; padding: 30px;
+        background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
+        border-radius: 0 0 24px 24px; border: 1px solid rgba(0,0,0,0.05); border-top: none;
+    }
+
+    /* 样式适配暗色模式 */
+    @media (prefers-color-scheme: dark) {
+        .admin-item-btn { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
+        .item-title { color: #f5f5f7; }
+        .edit-fold-panel { background: rgba(28, 28, 30, 0.8); border-color: rgba(255,255,255,0.1); }
+        .status-pending { background: #451a03; color: #fbbf24; border: none; }
+        .status-complete { background: #064e3b; color: #4ade80; border: none; }
+    }
+
+    /* 其他辅助样式 */
+    .admin-select { padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: #fff; font-weight: 600; }
+    .refresh-mini { padding: 10px 20px; border-radius: 12px; background: #1d1d1f; color: #fff; border: none; cursor: pointer; font-size: 12px; font-weight: 700; margin-left: 10px; }
+    .admin-list-stack { display: flex; flex-direction: column; gap: 8px; }
+
+    /* 复制 Index 的按钮样式用于 Tab */
+    .action-button {
+        background: #fff; color: #1d1d1f; border: 1px solid rgba(0,0,0,0.05);
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        padding: 15px 30px; border-radius: 16px; cursor: pointer; font-weight: 700;
+        transition: all 0.3s; flex: 1;
+    }
+    .action-button.active-tab { background: #1d1d1f; color: #fff; transform: scale(1.02); }
+    @media (prefers-color-scheme: dark) {
+        .action-button { background: #1c1c1e; color: #fff; }
+        .action-button.active-tab { background: #fff; color: #1d1d1f; }
+    }
+
+    .edit-field { margin-bottom: 20px; }
+    .edit-field label { display: block; font-size: 11px; font-weight: 800; color: #86868b; margin-bottom: 8px; text-transform: uppercase; }
+    .admin-textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.5); color: inherit; font-family: inherit; resize: vertical; }
+    
+    .btn-group-row { display: flex; gap: 10px; margin-top: 20px; }
+    .save-btn { flex: 2; padding: 15px; background: #0071e3; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+    .del-btn { flex: 1; padding: 15px; background: rgba(255, 69, 58, 0.1); color: #ff453a; border: 1px solid #ff453a; border-radius: 12px; font-weight: 700; cursor: pointer; }
 </style>
 
 <script>
@@ -152,10 +180,10 @@ import Header from '../components/Header.astro';
     }
 
     window.switchTab = function(tabName) {
-        document.getElementById('sendPanel').style.display = tabName === 'send' ? 'block' : 'none';
-        document.getElementById('examPanel').style.display = tabName === 'exam' ? 'block' : 'none';
         document.getElementById('tab-send').classList.toggle('active-tab', tabName === 'send');
         document.getElementById('tab-exam').classList.toggle('active-tab', tabName === 'exam');
+        document.getElementById('sendPanel').style.display = tabName === 'send' ? 'block' : 'none';
+        document.getElementById('examPanel').style.display = tabName === 'exam' ? 'block' : 'none';
         tabName === 'send' ? loadMessages() : loadApplications();
     }
 
@@ -164,125 +192,143 @@ import Header from '../components/Header.astro';
         loadMessages(); 
     }
 
-    // --- MLU 10 排序与渲染 ---
+    // --- 核心逻辑：加载并排序留言 ---
     window.loadMessages = async function() {
         const container = document.getElementById('messagesList');
         try {
-            const response = await fetch('/api/admin', {
-                headers: { 'X-Admin-Token': adminToken }
-            });
+            const response = await fetch('/api/admin', { headers: { 'X-Admin-Token': adminToken } });
             const data = await response.json();
 
-            // 1. 优先级排序逻辑
-            const statusOrder = { 'PENDING': 1, 'COMPLETE': 2, 'ARCHIVED': 3 };
-            const sortedMessages = data.messages.sort((a, b) => {
-                // 首先按状态优先级排
-                if (statusOrder[a.type || 'PENDING'] !== statusOrder[b.type || 'PENDING']) {
-                    return statusOrder[a.type || 'PENDING'] - statusOrder[b.type || 'PENDING'];
-                }
-                // 同状态按时间倒序
-                return new Date(b.created_at) - new Date(a.created_at);
-            });
+            // 排序逻辑：PENDING (0) -> COMPLETE (1) -> ARCHIVED (2)
+            const order = { 'PENDING': 0, 'COMPLETE': 1, 'ARCHIVED': 2 };
+            const sortedMessages = (data.messages || []).sort((a, b) => order[a.type] - order[b.type]);
 
-            container.innerHTML = sortedMessages.map(msg => {
-                const safeTitle = msg.title || 'Untitled Unit';
-                const safeType = msg.type || 'PENDING';
-                
-                return `
-                <div class="mlu-unit-wrapper" id="unit-${msg.id}">
-                    <button class="action-button mlu-item-btn" onclick="toggleEdit(${msg.id})">
-                        <div class="unit-info">
-                            <span class="unit-id-tag">#${msg.id}</span>
-                            <span class="action-text" id="preview-title-${msg.id}">${escapeHtml(safeTitle)}</span>
+            container.innerHTML = sortedMessages.map(msg => `
+                <div class="message-unit-wrapper">
+                    <div class="admin-item-btn" onclick="toggleEdit(${msg.id})">
+                        <div class="item-left">
+                            <span class="unit-tag">UNIT ${msg.id}</span>
+                            <span class="item-title" id="disp-title-${msg.id}">${escapeHtml(msg.title || 'Untitled')}</span>
                         </div>
-                        <span class="status-tag status-${safeType}" id="preview-tag-${msg.id}">${safeType}</span>
-                    </button>
+                        <span class="status-tag status-${(msg.type || 'PENDING').toLowerCase()}" id="disp-type-${msg.id}">
+                            ${msg.type || 'PENDING'}
+                        </span>
+                    </div>
 
-                    <div id="edit-panel-${msg.id}" class="edit-panel" style="display: none;">
-                        <span class="label">Unit Identifier</span>
-                        <input type="text" id="title-${msg.id}" class="mlu-title-input" value="${escapeHtml(safeTitle)}" />
-                        
-                        <div style="display: flex; gap: 20px; margin-bottom: 1rem;">
-                            <div style="flex: 1;">
-                                <span class="label">Current Status</span>
-                                <select id="type-${msg.id}" class="mlu-title-input" style="margin-bottom:0">
-                                    <option value="PENDING" ${safeType === 'PENDING' ? 'selected' : ''}>PENDING</option>
-                                    <option value="COMPLETE" ${safeType === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
-                                    <option value="ARCHIVED" ${safeType === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
-                                </select>
-                            </div>
-                            <div style="flex: 1;">
-                                <span class="label">Received At</span>
-                                <div style="font-size: 13px; padding-top: 10px;">${new Date(msg.created_at).toLocaleString()}</div>
-                            </div>
+                    <div id="edit-panel-${msg.id}" class="edit-fold-panel">
+                        <div class="edit-field">
+                            <label>Title</label>
+                            <input type="text" id="in-title-${msg.id}" class="admin-input-field" style="text-align:left; max-width:100%" value="${escapeHtml(msg.title || '')}" />
                         </div>
-
-                        <span class="label">Message Content</span>
-                        <textarea id="content-${msg.id}" class="content-textarea" rows="4">${escapeHtml(msg.content || '')}</textarea>
-                        
-                        <span class="label">Station Manager Reply</span>
-                        <textarea id="reply-${msg.id}" class="reply-textarea" rows="4" placeholder="Type your reply here...">${escapeHtml(msg.reply || '')}</textarea>
-                        
-                        <div class="btn-group">
+                        <div class="edit-field">
+                            <label>Status</label>
+                            <select id="in-type-${msg.id}" class="admin-select">
+                                <option value="PENDING" ${msg.type === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                                <option value="COMPLETE" ${msg.type === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
+                                <option value="ARCHIVED" ${msg.type === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
+                            </select>
+                        </div>
+                        <div class="edit-field">
+                            <label>Content</label>
+                            <textarea id="in-content-${msg.id}" class="admin-textarea" rows="4">${escapeHtml(msg.content || '')}</textarea>
+                        </div>
+                        <div class="edit-field">
+                            <label>Station Reply</label>
+                            <textarea id="in-reply-${msg.id}" class="admin-textarea" rows="3" style="border-color:#0071e3">${escapeHtml(msg.reply || '')}</textarea>
+                        </div>
+                        <div class="btn-group-row">
                             <button class="save-btn" onclick="updateMessage(${msg.id})">SYNC TO CLOUD</button>
                             <button class="del-btn" onclick="deleteData('send', ${msg.id})">DELETE</button>
                         </div>
                     </div>
                 </div>
-            `}).join('');
-        } catch (e) { 
-            container.innerHTML = `<p style="color:red; text-align:center;">Load Failed: ${e.message}</p>`; 
-        }
+            `).join('');
+        } catch (e) { container.innerHTML = '<p>Error loading messages.</p>'; }
     }
 
     window.toggleEdit = function(id) {
         const panel = document.getElementById(`edit-panel-${id}`);
-        const isHidden = panel.style.display === 'none';
+        const allPanels = document.querySelectorAll('.edit-fold-panel');
+        const isHidden = panel.style.display === 'none' || !panel.style.display;
         
-        // 关闭其他已打开的面板 (可选，为了整洁)
-        document.querySelectorAll('.edit-panel').forEach(p => {
-            if (p.id !== `edit-panel-${id}`) p.style.display = 'none';
-        });
-
+        allPanels.forEach(p => p.style.display = 'none'); // 手风琴效果
         panel.style.display = isHidden ? 'block' : 'none';
     }
 
     window.updateMessage = async function(id) {
-        const title = document.getElementById(`title-${id}`).value;
-        const type = document.getElementById(`type-${id}`).value;
         const payload = {
-            id, title, type,
-            content: document.getElementById(`content-${id}`).value,
-            reply: document.getElementById(`reply-${id}`).value
+            id,
+            title: document.getElementById(`in-title-${id}`).value,
+            type: document.getElementById(`in-type-${id}`).value,
+            content: document.getElementById(`in-content-${id}`).value,
+            reply: document.getElementById(`in-reply-${id}`).value
         };
 
+        const res = await fetch('/api/admin', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            loadMessages(); // 重新加载以触发排序
+        }
+    }
+
+    // --- 修复 500 错误的 Exam 加载逻辑 ---
+    window.loadApplications = async function() {
+        const groupVal = document.getElementById('groupFilter').value;
+        const container = document.getElementById('applicationsList');
+        
+        // 修复点：如果选择 'all'，不传 group 参数或传空，避免后端 SQL 拼接错误
+        const url = groupVal === 'all' ? '/api/exam/admin' : `/api/exam/admin?group=${groupVal}`;
+
         try {
-            const res = await fetch('/api/admin', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-                body: JSON.stringify(payload)
+            const response = await fetch(url, {
+                headers: { 'X-Admin-Token': adminToken }
             });
-            if (res.ok) {
-                // 实时刷新预览标签和标题
-                document.getElementById(`preview-title-${id}`).textContent = title;
-                const tag = document.getElementById(`preview-tag-${id}`);
-                tag.textContent = type;
-                tag.className = `status-tag status-${type}`;
-                
-                // 成功反馈
-                const btn = document.querySelector(`#edit-panel-${id} .save-btn`);
-                btn.textContent = "✓ SYNCED";
-                setTimeout(() => { 
-                    btn.textContent = "SYNC TO CLOUD";
-                    loadMessages(); // 重新加载以触发排序
-                }, 1000);
-            }
-        } catch (e) { alert('Update Failed'); }
+            
+            if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+            
+            const data = await response.json();
+            container.innerHTML = (data.applications || []).map(app => `
+                <div class="admin-item-btn" style="flex-direction:column; align-items:flex-start; cursor:default">
+                    <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
+                        <span class="item-title">${escapeHtml(app.username)}</span>
+                        <span class="status-tag ${app.status === 'approved' ? 'status-complete' : 'status-pending'}">${app.status}</span>
+                    </div>
+                    <div style="font-size:12px; opacity:0.7; margin-bottom:10px;">
+                        Social: ${escapeHtml(app.social_id)} | Group: ${app.group_name}
+                    </div>
+                    <div class="admin-textarea" style="font-size:13px; margin-bottom:15px; background:rgba(0,0,0,0.02)">${escapeHtml(app.answers)}</div>
+                    <div class="btn-group-row" style="width:100%">
+                        <button class="save-btn" style="background:#22c55e" onclick="updateExamStatus(${app.id}, 'approved')">APPROVE</button>
+                        <button class="del-btn" onclick="updateExamStatus(${app.id}, 'rejected')">REJECT</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="text-align:center; padding:40px;">No applications found.</p>';
+        } catch (e) { 
+            console.error(e);
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:#ef4444;">
+                <strong>ERR_500_FIX_REQUIRED</strong><br/>
+                API 响应失败。请检查后端 Worker 是否正确处理了请求。
+            </div>`; 
+        }
+    }
+
+    window.updateExamStatus = async function(id, status) {
+        await fetch('/api/exam/admin', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+            body: JSON.stringify({ id, status })
+        });
+        loadApplications();
     }
 
     window.deleteData = async function(type, id) {
-        if (!confirm(`Permanently delete this ${type} record?`)) return;
-        await fetch(type === 'send' ? '/api/admin' : '/api/exam/admin', {
+        if (!confirm("PERMANENTLY DELETE?")) return;
+        const endpoint = type === 'send' ? '/api/admin' : '/api/exam/admin';
+        await fetch(endpoint, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
             body: JSON.stringify({ id })
