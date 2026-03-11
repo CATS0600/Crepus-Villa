@@ -72,37 +72,44 @@ import Header from '../components/Header.astro';
     .panel-header { padding: 1.25rem; border-bottom: 1px solid var(--card-border); background: rgba(0,0,0,0.02); }
     .btn-refresh { padding: 0.6rem 1.2rem; background: var(--text-main); color: var(--bg-color); border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
 
+    /* MLU 10 列表项 */
     .item-card { padding: 2rem; border-bottom: 1px solid var(--card-border); transition: background 0.2s; }
     .item-card:hover { background: rgba(0,0,0,0.01); }
     
-    /* MLU 10 标题样式 */
-    .mlu-title-input { width: 100%; background: transparent; border: none; border-bottom: 2px solid transparent; font-size: 1.75rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; padding: 0.5rem 0; transition: border-color 0.2s; }
-    .mlu-title-input:focus { outline: none; border-color: var(--text-main); }
-
-    .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .preview-title { font-size: 1.5rem; font-weight: 700; margin: 0.25rem 0; color: var(--text-main); }
+    .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
     .item-meta { font-size: 0.85rem; color: var(--text-muted); }
-    
-    /* Type 选择器样式 */
-    .type-select { padding: 0.4rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer; border: 1px solid var(--card-border); }
-    .type-PENDING { background: #fef3c7; color: #92400e; }
-    .type-COMPLETE { background: #dcfce7; color: #166534; }
-    .type-ARCHIVED { background: #f3f4f6; color: #374151; }
 
-    .edit-area { margin: 1rem 0; }
-    .label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; display: block; }
+    .btn-toggle { padding: 0.5rem 1rem; border: 1px solid var(--card-border); border-radius: 6px; background: transparent; color: var(--text-main); cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+    .btn-toggle:hover { background: var(--text-main); color: var(--bg-color); }
     
+    /* 状态标签样式 */
+    .type-tag { font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; margin-left: 0.5rem; }
+    .type-tag.type-PENDING { background: #fef3c7; color: #92400e; }
+    .type-tag.type-COMPLETE { background: #dcfce7; color: #166534; }
+    .type-tag.type-ARCHIVED { background: #f3f4f6; color: #374151; }
+
+    /* 编辑面板 */
+    .edit-panel { background: rgba(0,0,0,0.02); padding: 1.5rem; border-radius: 10px; border: 1px solid var(--card-border); }
+    .mlu-title-input { width: 100%; padding: 0.75rem; font-size: 1.25rem; font-weight: bold; border: 1px solid var(--card-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); margin-bottom: 1rem; }
+    .label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; margin-bottom: 0.5rem; text-transform: uppercase; }
+    
+    .type-select { padding: 0.5rem; border-radius: 6px; font-weight: 700; border: 1px solid var(--card-border); margin-bottom: 1rem; }
+
     .content-textarea, .reply-textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--card-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); font-size: 0.95rem; line-height: 1.6; resize: vertical; margin-bottom: 1rem; }
-    .content-textarea { border-style: dashed; } /* 区分正文和回复 */
+    .content-textarea { border-style: dashed; }
 
-    .btn-group { display: flex; gap: 0.75rem; }
+    .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; }
     .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
     .btn-save { background: #3b82f6; color: white; flex-grow: 1; }
     .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+    .btn-success { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid #22c55e; }
 
     @media (prefers-color-scheme: dark) { 
-        .type-PENDING { background: #451a03; color: #fbbf24; }
-        .type-COMPLETE { background: #064e3b; color: #4ade80; }
-        .type-ARCHIVED { background: #1f2937; color: #9ca3af; }
+        .type-tag.type-PENDING { background: #451a03; color: #fbbf24; }
+        .type-tag.type-COMPLETE { background: #064e3b; color: #4ade80; }
+        .type-tag.type-ARCHIVED { background: #1f2937; color: #9ca3af; }
+        .edit-panel { background: rgba(255,255,255,0.03); }
     }
 </style>
 
@@ -159,7 +166,7 @@ import Header from '../components/Header.astro';
         loadMessages(); 
     }
 
-    // --- MLU 10 核心管理逻辑 ---
+    // --- MLU 10 核心渲染逻辑 (增强防御性) ---
     window.loadMessages = async function() {
         const container = document.getElementById('messagesList');
         try {
@@ -168,15 +175,26 @@ import Header from '../components/Header.astro';
             });
             const data = await response.json();
 
-            container.innerHTML = data.messages.map(msg => `
+            if (!data || !Array.isArray(data.messages)) {
+                throw new Error("Invalid Data Format");
+            }
+
+            container.innerHTML = data.messages.map(msg => {
+                // 防御性字段初始化
+                const safeTitle = msg.title || 'Untitled Unit';
+                const safeType = msg.type || 'PENDING';
+                const safeContent = msg.content || '';
+                const safeReply = msg.reply || '';
+
+                return `
                 <div class="item-card" id="card-${msg.id}">
                     <div class="item-header">
                         <div style="flex-grow: 1;">
                             <span class="label" style="margin:0">UNIT ${msg.id}</span>
-                            <h2 class="preview-title" id="preview-title-${msg.id}">${escapeHtml(msg.title || 'Untitled')}</h2>
+                            <h2 class="preview-title" id="preview-title-${msg.id}">${escapeHtml(safeTitle)}</h2>
                             <div class="item-meta">
                                 📅 ${new Date(msg.created_at).toLocaleString()} | 
-                                <span class="type-tag type-${msg.type}">${msg.type}</span>
+                                <span class="type-tag type-${safeType}" id="preview-type-${msg.id}">${safeType}</span>
                             </div>
                         </div>
                         <div class="header-actions">
@@ -184,27 +202,27 @@ import Header from '../components/Header.astro';
                         </div>
                     </div>
 
-                    <div id="edit-panel-${msg.id}" class="edit-panel" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--card-border);">
+                    <div id="edit-panel-${msg.id}" class="edit-panel" style="display: none; margin-top: 1.5rem;">
                         <div class="edit-field">
                             <span class="label">单元标题 (Title)</span>
-                            <input type="text" id="title-${msg.id}" class="mlu-title-input" value="${escapeHtml(msg.title || 'Untitled')}" />
+                            <input type="text" id="title-${msg.id}" class="mlu-title-input" value="${escapeHtml(safeTitle)}" />
                         </div>
 
                         <div class="edit-field">
                             <span class="label">当前状态 (Type)</span>
-                            <select id="type-${msg.id}" class="type-select type-${msg.type}" onchange="this.className='type-select type='+this.value">
-                                <option value="PENDING" ${msg.type === 'PENDING' ? 'selected' : ''}>PENDING</option>
-                                <option value="COMPLETE" ${msg.type === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
-                                <option value="ARCHIVED" ${msg.type === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
+                            <select id="type-${msg.id}" class="type-select" onchange="this.className='type-select type-'+this.value">
+                                <option value="PENDING" ${safeType === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                                <option value="COMPLETE" ${safeType === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
+                                <option value="ARCHIVED" ${safeType === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
                             </select>
                         </div>
 
                         <div class="edit-area">
                             <span class="label">正文内容 (Content)</span>
-                            <textarea id="content-${msg.id}" class="content-textarea">${msg.content || ''}</textarea>
+                            <textarea id="content-${msg.id}" class="content-textarea">${escapeHtml(safeContent)}</textarea>
                             
                             <span class="label">站长回复 (Reply)</span>
-                            <textarea id="reply-${msg.id}" class="reply-textarea" placeholder="在此输入回复...">${msg.reply || ''}</textarea>
+                            <textarea id="reply-${msg.id}" class="reply-textarea" placeholder="在此输入回复...">${escapeHtml(safeReply)}</textarea>
                         </div>
                         
                         <div class="btn-group">
@@ -213,35 +231,30 @@ import Header from '../components/Header.astro';
                         </div>
                     </div>
                 </div>
-            `).join('');
-        } catch (e) { container.innerHTML = '<p style="color:red; text-align:center;">加载失败</p>'; }
-    }
-
-    // 新增：切换编辑区显示
-    window.toggleEdit = function(id) {
-        const panel = document.getElementById(`edit-panel-${id}`);
-        const btn = document.querySelector(`#card-${id} .btn-toggle`);
-        if (panel.style.display === 'none') {
-            panel.style.display = 'block';
-            btn.textContent = '收起面板';
-            btn.style.background = 'var(--card-border)';
-        } else {
-            panel.style.display = 'none';
-            btn.textContent = '📝 编辑单元';
-            btn.style.background = 'transparent';
+            `}).join('');
+        } catch (e) { 
+            console.error("Render Error:", e);
+            container.innerHTML = `<p style="color:red; text-align:center; padding:2rem;">加载失败: ${e.message}</p>`; 
         }
     }
 
-    // 更新函数增加 UI 反馈
+    window.toggleEdit = function(id) {
+        const panel = document.getElementById(`edit-panel-${id}`);
+        const btn = document.querySelector(`#card-${id} .btn-toggle`);
+        const isHidden = panel.style.display === 'none';
+        panel.style.display = isHidden ? 'block' : 'none';
+        btn.textContent = isHidden ? '收起面板' : '📝 编辑单元';
+    }
+
     window.updateMessage = async function(id) {
         const title = document.getElementById(`title-${id}`).value;
         const type = document.getElementById(`type-${id}`).value;
         const payload = {
             id,
-            title: title,
+            title,
+            type,
             content: document.getElementById(`content-${id}`).value,
-            reply: document.getElementById(`reply-${id}`).value,
-            type: type
+            reply: document.getElementById(`reply-${id}`).value
         };
 
         try {
@@ -251,25 +264,77 @@ import Header from '../components/Header.astro';
                 body: JSON.stringify(payload)
             });
             if (res.ok) {
-                // 同步更新预览区域的标题和状态色
+                // 实时更新预览层
                 document.getElementById(`preview-title-${id}`).textContent = title;
-                // 提示成功
+                const typeTag = document.getElementById(`preview-type-${id}`);
+                typeTag.textContent = type;
+                typeTag.className = `type-tag type-${type}`;
+                
                 const btn = document.querySelector(`#card-${id} .btn-save`);
                 btn.textContent = "✅ 同步成功";
                 setTimeout(() => { btn.textContent = "🚀 保存并同步云端"; }, 2000);
             }
         } catch (e) { alert('更新失败'); }
     }
+
+    // --- Exam 管理逻辑 ---
+    window.loadApplications = async function() {
+        const group = document.getElementById('groupFilter').value;
+        const container = document.getElementById('applicationsList');
+        try {
+            const response = await fetch(`/api/exam/admin?group=${encodeURIComponent(group)}`, {
+                headers: { 'X-Admin-Token': adminToken }
+            });
+            const data = await response.json();
+            container.innerHTML = (data.applications || []).map(app => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-meta">
+                            <strong>申请人: ${escapeHtml(app.username)}</strong> (ID: ${app.id})<br/>
+                            🆔 Social: ${escapeHtml(app.social_id)} | ⏱️ ${new Date(app.created_at).toLocaleDateString()}
+                        </div>
+                        <span class="badge ${app.status === 'approved' ? 'status-ok' : 'private'}">${app.status}</span>
+                    </div>
+                    <div class="content-box" style="font-size:0.85rem; padding:1rem; background:rgba(0,0,0,0.02); border-radius:8px;">${escapeHtml(app.answers)}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="updateExamStatus(${app.id}, 'approved')">通过</button>
+                        <button class="btn btn-danger" onclick="updateExamStatus(${app.id}, 'rejected')">拒绝</button>
+                        <button class="btn btn-danger" style="margin-left:auto" onclick="deleteData('exam', ${app.id})">彻底删除</button>
+                    </div>
+                </div>
+            `).join('') || '<p style="text-align:center; padding:2rem;">无待处理申请</p>';
+        } catch (e) { container.innerHTML = '<p style="color:red; text-align:center;">加载失败</p>'; }
+    }
+
+    window.updateExamStatus = async function(id, status) {
+        await fetch('/api/exam/admin', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+            body: JSON.stringify({ id, status })
+        });
+        loadApplications();
+    }
+
+    window.deleteData = async function(type, id) {
+        if (!confirm(`确定彻底删除 ${type} 记录吗？`)) return;
+        const endpoint = type === 'send' ? '/api/admin' : '/api/exam/admin';
+        await fetch(endpoint, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+            body: JSON.stringify({ id })
+        });
+        type === 'send' ? loadMessages() : loadApplications();
+    }
+
+    // 关键工具函数：处理 NULL 情况
+    function escapeHtml(text) {
+        if (text === null || text === undefined) return '';
+        const div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+    }
+
+    document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') authenticate();
+    });
 </script>
-<style>
-    /* 增加和优化样式 */
-    .preview-title { font-size: 1.5rem; font-weight: 700; margin: 0.25rem 0; color: var(--text-main); }
-    .btn-toggle { padding: 0.5rem 1rem; border: 1px solid var(--card-border); border-radius: 6px; background: transparent; color: var(--text-main); cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
-    .btn-toggle:hover { background: var(--text-main); color: var(--bg-color); }
-    
-    .type-tag { font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; }
-    
-    /* 其他 MLU 10 样式与之前保持一致 */
-    .mlu-title-input { width: 100%; padding: 0.75rem; font-size: 1.25rem; font-weight: bold; border: 1px solid var(--card-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); margin-bottom: 1rem; }
-    .label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; margin-bottom: 0.5rem; text-transform: uppercase; }
-</style>
