@@ -8,7 +8,7 @@ import Header from '../components/Header.astro';
     
     <main class="main-content">
         <section class="content-section reveal">
-            <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto; padding: 0 1rem;">
+            <div class="container safe-zone" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
                 <h1 class="page-title">公开留言板 Public Message Board</h1>
                 
                 <div id="messageList" class="message-list">
@@ -19,9 +19,9 @@ import Header from '../components/Header.astro';
                 </div>
 
                 <nav class="nav-links fade-in">
-                    <a href="/send" class="nav-link">✍️ 写新留言 Write New Message</a>
-                    <a href="/reply/private" class="nav-link">🔐 查看私密留言 View Private</a>
-                    <a href="/" class="nav-link">🏠 回到首页 Return</a>
+                    <a href="/send" class="nav-link">写新留言 Write New</a>
+                    <a href="/reply/private" class="nav-link">查看私密 View Private</a>
+                    <a href="/" class="nav-link">回到首页 Return</a>
                 </nav>
             </div>
         </section>
@@ -29,7 +29,6 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <style>
-    /* 页面基础 */
     .page-title {
         text-align: center; 
         margin-bottom: 2.5rem;
@@ -40,149 +39,204 @@ import Header from '../components/Header.astro';
     .message-list {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         min-height: 200px;
     }
 
-    /* 留言卡片基础 */
-    .message-card {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
+    /* 消息条目容器 */
+    .msg-item {
+        width: 100%;
+        opacity: 0;
+        animation: slideUp 0.5s ease forwards;
+    }
+
+    /* 按钮基础样式 */
+    .msg-btn {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--card-border, rgba(0,0,0,0.1));
         border-radius: 12px;
-        padding: 1.5rem;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        opacity: 0; 
-        animation: slideUp 0.6s ease forwards;
+        padding: 1.2rem 1.5rem;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        position: relative;
+        z-index: 2;
     }
 
-    .message-card:hover {
+    .msg-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+    
+    .msg-btn.active {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-color: transparent;
+        transform: none;
+        box-shadow: none;
     }
 
-    /* 状态标签样式 */
+    /* 按钮内部布局 */
+    .btn-left {
+        flex: 1;
+        padding-right: 1rem;
+    }
+    
+    .btn-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        word-break: break-all;
+    }
+
+    .btn-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.4rem;
+        min-width: 120px;
+    }
+
     .status-badge {
-        display: inline-block;
         font-size: 0.7rem;
         font-weight: 800;
         padding: 0.2rem 0.6rem;
         border-radius: 4px;
-        margin-bottom: 0.8rem;
         letter-spacing: 0.5px;
         text-transform: uppercase;
-    }
-
-    .badge-sent {
-        background: rgba(var(--text-main-rgb, 0, 0, 0), 0.1);
-        color: var(--text-main);
-    }
-
-    .badge-replied {
         background: var(--text-main);
-        color: var(--bg-color);
+        color: var(--bg-color, #fff);
     }
 
-    /* 内容区块 */
-    .message-content {
-        font-size: 1.05rem;
-        line-height: 1.7;
+    .msg-time {
+        font-size: 0.8rem;
+        color: var(--text-muted, #86868b);
+        font-family: monospace;
+    }
+
+    /* 折叠面板动画与样式 */
+    .msg-detail-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        background: rgba(0,0,0,0.02);
+        border: 1px solid transparent;
+        border-top: none;
+        border-radius: 0 0 12px 12px;
+        margin-top: -1px;
+    }
+
+    .msg-item.open .msg-detail-wrapper {
+        grid-template-rows: 1fr;
+        border-color: var(--card-border, rgba(0,0,0,0.1));
+    }
+
+    .msg-detail-inner {
+        overflow: hidden;
+    }
+
+    .detail-content {
+        padding: 1.5rem;
+    }
+
+    .content-block { margin-bottom: 1.5rem; }
+    .content-block:last-child { margin-bottom: 0; }
+
+    .block-label {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
         margin-bottom: 0.5rem;
-        white-space: pre-wrap;
-        word-break: break-word;
+        letter-spacing: 1px;
     }
 
-    /* 回复区块 */
-    .reply-section {
-        background: rgba(var(--text-main-rgb, 0,0,0), 0.03);
-        border-left: 3px solid var(--text-main);
-        padding: 1.2rem;
-        border-radius: 0 6px 6px 0;
-        margin-top: 1.5rem;
-        position: relative;
-        animation: expandReply 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .reply-text {
+    .block-text {
         font-size: 1rem;
         line-height: 1.6;
         color: var(--text-main);
         white-space: pre-wrap;
+        word-break: break-word;
     }
 
-    /* Meta 信息 */
-    .message-meta {
+    .reply-block {
+        padding-left: 1rem;
+        border-left: 3px solid var(--text-main);
+    }
+
+    .detail-meta {
         display: flex;
         justify-content: space-between;
         font-size: 0.8rem;
         color: var(--text-muted);
-        margin-top: 1rem;
+        margin-top: 1.5rem;
         padding-top: 1rem;
-        border-top: 1px solid rgba(var(--card-border-rgb, 0,0,0), 0.1);
+        border-top: 1px solid rgba(0,0,0,0.05);
+        font-family: monospace;
     }
 
-    /* 动画定义 */
+    /* 全局动画 */
     @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
+        from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }
     }
+    .fade-in { animation: fadeIn 1s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    @keyframes expandReply {
-        from { opacity: 0; transform: translateX(-10px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-
-    .fade-in {
-        animation: fadeIn 1s ease forwards;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    /* 导航样式 */
+    /* 导航 */
     .nav-links {
-        display: flex;
-        gap: 0.8rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 3rem;
+        display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;
     }
-
     .nav-link {
-        padding: 0.6rem 1.2rem;
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--text-main);
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
+        padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border);
+        border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; transition: 0.2s;
     }
+    .nav-link:hover { background: var(--text-main); color: var(--bg-color); }
 
-    .nav-link:hover {
-        background: var(--text-main);
-        color: var(--bg-color);
-    }
-
-    .loading-state {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-muted);
+    @media (prefers-color-scheme: dark) {
+        .msg-btn, .nav-link { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
+        .msg-detail-wrapper { background: rgba(255,255,255,0.02); }
+        .msg-item.open .msg-detail-wrapper { border-color: rgba(255,255,255,0.05); }
+        .status-badge { background: #f5f5f7; color: #000; }
+        .block-label { color: rgba(255,255,255,0.5); }
+        .detail-meta { border-top-color: rgba(255,255,255,0.05); }
     }
 </style>
 
 <script>
-    //@ts-nocheck
+    // @ts-nocheck
     const formatter = new Intl.DateTimeFormat('zh-CN', {
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', hour12: false
     });
 
     function escapeHtml(text) {
+        if (!text) return '';
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
         return text.replace(/[&<>"']/g, m => map[m]);
     }
+
+    // 暴露到全局以供内联事件调用
+    window.toggleMsg = function(id) {
+        const item = document.getElementById(`msg-item-${id}`);
+        const btn = item.querySelector('.msg-btn');
+        
+        // 排他性展开：如果想点击一个时关闭其他的，保留以下代码
+        document.querySelectorAll('.msg-item.open').forEach(el => {
+            if (el.id !== `msg-item-${id}`) {
+                el.classList.remove('open');
+                el.querySelector('.msg-btn').classList.remove('active');
+            }
+        });
+
+        item.classList.toggle('open');
+        btn.classList.toggle('active');
+    };
 
     async function loadMessages() {
         const container = document.getElementById('messageList');
@@ -190,56 +244,59 @@ import Header from '../components/Header.astro';
         
         try {
             const response = await fetch('/api/get-messages');
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) throw new Error('Network error');
             const data = await response.json();
 
             if (!data.messages || data.messages.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state fade-in" style="text-align: center; padding: 4rem 0;">
-                        <span style="font-size: 3rem;">📭</span>
-                        <p style="margin-top: 1rem; color: var(--text-muted);">还没有公开留言呢... No Messages Yet</p>
-                    </div>`;
+                container.innerHTML = `<div class="fade-in" style="text-align: center; padding: 4rem 0; color: var(--text-muted);">暂无公开留言数据</div>`;
                 return;
             }
 
-            const fragment = document.createDocumentFragment();
-            
-            data.messages.forEach((msg, index) => {
+            container.innerHTML = data.messages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
-                const card = document.createElement('div');
-                card.className = 'message-card';
-                card.style.animationDelay = `${index * 0.1}s`;
+                const title = msg.title || 'Untitled';
+                const type = msg.type || 'UNKNOWN';
                 
-                card.innerHTML = `
-                    <div class="sent-container">
-                        <span class="status-badge badge-sent">Sent / 留言</span>
-                        <div class="message-content">${escapeHtml(msg.content)}</div>
-                    </div>
-                    
-                    ${msg.reply ? `
-                        <div class="reply-section">
-                            <span class="status-badge badge-replied">Replied / 回复</span>
-                            <div class="reply-text">${escapeHtml(msg.reply)}</div>
+                return `
+                    <div class="msg-item" id="msg-item-${msg.id}" style="animation-delay: ${index * 0.05}s">
+                        <button class="msg-btn" onclick="toggleMsg('${msg.id}')">
+                            <div class="btn-left">
+                                <div class="btn-title">${escapeHtml(title)}</div>
+                            </div>
+                            <div class="btn-right">
+                                <span class="status-badge">${type}</span>
+                                <span class="msg-time">${date}</span>
+                            </div>
+                        </button>
+                        
+                        <div class="msg-detail-wrapper">
+                            <div class="msg-detail-inner">
+                                <div class="detail-content">
+                                    <div class="content-block">
+                                        <span class="block-label">Sent</span>
+                                        <div class="block-text">${escapeHtml(msg.content)}</div>
+                                    </div>
+                                    
+                                    ${msg.reply ? `
+                                    <div class="content-block reply-block">
+                                        <span class="block-label">Replied</span>
+                                        <div class="block-text">${escapeHtml(msg.reply)}</div>
+                                    </div>
+                                    ` : ''}
+                                    
+                                    <div class="detail-meta">
+                                        <span>MSG_ID #${msg.id}</span>
+                                        <span>${date}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    ` : ''}
-
-                    <div class="message-meta">
-                        <span>#${msg.id}</span>
-                        <span>${date}</span>
                     </div>
                 `;
-                fragment.appendChild(card);
-            });
-
-            container.innerHTML = '';
-            container.appendChild(fragment);
+            }).join('');
 
         } catch (error) {
-            container.innerHTML = `
-                <div class="error-state" style="text-align: center; color: #ff6b6b; padding: 2rem;">
-                    <p>⚠️ 无法加载留言板，请稍后再试</p>
-                </div>`;
-            console.error('Fetch error:', error);
+            container.innerHTML = `<div style="text-align: center; color: #ff6b6b; padding: 2rem;">加载失败，请检查网络或联系管理员。</div>`;
         }
     }
 
