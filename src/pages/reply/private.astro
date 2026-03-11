@@ -9,7 +9,7 @@ import Header from '../../components/Header.astro';
     <main class="main-content">
         <section class="content-section reveal">
             <div class="container safe-zone" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
-                <h1 style="text-align: center; margin-bottom: 2rem; font-weight: 300; letter-spacing: 1px;">私密留言 Private Messages</h1>
+                <h1 style="text-align: center; margin-bottom: 2.5rem; font-weight: 300; letter-spacing: 1px;">私密留言检索 Private Messages</h1>
                 
                 <div id="tokenInputForm" class="form-container">
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem;">输入 8 位 Token 检索您的留言及回复状态</p>
@@ -24,7 +24,7 @@ import Header from '../../components/Header.astro';
 
                 <div id="messageDisplay" style="display: none;">
                     <div id="messageList" class="message-list"></div>
-                    <div class="nav-links">
+                    <div class="nav-links fade-in">
                         <button type="button" onclick="location.reload()" class="nav-link">查询其他 Token</button>
                         <a href="/send" class="nav-link">写新留言</a>
                         <a href="/reply" class="nav-link">返回广场</a>
@@ -36,12 +36,12 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <style>
+    /* 基础容器 */
     .form-container {
         max-width: 500px; margin: 0 auto;
         background: var(--card-bg, #fff); border: 1px solid var(--card-border, rgba(0,0,0,0.1));
         border-radius: 12px; padding: 2.5rem;
     }
-    
     .form-group { margin-bottom: 1.5rem; }
     
     input[type="text"] {
@@ -51,18 +51,15 @@ import Header from '../../components/Header.astro';
         text-transform: uppercase; letter-spacing: 4px; transition: 0.2s; outline: none;
     }
     input[type="text"]:focus { border-color: var(--text-main); }
-
     .submit-btn {
         width: 100%; padding: 1rem; background: var(--text-main); color: var(--bg-color, #fff);
-        border: none; border-radius: 8px; font-weight: 700; cursor: pointer; letter-spacing: 1px;
+        border: none; border-radius: 8px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s;
     }
+    .submit-btn:hover { opacity: 0.9; }
 
-    .error-message {
-        margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.1);
-        border-radius: 8px; color: #ff453a; text-align: center; font-size: 0.9rem;
-    }
+    .error-message { margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px; color: #ff453a; text-align: center; font-size: 0.9rem; }
 
-    /* 继承自公开版的折叠样式 */
+    /* 留言列表样式 (与公开版对齐) */
     .message-list { display: flex; flex-direction: column; gap: 1rem; }
     .msg-item { width: 100%; opacity: 0; animation: slideUp 0.5s ease forwards; }
     .msg-btn {
@@ -71,7 +68,6 @@ import Header from '../../components/Header.astro';
         border-radius: 12px; padding: 1.2rem 1.5rem; cursor: pointer; text-align: left;
         transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 2; position: relative;
     }
-    .msg-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
     .msg-btn.active { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; transform: none; box-shadow: none; }
     
     .btn-left { flex: 1; padding-right: 1rem; }
@@ -88,7 +84,6 @@ import Header from '../../components/Header.astro';
     .msg-detail-inner { overflow: hidden; }
     .detail-content { padding: 1.5rem; }
     .content-block { margin-bottom: 1.5rem; }
-    .content-block:last-child { margin-bottom: 0; }
     .block-label { display: inline-block; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px; }
     .block-text { font-size: 1rem; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
     .reply-block { padding-left: 1rem; border-left: 3px solid var(--text-main); }
@@ -97,17 +92,15 @@ import Header from '../../components/Header.astro';
 
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     .nav-links { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
-    .nav-link { padding: 0.6rem 1.2rem; background: transparent; border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; cursor: pointer; }
+    .nav-link { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+    .nav-link:hover { background: var(--text-main); color: var(--bg-color); }
     
     @media (prefers-color-scheme: dark) {
-        .form-container, .msg-btn { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
+        .form-container, .msg-btn, .nav-link { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
         input[type="text"] { background: #000; border-color: rgba(255,255,255,0.1); color: #fff; }
-        .msg-detail-wrapper, .pending-block { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); }
-        .msg-item.open .msg-detail-wrapper { border-color: rgba(255,255,255,0.05); }
+        .msg-detail-wrapper, .pending-block { background: rgba(255,255,255,0.02); }
         .status-badge { background: #f5f5f7; color: #000; }
-        .block-label { color: rgba(255,255,255,0.5); }
         .detail-meta { border-top-color: rgba(255,255,255,0.05); }
-        .nav-link { border-color: rgba(255,255,255,0.1); }
     }
 </style>
 
@@ -134,6 +127,15 @@ import Header from '../../components/Header.astro';
     window.toggleMsg = function(id) {
         const item = document.getElementById(`msg-item-${id}`);
         const btn = item.querySelector('.msg-btn');
+        
+        // 排他性展开
+        document.querySelectorAll('.msg-item.open').forEach(el => {
+            if (el.id !== `msg-item-${id}`) {
+                el.classList.remove('open');
+                el.querySelector('.msg-btn').classList.remove('active');
+            }
+        });
+
         item.classList.toggle('open');
         btn.classList.toggle('active');
     };
@@ -143,7 +145,7 @@ import Header from '../../components/Header.astro';
         const token = tokenInput.value.trim().toUpperCase();
 
         if (token.length !== 8) {
-            showError('Token 验证失败：长度必须为 8 位');
+            showError('Token 长度无效：必须为 8 位');
             return;
         }
 
@@ -154,41 +156,38 @@ import Header from '../../components/Header.astro';
             const data = await response.json();
 
             if (!data.messages || data.messages.length === 0) {
-                showError('查询不到对应数据，请核对 Token 是否输入正确。');
+                showError('未找到匹配记录，请确认 Token 是否正确。');
                 return;
             }
 
             messageList.innerHTML = data.messages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
-                const title = msg.title || 'Untitled';
-                const type = msg.type || 'UNKNOWN';
+                const type = msg.type || 'PRIVATE';
                 
-                // 根据 Type 决定回复区域的显示逻辑
                 let replyAreaHtml = '';
                 if (type === 'PENDING') {
-                    replyAreaHtml = `<div class="pending-block">尚未回复 (Awaiting Admin Reply)</div>`;
+                    replyAreaHtml = `<div class="pending-block">管理员尚未查阅或回复 (Awaiting Reply)</div>`;
                 } else if (msg.reply) {
                     replyAreaHtml = `
                         <div class="content-block reply-block">
-                            <span class="block-label">Replied</span>
+                            <span class="block-label">Admin Reply</span>
                             <div class="block-text">${escapeHtml(msg.reply)}</div>
                         </div>`;
                 } else {
-                    replyAreaHtml = `<div class="pending-block">无需回复或记录已完结</div>`;
+                    replyAreaHtml = `<div class="pending-block">该留言无需回复或记录已完结</div>`;
                 }
 
                 return `
                     <div class="msg-item" id="msg-item-${msg.id}" style="animation-delay: ${index * 0.05}s">
                         <button class="msg-btn" onclick="toggleMsg('${msg.id}')">
                             <div class="btn-left">
-                                <div class="btn-title">${escapeHtml(title)}</div>
+                                <div class="btn-title">${escapeHtml(msg.title || 'Untitled')}</div>
                             </div>
                             <div class="btn-right">
                                 <span class="status-badge">${type}</span>
                                 <span class="msg-time">${date}</span>
                             </div>
                         </button>
-                        
                         <div class="msg-detail-wrapper">
                             <div class="msg-detail-inner">
                                 <div class="detail-content">
@@ -196,11 +195,9 @@ import Header from '../../components/Header.astro';
                                         <span class="block-label">Sent Content</span>
                                         <div class="block-text">${escapeHtml(msg.content)}</div>
                                     </div>
-                                    
                                     ${replyAreaHtml}
-                                    
                                     <div class="detail-meta">
-                                        <span>MSG_ID #${msg.id}</span>
+                                        <span>MSG_ID: ${msg.id}</span>
                                         <span>${date}</span>
                                     </div>
                                 </div>
@@ -214,7 +211,7 @@ import Header from '../../components/Header.astro';
             messageDisplay.style.display = 'block';
 
         } catch (error) {
-            showError('数据拉取失败，服务器可能暂时不可用。');
+            showError('服务暂时不可用，请稍后再试。');
         }
     });
 

@@ -43,14 +43,12 @@ import Header from '../components/Header.astro';
         min-height: 200px;
     }
 
-    /* 消息条目容器 */
     .msg-item {
         width: 100%;
         opacity: 0;
         animation: slideUp 0.5s ease forwards;
     }
 
-    /* 按钮基础样式 */
     .msg-btn {
         width: 100%;
         display: flex;
@@ -80,26 +78,9 @@ import Header from '../components/Header.astro';
         box-shadow: none;
     }
 
-    /* 按钮内部布局 */
-    .btn-left {
-        flex: 1;
-        padding-right: 1rem;
-    }
-    
-    .btn-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--text-main);
-        word-break: break-all;
-    }
-
-    .btn-right {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 0.4rem;
-        min-width: 120px;
-    }
+    .btn-left { flex: 1; padding-right: 1rem; }
+    .btn-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); word-break: break-all; }
+    .btn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; min-width: 120px; }
 
     .status-badge {
         font-size: 0.7rem;
@@ -112,13 +93,8 @@ import Header from '../components/Header.astro';
         color: var(--bg-color, #fff);
     }
 
-    .msg-time {
-        font-size: 0.8rem;
-        color: var(--text-muted, #86868b);
-        font-family: monospace;
-    }
+    .msg-time { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
 
-    /* 折叠面板动画与样式 */
     .msg-detail-wrapper {
         display: grid;
         grid-template-rows: 0fr;
@@ -135,39 +111,13 @@ import Header from '../components/Header.astro';
         border-color: var(--card-border, rgba(0,0,0,0.1));
     }
 
-    .msg-detail-inner {
-        overflow: hidden;
-    }
-
-    .detail-content {
-        padding: 1.5rem;
-    }
-
+    .msg-detail-inner { overflow: hidden; }
+    .detail-content { padding: 1.5rem; }
     .content-block { margin-bottom: 1.5rem; }
-    .content-block:last-child { margin-bottom: 0; }
-
-    .block-label {
-        display: inline-block;
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        letter-spacing: 1px;
-    }
-
-    .block-text {
-        font-size: 1rem;
-        line-height: 1.6;
-        color: var(--text-main);
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-
-    .reply-block {
-        padding-left: 1rem;
-        border-left: 3px solid var(--text-main);
-    }
+    .block-label { display: inline-block; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px; }
+    .block-text { font-size: 1rem; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
+    .reply-block { padding-left: 1rem; border-left: 3px solid var(--text-main); }
+    .pending-block { padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 8px; color: var(--text-muted); text-align: center; font-size: 0.9rem; border: 1px dashed rgba(0,0,0,0.1); }
 
     .detail-meta {
         display: flex;
@@ -180,30 +130,19 @@ import Header from '../components/Header.astro';
         font-family: monospace;
     }
 
-    /* 全局动画 */
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 1s ease forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* 导航 */
-    .nav-links {
-        display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;
-    }
-    .nav-link {
-        padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border);
-        border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; transition: 0.2s;
-    }
+    .nav-links { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
+    .nav-link { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; transition: 0.2s; }
     .nav-link:hover { background: var(--text-main); color: var(--bg-color); }
 
     @media (prefers-color-scheme: dark) {
         .msg-btn, .nav-link { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
-        .msg-detail-wrapper { background: rgba(255,255,255,0.02); }
+        .msg-detail-wrapper, .pending-block { background: rgba(255,255,255,0.02); }
         .msg-item.open .msg-detail-wrapper { border-color: rgba(255,255,255,0.05); }
         .status-badge { background: #f5f5f7; color: #000; }
-        .block-label { color: rgba(255,255,255,0.5); }
         .detail-meta { border-top-color: rgba(255,255,255,0.05); }
     }
 </style>
@@ -221,12 +160,11 @@ import Header from '../components/Header.astro';
         return text.replace(/[&<>"']/g, m => map[m]);
     }
 
-    // 暴露到全局以供内联事件调用
     window.toggleMsg = function(id) {
         const item = document.getElementById(`msg-item-${id}`);
         const btn = item.querySelector('.msg-btn');
         
-        // 排他性展开：如果想点击一个时关闭其他的，保留以下代码
+        // 排他性展开
         document.querySelectorAll('.msg-item.open').forEach(el => {
             if (el.id !== `msg-item-${id}`) {
                 el.classList.remove('open');
@@ -254,38 +192,34 @@ import Header from '../components/Header.astro';
 
             container.innerHTML = data.messages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
-                const title = msg.title || 'Untitled';
-                const type = msg.type || 'UNKNOWN';
+                const type = msg.type || 'PUBLIC';
                 
                 return `
                     <div class="msg-item" id="msg-item-${msg.id}" style="animation-delay: ${index * 0.05}s">
                         <button class="msg-btn" onclick="toggleMsg('${msg.id}')">
                             <div class="btn-left">
-                                <div class="btn-title">${escapeHtml(title)}</div>
+                                <div class="btn-title">${escapeHtml(msg.title || 'Untitled')}</div>
                             </div>
                             <div class="btn-right">
                                 <span class="status-badge">${type}</span>
                                 <span class="msg-time">${date}</span>
                             </div>
                         </button>
-                        
                         <div class="msg-detail-wrapper">
                             <div class="msg-detail-inner">
                                 <div class="detail-content">
                                     <div class="content-block">
-                                        <span class="block-label">Sent</span>
+                                        <span class="block-label">Message</span>
                                         <div class="block-text">${escapeHtml(msg.content)}</div>
                                     </div>
-                                    
                                     ${msg.reply ? `
                                     <div class="content-block reply-block">
-                                        <span class="block-label">Replied</span>
+                                        <span class="block-label">Admin Reply</span>
                                         <div class="block-text">${escapeHtml(msg.reply)}</div>
                                     </div>
-                                    ` : ''}
-                                    
+                                    ` : `<div class="pending-block">暂无公开回复</div>`}
                                     <div class="detail-meta">
-                                        <span>MSG_ID #${msg.id}</span>
+                                        <span>ID: ${msg.id}</span>
                                         <span>${date}</span>
                                     </div>
                                 </div>
@@ -294,9 +228,8 @@ import Header from '../components/Header.astro';
                     </div>
                 `;
             }).join('');
-
         } catch (error) {
-            container.innerHTML = `<div style="text-align: center; color: #ff6b6b; padding: 2rem;">加载失败，请检查网络或联系管理员。</div>`;
+            container.innerHTML = `<div style="text-align: center; color: #ff6b6b; padding: 2rem;">加载失败，请检查网络。</div>`;
         }
     }
 
