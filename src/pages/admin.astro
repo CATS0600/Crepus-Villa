@@ -41,8 +41,8 @@ import Header from '../components/Header.astro';
                     </div>
 
                     <div id="examPanel" class="tab-content" style="display: none;">
-                        <div class="filter-row" style="margin-bottom: 25px;">
-                            <select id="groupFilter" onchange="loadApplications()" class="admin-select">
+                        <div class="filter-row" style="margin-bottom: 25px; display: flex; justify-content: flex-end;">
+                            <select id="groupFilter" onchange="loadApplications()" class="admin-select" style="padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); font-weight: 700;">
                                 <option value="all">ALL GROUPS</option>
                                 <option value="dpmbg">DPMBG ONLY</option>
                             </select>
@@ -64,7 +64,7 @@ import Header from '../components/Header.astro';
 
     .horizontal-tabs { display: flex !important; flex-direction: row !important; gap: 20px; margin-bottom: 50px; justify-content: center; }
 
-    /* 按钮化条目样式 */
+    /* 条目按钮 */
     .item-entry-btn {
         width: 100%; display: flex; align-items: center; justify-content: space-between;
         padding: 22px 30px; background: #fff;
@@ -72,7 +72,7 @@ import Header from '../components/Header.astro';
         box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         cursor: pointer; text-align: left;
     }
-    .item-entry-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); border-color: var(--accent-color); }
+    .item-entry-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
     
     .entry-title { font-size: 1.1rem; font-weight: 700; color: #1d1d1f; }
     .status-pill { padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
@@ -80,19 +80,31 @@ import Header from '../components/Header.astro';
     .status-complete { background: #f0fdf4; color: #15803d; }
     .status-archived { background: #f1f5f9; color: #475569; }
 
-    /* 分割线 */
-    .msg-divider { height: 1px; background: rgba(0,0,0,0.05); margin: 20px 40px; }
+    /* 间隔符 --- */
+    .admin-divider {
+        text-align: center;
+        margin: 30px 0;
+        color: rgba(0,0,0,0.1);
+        font-weight: 300;
+        letter-spacing: 10px;
+        user-select: none;
+    }
 
-    /* 信息块样式 */
-    .detail-fold { display: none; padding: 25px; margin: -10px 10px 30px 10px; background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); border-radius: 0 0 24px 24px; border: 1px solid rgba(0,0,0,0.05); }
+    /* 信息块 - 严格默认隐藏 */
+    .detail-fold { 
+        display: none; 
+        padding: 25px; margin: -10px 10px 30px 10px; 
+        background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); 
+        border-radius: 0 0 24px 24px; border: 1px solid rgba(0,0,0,0.05); 
+    }
+    
     .info-block { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.03); }
     .info-label { font-size: 10px; font-weight: 800; color: #86868b; margin-bottom: 8px; display: block; text-transform: uppercase; }
     .admin-textarea { width: 100%; background: transparent; border: none; font-family: inherit; font-size: 1rem; font-weight: 600; outline: none; resize: vertical; color: #1d1d1f; }
 
     .ops-row { display: flex; gap: 10px; margin-top: 20px; }
     .btn-sync { flex: 2; padding: 18px; border-radius: 14px; background: #1d1d1f; color: #fff; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
-    .btn-delete { flex: 1; padding: 18px; border-radius: 14px; background: rgba(255, 69, 58, 0.1); color: #ff453a; border: 1px solid #ff453a; font-weight: 700; cursor: pointer; transition: 0.3s; }
-    .btn-delete:hover { background: #ff453a; color: #fff; }
+    .btn-delete { flex: 1; padding: 18px; border-radius: 14px; background: rgba(255, 69, 58, 0.1); color: #ff453a; border: 1px solid #ff453a; font-weight: 700; cursor: pointer; }
 
     .active-tab { background: #1d1d1f !important; color: #fff !important; }
 
@@ -100,7 +112,7 @@ import Header from '../components/Header.astro';
         .item-entry-btn, .info-block { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
         .entry-title, .admin-textarea { color: #f5f5f7; }
         .detail-fold { background: rgba(28,28,30,0.8); }
-        .msg-divider { background: rgba(255,255,255,0.05); }
+        .admin-divider { color: rgba(255,255,255,0.1); }
         .active-tab { background: #f5f5f7 !important; color: #1d1d1f !important; }
         .btn-sync { background: #f5f5f7; color: #1d1d1f; }
     }
@@ -111,7 +123,7 @@ import Header from '../components/Header.astro';
     const TARGET_HASH = "98757df4549e87f22ede90d906cf20ac8a65a6cacf3e95f02533c23772ea351b"; 
     let adminToken = null;
 
-    // --- 登录验证 ---
+    // --- 认证 ---
     window.authenticate = async function() {
         const input = document.getElementById('adminPassword').value;
         const msgBuffer = new TextEncoder().encode(input.trim().toLowerCase());
@@ -125,7 +137,7 @@ import Header from '../components/Header.astro';
             document.getElementById('dashboardPanel').style.display = 'block';
             loadMessages();
         } else {
-            alert("ACCESS DENIED");
+            alert("PWD ERROR");
         }
     }
 
@@ -137,10 +149,10 @@ import Header from '../components/Header.astro';
         document.getElementById('examPanel').style.display = tabName === 'exam' ? 'block' : 'none';
         
         if (tabName === 'send') loadMessages();
-        else window.loadApplications(); // 显式调用挂载在 window 上的方法
+        else window.loadApplications(); 
     }
 
-    // --- 留言列表加载 ---
+    // --- 加载留言 ---
     window.loadMessages = async function() {
         const container = document.getElementById('messagesList');
         try {
@@ -152,65 +164,83 @@ import Header from '../components/Header.astro';
             container.innerHTML = sorted.map((msg, index) => `
                 <div class="msg-unit">
                     <button class="item-entry-btn" onclick="toggleFold(${msg.id})">
-                        <div class="entry-info">
-                            <span class="entry-title">${escapeHtml(msg.title || 'UNTITLED')}</span>
-                        </div>
+                        <span class="entry-title">${escapeHtml(msg.title || 'UNTITLED')}</span>
                         <span class="status-pill status-${(msg.type || 'PENDING').toLowerCase()}">${msg.type || 'PENDING'}</span>
                     </button>
                     
                     <div id="fold-${msg.id}" class="detail-fold">
                         <div class="info-block"><span class="info-label">Title</span><input id="in-title-${msg.id}" class="admin-textarea" value="${escapeHtml(msg.title || '')}" /></div>
                         <div class="info-block"><span class="info-label">Content</span><textarea id="in-content-${msg.id}" class="admin-textarea">${escapeHtml(msg.content || '')}</textarea></div>
-                        <div class="info-block"><span class="info-label">Reply</span><textarea id="in-reply-${msg.id}" class="admin-textarea" style="color:#0071e3" placeholder="Waiting for reply...">${escapeHtml(msg.reply || '')}</textarea></div>
+                        <div class="info-block"><span class="info-label">Reply</span><textarea id="in-reply-${msg.id}" class="admin-textarea" style="color:#0071e3" placeholder="REPLY HERE">${escapeHtml(msg.reply || '')}</textarea></div>
                         <div class="info-block">
                             <span class="info-label">Status</span>
-                            <select id="in-type-${msg.id}" class="admin-textarea" style="background:transparent; cursor:pointer;">
+                            <select id="in-type-${msg.id}" class="admin-textarea" style="background:transparent;">
                                 <option value="PENDING" ${msg.type === 'PENDING' ? 'selected' : ''}>PENDING</option>
                                 <option value="COMPLETE" ${msg.type === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
                                 <option value="ARCHIVED" ${msg.type === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
                             </select>
                         </div>
                         <div class="ops-row">
-                            <button class="btn-sync" onclick="updateMessage(${msg.id})">UPDATE UNIT</button>
+                            <button class="btn-sync" onclick="updateMessage(${msg.id})">UPDATE</button>
                             <button class="btn-delete" onclick="deleteData('send', ${msg.id})">DELETE</button>
                         </div>
                     </div>
-                    ${index !== sorted.length - 1 ? '<div class="msg-divider"></div>' : ''}
+                    ${index !== sorted.length - 1 ? '<div class="admin-divider">---</div>' : ''}
                 </div>
             `).join('');
-        } catch (e) { container.innerHTML = '<p>FETCH ERROR</p>'; }
+        } catch (e) { container.innerHTML = '<p>LOAD FAILED</p>'; }
     }
 
-    // --- 申请加载 (修复 ReferenceError) ---
+    // --- 申请加载 (修复 400/500) ---
     window.loadApplications = async function() {
         const group = document.getElementById('groupFilter').value;
-        const url = group === 'all' ? '/api/exam/admin' : `/api/exam/admin?group=${group}`;
+        // 如果后端 400 是因为缺少 group 参数，我们强制带上 group=all
+        const url = `/api/exam/admin?group=${group}`;
         const container = document.getElementById('applicationsList');
+        
+        container.innerHTML = '<p style="text-align:center; opacity:0.5;">LOADING...</p>';
+
         try {
             const res = await fetch(url, { headers: { 'X-Admin-Token': adminToken } });
-            if (!res.ok) throw new Error();
+            
+            if (res.status === 400) {
+                container.innerHTML = '<div class="info-block" style="color:#ff453a; text-align:center;">API ERROR 400: 后端拒绝了请求，请尝试切换群组过滤器。</div>';
+                return;
+            }
+            if (res.status === 500) {
+                container.innerHTML = '<div class="info-block" style="color:#ff453a; text-align:center;">API ERROR 500: 后端处理此群组时崩溃，请联系管理员检查数据库。</div>';
+                return;
+            }
+
             const data = await res.json();
-            container.innerHTML = (data.applications || []).map(app => `
-                <div class="info-block" style="border: 1px solid rgba(0,0,0,0.05);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                        <span style="font-weight:800; font-size:1.2rem;">${escapeHtml(app.username)}</span>
+            container.innerHTML = (data.applications || []).map((app, index) => `
+                <div class="app-unit">
+                    <button class="item-entry-btn" onclick="toggleFold('app-${app.id}')">
+                        <span class="entry-title">${escapeHtml(app.username)}</span>
                         <span class="status-pill status-pending">${app.status}</span>
+                    </button>
+                    <div id="fold-app-${app.id}" class="detail-fold">
+                        <div class="info-block" style="white-space: pre-wrap; font-size: 0.9rem;">${escapeHtml(app.answers)}</div>
+                        <div class="ops-row">
+                            <button class="btn-sync" style="background:#22c55e" onclick="updateExamStatus(${app.id}, 'approved')">APPROVE</button>
+                            <button class="btn-delete" style="background:rgba(255,69,58,0.1)" onclick="updateExamStatus(${app.id}, 'rejected')">REJECT</button>
+                        </div>
                     </div>
-                    <div class="info-block" style="background:rgba(0,0,0,0.02); font-size:13px; white-space: pre-wrap;">${escapeHtml(app.answers)}</div>
-                    <div class="ops-row">
-                        <button class="btn-sync" style="background:#22c55e" onclick="updateStatus(${app.id}, 'approved')">APPROVE</button>
-                        <button class="btn-delete" style="background:rgba(255,69,58,0.1)" onclick="updateStatus(${app.id}, 'rejected')">REJECT</button>
-                    </div>
+                    ${index !== data.applications.length - 1 ? '<div class="admin-divider">---</div>' : ''}
                 </div>
-            `).join('') || '<p style="text-align:center; padding:50px;">NO APPLICATIONS FOUND</p>';
-        } catch (e) { container.innerHTML = '<p>ERROR: UNABLE TO LOAD EXAMS</p>'; }
+            `).join('') || '<p style="text-align:center; padding:50px;">NO DATA FOUND</p>';
+        } catch (e) { 
+            container.innerHTML = '<div class="info-block" style="color:#ff453a; text-align:center;">NETWORK ERROR: 无法连接至服务器</div>';
+        }
     }
 
-    // --- 其他功能函数 ---
+    // --- 折叠逻辑 ---
     window.toggleFold = function(id) {
         const fold = document.getElementById(`fold-${id}`);
         const isVisible = fold.style.display === 'block';
+        // 关闭其他
         document.querySelectorAll('.detail-fold').forEach(f => f.style.display = 'none');
+        // 切换当前
         fold.style.display = isVisible ? 'none' : 'block';
     }
 
@@ -230,10 +260,18 @@ import Header from '../components/Header.astro';
         loadMessages();
     }
 
+    window.updateExamStatus = async function(id, status) {
+        await fetch('/api/exam/admin', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+            body: JSON.stringify({ id, status })
+        });
+        loadApplications();
+    }
+
     window.deleteData = async function(type, id) {
-        if (!confirm("PERMANENTLY DELETE THIS UNIT?")) return;
-        const endpoint = type === 'send' ? '/api/admin' : '/api/exam/admin';
-        await fetch(endpoint, {
+        if (!confirm("DELETE PERMANENTLY?")) return;
+        await fetch(type === 'send' ? '/api/admin' : '/api/exam/admin', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
             body: JSON.stringify({ id })
@@ -247,7 +285,6 @@ import Header from '../components/Header.astro';
         return div.innerHTML;
     }
 
-    // 页面初始化
     document.addEventListener('DOMContentLoaded', () => {
         if (sessionStorage.getItem('adminToken') === TARGET_HASH) {
             adminToken = TARGET_HASH;
