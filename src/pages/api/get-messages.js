@@ -9,22 +9,20 @@ export const GET = async ({ request, locals }) => {
     let messages;
 
     if (token) {
-      // 1. 增加了 status 字段
-      // 2. 如果你希望带 token 的查询也不显示 PENDING，可以加上 AND UPPER(status) != 'PENDING'
+      // 这里的字段名完全匹配你 PRAGMA 的结果
       const stmt = env.DB.prepare(
-        'SELECT id, title, type, content, reply, is_public, status, created_at FROM messages WHERE UPPER(token) = UPPER(?) ORDER BY created_at DESC'
+        'SELECT id, content, reply, is_public, token, created_at, reply_method, email, title, type FROM messages WHERE UPPER(token) = UPPER(?) ORDER BY created_at DESC'
       );
       const result = await stmt.bind(token).all();
       messages = result.results || [];
     } else {
-      // 1. 增加了 status 字段
-      // 2. 增加过滤条件：status 必须不是 PENDING
+      // 过滤掉 type 为 PENDING 的消息
       const stmt = env.DB.prepare(
-        `SELECT id, title, type, content, reply, is_public, status, created_at 
+        `SELECT id, content, reply, is_public, token, created_at, reply_method, email, title, type 
          FROM messages 
          WHERE is_public = 1 
          AND reply IS NOT NULL 
-         AND UPPER(status) != 'PENDING' 
+         AND UPPER(type) != 'PENDING' 
          ORDER BY created_at DESC`
       );
       const result = await stmt.all();
@@ -41,6 +39,9 @@ export const GET = async ({ request, locals }) => {
     });
   } catch (error) {
     console.error('Get messages error:', error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ success: false, error: error.message }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' } 
+    });
   }
 };

@@ -176,8 +176,8 @@ import Header from '../components/Header.astro';
             if (!response.ok) throw new Error('Fetch failed');
             const data = await response.json();
 
-            // 1. 过滤：只保留状态不是 PENDING 的消息
-            const visibleMessages = (data.messages || []).filter(msg => msg.status !== 'PENDING');
+            // // 1. 过滤：只保留状态不是 PENDING 的消息
+            // const visibleMessages = (data.messages || []).filter(msg => msg.status !== 'PENDING');
 
             if (visibleMessages.length === 0) {
                 container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #86868b; padding: 3rem;">No public messages available.</p>`;
