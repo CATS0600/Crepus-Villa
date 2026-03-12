@@ -28,53 +28,50 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <style>
-    /* 页面基础 */
     .page-title {
         text-align: center; 
         margin-bottom: 3rem;
         font-weight: 700;
-        letter-spacing: -0.02em;
         color: #1d1d1f;
         font-size: 2.5rem;
     }
 
-    /* 借用 About 页面的 Grid 布局 */
     .interests-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 30px;
     }
 
-    /* --- 核心：完全对齐 About My Card 样式 --- */
+    /* --- 显著边框版本 --- */
     .interest-item {
         padding: 24px;
-        /* 使用 About 页面的背景色与透明度 */
-        background: rgba(251, 251, 253, 0.8);
-        border-radius: 8px;
-        /* 强化边框可见度，确保在浅色背景下也有轮廓 */
-        border: 1px solid rgba(0, 0, 0, 0.1); 
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        /* 增加边框可见度：使用更明显的灰色，并稍微加粗 */
+        border: 2px solid rgba(128, 128, 128, 0.2); 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         flex-direction: column;
         opacity: 0;
         animation: fadeInUp 0.6s ease forwards;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
     }
 
     .interest-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        border-color: rgba(0, 0, 0, 0.15); /* 悬浮时边框略微加深 */
+        transform: translateY(-5px);
+        /* 悬浮时边框变为深色 */
+        border-color: rgba(29, 29, 31, 0.3);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
-    /* 卡片内部排版 */
     .card-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 16px;
         padding-bottom: 12px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     .interest-title {
@@ -82,81 +79,79 @@ import Header from '../components/Header.astro';
         font-weight: 600;
         color: #1d1d1f;
         margin: 0;
-        line-height: 1.3;
+    }
+
+    /* Type 标签样式 */
+    .type-badge {
+        font-size: 0.7rem;
+        background: #1d1d1f;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        display: inline-block;
+        width: fit-content;
     }
 
     .interest-date {
         font-size: 0.75rem;
         color: #86868b;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-family: monospace;
     }
 
     .interest-desc {
-        font-size: 0.95rem;
+        font-size: 1rem;
         color: #424245; 
         line-height: 1.6;
-        margin-bottom: 20px;
+        margin: 12px 0 20px 0;
         white-space: pre-wrap;
     }
 
-    /* 回复区样式 */
     .reply-box {
         margin-top: auto;
         padding: 12px 16px;
-        background: rgba(0, 0, 0, 0.03);
-        border-left: 3px solid #1d1d1f;
+        background: rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #1d1d1f;
         border-radius: 4px;
     }
 
-    .reply-label {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #86868b;
-        font-weight: 700;
-        margin-bottom: 4px;
-        display: block;
-    }
-
     .reply-text {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: #1d1d1f;
         margin: 0;
     }
 
-    /* 动画与响应式 */
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
     .nav-links { display: flex; gap: 1rem; justify-content: center; margin-top: 4rem; }
     .nav-link { 
         padding: 10px 20px; 
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: #fff;
+        border: 2px solid rgba(128, 128, 128, 0.2);
         border-radius: 8px;
         text-decoration: none;
-        color: #424245;
+        color: #1d1d1f;
         font-size: 0.85rem;
+        font-weight: 500;
         transition: all 0.2s;
     }
-    .nav-link:hover { background: #fff; transform: translateY(-1px); }
+    .nav-link:hover { border-color: #1d1d1f; transform: translateY(-1px); }
 
-    /* 深色模式修正 */
+    /* 深色模式强化边框 */
     @media (prefers-color-scheme: dark) {
         .page-title { color: #f5f5f7; }
         .interest-item {
             background: rgba(44, 44, 46, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2); /* 深色模式下边框颜色稍亮 */
         }
-        .interest-item:hover { border-color: rgba(255, 255, 255, 0.25); }
+        .interest-item:hover { border-color: rgba(255, 255, 255, 0.5); }
         .interest-title { color: #f5f5f7; }
         .interest-desc { color: #e0e0e2; }
-        .reply-box { background: rgba(255, 255, 255, 0.05); border-left-color: #f5f5f7; }
+        .type-badge { background: #f5f5f7; color: #000; }
+        .reply-box { background: rgba(255, 255, 255, 0.08); border-left-color: #f5f5f7; }
         .reply-text { color: #f5f5f7; }
-        .nav-link { 
-            background: rgba(44, 44, 46, 0.5); 
-            border-color: rgba(255, 255, 255, 0.1); 
-            color: #f5f5f7; 
-        }
+        .nav-link { background: #1d1d1f; color: #f5f5f7; border-color: rgba(255, 255, 255, 0.1); }
     }
 </style>
 
@@ -181,21 +176,24 @@ import Header from '../components/Header.astro';
             if (!response.ok) throw new Error('Fetch failed');
             const data = await response.json();
 
-            // 核心修改：通过 filter 过滤掉状态为 PENDING 的留言
-            const publicMessages = (data.messages || []).filter(msg => msg.status !== 'PENDING');
+            // 1. 只有 status 为 PENDING 的被隐藏
+            const visibleMessages = (data.messages || []).filter(msg => msg.status !== 'PENDING');
 
-            if (publicMessages.length === 0) {
-                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #86868b; padding: 3rem;">No messages yet.</p>`;
+            if (visibleMessages.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #86868b; padding: 3rem;">No public messages available.</p>`;
                 return;
             }
 
-            container.innerHTML = publicMessages.map((msg, index) => {
+            container.innerHTML = visibleMessages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
                 
                 return `
                     <div class="interest-item" style="animation-delay: ${index * 0.05}s">
                         <div class="card-header">
-                            <h3 class="interest-title">${escapeHtml(msg.title || 'Note')}</h3>
+                            <div>
+                                <span class="type-badge">${escapeHtml(msg.type || 'PUBLIC')}</span>
+                                <h3 class="interest-title">${escapeHtml(msg.title || 'Note')}</h3>
+                            </div>
                             <span class="interest-date">${date}</span>
                         </div>
 
@@ -203,8 +201,7 @@ import Header from '../components/Header.astro';
 
                         ${msg.reply ? `
                         <div class="reply-box">
-                            <span class="reply-label">Reply</span>
-                            <p class="reply-text">${escapeHtml(msg.reply)}</p>
+                            <p class="reply-text"><strong>Reply:</strong> ${escapeHtml(msg.reply)}</p>
                         </div>
                         ` : ''}
                     </div>
