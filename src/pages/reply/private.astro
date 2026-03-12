@@ -3,220 +3,156 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 ---
 
-<Layout title="私密留言 - Crepus Villa">
+<Layout title="查看私密留言 - Crepus Villa">
     <Header />
     
     <main class="main-content">
         <section class="content-section reveal">
-            <div class="container safe-zone" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
-                <h1 style="text-align: center; margin-bottom: 2.5rem; font-weight: 300; letter-spacing: 1px;">私密留言检索 Private Messages</h1>
+            <div class="container safe-zone" style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+                <h1 class="page-title">私密查询 Private Query</h1>
                 
-                <div id="tokenInputForm" class="form-container">
-                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem;">输入 8 位 Token 检索您的留言及回复状态</p>
-                    <form id="tokenForm">
-                        <div class="form-group">
-                            <input type="text" id="token" name="token" required placeholder="ENTER TOKEN" maxlength="8" autocomplete="off" />
-                        </div>
-                        <button type="submit" class="submit-btn">EXECUTE SEARCH</button>
-                    </form>
-                    <div id="errorMessage" class="error-message" style="display: none;"><p id="errorText"></p></div>
+                <div class="search-container" style="text-align: center; margin-bottom: 3rem;">
+                    <input 
+                        type="text" 
+                        id="tokenInput" 
+                        placeholder="ENTER YOUR TOKEN" 
+                        class="token-input"
+                    />
+                    <button id="searchBtn" class="search-btn">查询 Query</button>
                 </div>
 
-                <div id="messageDisplay" style="display: none;">
-                    <div id="messageList" class="message-list"></div>
-                    <div class="nav-links fade-in">
-                        <button type="button" onclick="location.reload()" class="nav-link">查询其他 Token</button>
-                        <a href="/send" class="nav-link">写新留言</a>
-                        <a href="/reply" class="nav-link">返回广场</a>
-                    </div>
+                <div id="messageList" class="interests-grid">
+                    <p style="grid-column: 1/-1; text-align: center; color: #86868b;">请输入 Token 以查看您的留言内容。</p>
                 </div>
+
+                <nav class="nav-links fade-in">
+                    <a href="/reply" class="nav-link">公开留言板 Public</a>
+                    <a href="/" class="nav-link">回到首页 Home</a>
+                </nav>
             </div>
         </section>
     </main>
 </Layout>
 
 <style>
-    /* 基础容器 */
-    .form-container {
-        max-width: 500px; margin: 0 auto;
-        background: var(--card-bg, #fff); border: 1px solid var(--card-border, rgba(0,0,0,0.1));
-        border-radius: 12px; padding: 2.5rem;
-    }
-    .form-group { margin-bottom: 1.5rem; }
+    /* 复用 reply 的核心样式 */
+    .page-title { text-align: center; margin-bottom: 2rem; font-weight: 700; color: #1d1d1f; font-size: 2.5rem; }
     
-    input[type="text"] {
-        width: 100%; padding: 1rem; border: 1px solid var(--card-border, rgba(0,0,0,0.1));
-        border-radius: 8px; font-family: monospace; font-size: 1.2rem; text-align: center;
-        background: var(--bg-color, #f5f5f7); color: var(--text-main);
-        text-transform: uppercase; letter-spacing: 4px; transition: 0.2s; outline: none;
+    /* 修正 Token 输入框字体与样式 */
+    .token-input {
+        padding: 12px 20px;
+        border-radius: 8px;
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
+        font-size: 1rem;
+        width: 300px;
+        max-width: 100%;
+        /* 强制使用与页面相同的 Apple 字体家族 */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        outline: none;
+        transition: border-color 0.2s;
     }
-    input[type="text"]:focus { border-color: var(--text-main); }
-    .submit-btn {
-        width: 100%; padding: 1rem; background: var(--text-main); color: var(--bg-color, #fff);
-        border: none; border-radius: 8px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s;
-    }
-    .submit-btn:hover { opacity: 0.9; }
-
-    .error-message { margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px; color: #ff453a; text-align: center; font-size: 0.9rem; }
-
-    /* 留言列表样式 (与公开版对齐) */
-    .message-list { display: flex; flex-direction: column; gap: 1rem; }
-    .msg-item { width: 100%; opacity: 0; animation: slideUp 0.5s ease forwards; }
-    .msg-btn {
-        width: 100%; display: flex; justify-content: space-between; align-items: center;
-        background: var(--card-bg, #fff); border: 1px solid var(--card-border, rgba(0,0,0,0.1));
-        border-radius: 12px; padding: 1.2rem 1.5rem; cursor: pointer; text-align: left;
-        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 2; position: relative;
-    }
-    .msg-btn.active { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; transform: none; box-shadow: none; }
+    .token-input:focus { border-color: #1d1d1f; }
     
-    .btn-left { flex: 1; padding-right: 1rem; }
-    .btn-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); word-break: break-all; }
-    .btn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; min-width: 120px; }
-    .status-badge { font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase; background: var(--text-main); color: var(--bg-color, #fff); }
-    .msg-time { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
-
-    .msg-detail-wrapper {
-        display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-        background: rgba(0,0,0,0.02); border: 1px solid transparent; border-top: none; border-radius: 0 0 12px 12px; margin-top: -1px;
+    .search-btn {
+        padding: 12px 24px;
+        background: #1d1d1f;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: opacity 0.2s;
     }
-    .msg-item.open .msg-detail-wrapper { grid-template-rows: 1fr; border-color: var(--card-border, rgba(0,0,0,0.1)); }
-    .msg-detail-inner { overflow: hidden; }
-    .detail-content { padding: 1.5rem; }
-    .content-block { margin-bottom: 1.5rem; }
-    .block-label { display: inline-block; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px; }
-    .block-text { font-size: 1rem; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
-    .reply-block { padding-left: 1rem; border-left: 3px solid var(--text-main); }
-    .pending-block { padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 8px; color: var(--text-muted); text-align: center; font-size: 0.9rem; border: 1px dashed rgba(0,0,0,0.1); }
-    .detail-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05); font-family: monospace; }
+    .search-btn:hover { opacity: 0.8; }
 
-    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    .nav-links { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
-    .nav-link { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
-    .nav-link:hover { background: var(--text-main); color: var(--bg-color); }
-    
+    .interests-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+
+    /* 居中卡片样式 */
+    .interest-item {
+        padding: 24px; background: rgba(255, 255, 255, 0.7); border-radius: 12px;
+        border: 1.5px solid rgba(0, 0, 0, 0.1); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        display: flex; flex-direction: column; align-items: center; text-align: center;
+        animation: fadeInUp 0.6s ease forwards; backdrop-filter: blur(12px);
+    }
+
+    .card-header { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+    .interest-title { font-size: 1.15rem; font-weight: 600; color: #1d1d1f; }
+    .type-badge { font-size: 0.7rem; background: #1d1d1f; color: #fff; padding: 2px 8px; border-radius: 4px; }
+    .interest-date { font-size: 0.75rem; color: #86868b; font-family: monospace; }
+    .interest-desc { font-size: 1rem; color: #424245; line-height: 1.6; margin: 12px 0 20px 0; white-space: pre-wrap; width: 100%; }
+    .reply-box { margin-top: auto; padding: 12px 16px; background: rgba(0, 0, 0, 0.03); border-top: 3px solid #1d1d1f; border-radius: 4px; width: 100%; box-sizing: border-box; }
+    .reply-text { font-size: 0.95rem; color: #1d1d1f; margin: 0; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .nav-links { display: flex; gap: 1rem; justify-content: center; margin-top: 4rem; }
+    .nav-link { padding: 10px 20px; background: #fff; border: 1.5px solid rgba(0, 0, 0, 0.1); border-radius: 8px; text-decoration: none; color: #1d1d1f; font-size: 0.85rem; }
+
     @media (prefers-color-scheme: dark) {
-        .form-container, .msg-btn, .nav-link { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
-        input[type="text"] { background: #000; border-color: rgba(255,255,255,0.1); color: #fff; }
-        .msg-detail-wrapper, .pending-block { background: rgba(255,255,255,0.02); }
-        .status-badge { background: #f5f5f7; color: #000; }
-        .detail-meta { border-top-color: rgba(255,255,255,0.05); }
+        .page-title { color: #f5f5f7; }
+        .token-input { background: #1d1d1f; border-color: rgba(255, 255, 255, 0.1); color: #f5f5f7; }
+        .search-btn { background: #f5f5f7; color: #000; }
+        .interest-item { background: rgba(44, 44, 46, 0.8); border-color: rgba(255, 255, 255, 0.15); }
+        .interest-title, .reply-text { color: #f5f5f7; }
+        .interest-desc { color: #e0e0e2; }
+        .type-badge { background: #f5f5f7; color: #000; }
+        .reply-box { border-top-color: #f5f5f7; }
+        .nav-link { background: #1d1d1f; color: #f5f5f7; border-color: rgba(255, 255, 255, 0.1); }
     }
 </style>
 
 <script>
     // @ts-nocheck
-    const tokenForm = document.getElementById('tokenForm');
-    const tokenInput = document.getElementById('token');
-    const errorMsg = document.getElementById('errorMessage');
-    const tokenInputForm = document.getElementById('tokenInputForm');
-    const messageDisplay = document.getElementById('messageDisplay');
-    const messageList = document.getElementById('messageList');
-
-    const formatter = new Intl.DateTimeFormat('zh-CN', {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', hour12: false
-    });
-
+    const formatter = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     function escapeHtml(text) {
         if (!text) return '';
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
         return text.replace(/[&<>"']/g, m => map[m]);
     }
 
-    window.toggleMsg = function(id) {
-        const item = document.getElementById(`msg-item-${id}`);
-        const btn = item.querySelector('.msg-btn');
-        
-        // 排他性展开
-        document.querySelectorAll('.msg-item.open').forEach(el => {
-            if (el.id !== `msg-item-${id}`) {
-                el.classList.remove('open');
-                el.querySelector('.msg-btn').classList.remove('active');
-            }
-        });
+    async function searchPrivate() {
+        const token = document.getElementById('tokenInput').value.trim();
+        const container = document.getElementById('messageList');
+        if (!token) return;
 
-        item.classList.toggle('open');
-        btn.classList.toggle('active');
-    };
-
-    tokenForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const token = tokenInput.value.trim().toUpperCase();
-
-        if (token.length !== 8) {
-            showError('Token 长度无效：必须为 8 位');
-            return;
-        }
+        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Searching...</p>';
 
         try {
             const response = await fetch(`/api/get-messages?token=${encodeURIComponent(token)}`);
-            if (!response.ok) throw new Error('Query failed');
-            
             const data = await response.json();
+            const messages = data.messages || [];
 
-            if (!data.messages || data.messages.length === 0) {
-                showError('未找到匹配记录，请确认 Token 是否正确。');
+            if (messages.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #86868b;">未找到相关留言。请检查 Token 是否正确。</p>';
                 return;
             }
 
-            messageList.innerHTML = data.messages.map((msg, index) => {
+            container.innerHTML = messages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
-                const type = msg.type || 'PRIVATE';
-                
-                let replyAreaHtml = '';
-                if (type === 'PENDING') {
-                    replyAreaHtml = `<div class="pending-block">管理员尚未查阅或回复 (Awaiting Reply)</div>`;
-                } else if (msg.reply) {
-                    replyAreaHtml = `
-                        <div class="content-block reply-block">
-                            <span class="block-label">Admin Reply</span>
-                            <div class="block-text">${escapeHtml(msg.reply)}</div>
-                        </div>`;
-                } else {
-                    replyAreaHtml = `<div class="pending-block">该留言无需回复或记录已完结</div>`;
-                }
-
                 return `
-                    <div class="msg-item" id="msg-item-${msg.id}" style="animation-delay: ${index * 0.05}s">
-                        <button class="msg-btn" onclick="toggleMsg('${msg.id}')">
-                            <div class="btn-left">
-                                <div class="btn-title">${escapeHtml(msg.title || 'Untitled')}</div>
-                            </div>
-                            <div class="btn-right">
-                                <span class="status-badge">${type}</span>
-                                <span class="msg-time">${date}</span>
-                            </div>
-                        </button>
-                        <div class="msg-detail-wrapper">
-                            <div class="msg-detail-inner">
-                                <div class="detail-content">
-                                    <div class="content-block">
-                                        <span class="block-label">Sent Content</span>
-                                        <div class="block-text">${escapeHtml(msg.content)}</div>
-                                    </div>
-                                    ${replyAreaHtml}
-                                    <div class="detail-meta">
-                                        <span>MSG_ID: ${msg.id}</span>
-                                        <span>${date}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="interest-item" style="animation-delay: ${index * 0.05}s">
+                    <div class="card-header">
+                        <span class="type-badge">${escapeHtml(msg.type || 'PRIVATE')}</span>
+                        <h3 class="interest-title">${escapeHtml(msg.title || 'Untitled')}</h3>
+                        <span class="interest-date">${date}</span>
                     </div>
-                `;
+                    <p class="interest-desc">${escapeHtml(msg.content)}</p>
+                    ${msg.reply ? `
+                    <div class="reply-box">
+                        <p class="reply-text"><strong>Reply:<br/></strong> ${escapeHtml(msg.reply)}</p>
+                    </div>` : `
+                    <div class="reply-box" style="border-top-color: #86868b; opacity: 0.6;">
+                        <p class="reply-text">Waiting for reply...</p>
+                    </div>`}
+                </div>`;
             }).join('');
-
-            tokenInputForm.style.display = 'none';
-            messageDisplay.style.display = 'block';
-
         } catch (error) {
-            showError('服务暂时不可用，请稍后再试。');
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #ff6b6b;">查询出错，请稍后再试。</p>';
         }
-    });
-
-    function showError(message) {
-        document.getElementById('errorText').textContent = message;
-        errorMsg.style.display = 'block';
     }
+
+    document.getElementById('searchBtn').addEventListener('click', searchPrivate);
+    document.getElementById('tokenInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchPrivate();
+    });
 </script>

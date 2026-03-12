@@ -42,17 +42,17 @@ import Header from '../components/Header.astro';
         gap: 30px;
     }
 
-    /* --- 信息卡片样式：增加显著边框 --- */
     .interest-item {
         padding: 24px;
         background: rgba(255, 255, 255, 0.7);
         border-radius: 12px;
-        /* 使用 1.5px 的半透明灰色边框 */
         border: 1.5px solid rgba(0, 0, 0, 0.1); 
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         flex-direction: column;
+        align-items: center; 
+        text-align: center;
         opacity: 0;
         animation: fadeInUp 0.6s ease forwards;
         backdrop-filter: blur(12px);
@@ -60,15 +60,16 @@ import Header from '../components/Header.astro';
 
     .interest-item:hover {
         transform: translateY(-5px);
-        /* 悬浮时边框变深 */
         border-color: rgba(0, 0, 0, 0.3);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
     .card-header {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
         margin-bottom: 16px;
         padding-bottom: 12px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -89,8 +90,6 @@ import Header from '../components/Header.astro';
         border-radius: 4px;
         font-weight: 600;
         margin-bottom: 4px;
-        display: inline-block;
-        width: fit-content;
     }
 
     .interest-date {
@@ -105,14 +104,17 @@ import Header from '../components/Header.astro';
         line-height: 1.6;
         margin: 12px 0 20px 0;
         white-space: pre-wrap;
+        width: 100%;
     }
 
     .reply-box {
         margin-top: auto;
         padding: 12px 16px;
         background: rgba(0, 0, 0, 0.03);
-        border-left: 4px solid #1d1d1f;
+        border-top: 3px solid #1d1d1f;
         border-radius: 4px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .reply-text {
@@ -137,18 +139,14 @@ import Header from '../components/Header.astro';
     }
     .nav-link:hover { border-color: #1d1d1f; transform: translateY(-1px); }
 
-    /* 深色模式适配 */
     @media (prefers-color-scheme: dark) {
         .page-title { color: #f5f5f7; }
-        .interest-item {
-            background: rgba(44, 44, 46, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+        .interest-item { background: rgba(44, 44, 46, 0.8); border-color: rgba(255, 255, 255, 0.15); }
         .interest-item:hover { border-color: rgba(255, 255, 255, 0.4); }
         .interest-title { color: #f5f5f7; }
         .interest-desc { color: #e0e0e2; }
         .type-badge { background: #f5f5f7; color: #000; }
-        .reply-box { background: rgba(255, 255, 255, 0.05); border-left-color: #f5f5f7; }
+        .reply-box { background: rgba(255, 255, 255, 0.05); border-top-color: #f5f5f7; }
         .reply-text { color: #f5f5f7; }
         .nav-link { background: #1d1d1f; color: #f5f5f7; border-color: rgba(255, 255, 255, 0.1); }
     }
@@ -156,10 +154,7 @@ import Header from '../components/Header.astro';
 
 <script>
     // @ts-nocheck
-    const formatter = new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric'
-    });
-
+    const formatter = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     function escapeHtml(text) {
         if (!text) return '';
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
@@ -169,13 +164,10 @@ import Header from '../components/Header.astro';
     async function loadMessages() {
         const container = document.getElementById('messageList');
         if (!container) return;
-        
         try {
             const response = await fetch('/api/get-messages');
             if (!response.ok) throw new Error('Fetch failed');
             const data = await response.json();
-
-            // 因为后端已经过滤了 PENDING，这里直接使用即可
             const visibleMessages = data.messages || [];
 
             if (visibleMessages.length === 0) {
@@ -185,32 +177,23 @@ import Header from '../components/Header.astro';
 
             container.innerHTML = visibleMessages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
-                
                 return `
-                    <div class="interest-item" style="animation-delay: ${index * 0.05}s">
-                        <div class="card-header">
-                            <div>
-                                <span class="type-badge">${escapeHtml(msg.type || 'PUBLIC')}</span>
-                                <h3 class="interest-title">${escapeHtml(msg.title || 'Untitled')}</h3>
-                            </div>
-                            <span class="interest-date">${date}</span>
-                        </div>
-
-                        <p class="interest-desc">${escapeHtml(msg.content)}</p>
-
-                        ${msg.reply ? `
-                        <div class="reply-box">
-                            <p class="reply-text"><strong>Reply:</strong> ${escapeHtml(msg.reply)}</p>
-                        </div>
-                        ` : ''}
+                <div class="interest-item" style="animation-delay: ${index * 0.05}s">
+                    <div class="card-header">
+                        <span class="type-badge">${escapeHtml(msg.type || 'PUBLIC')}</span>
+                        <h3 class="interest-title">${escapeHtml(msg.title || 'Untitled')}</h3>
+                        <span class="interest-date">${date}</span>
                     </div>
-                `;
+                    <p class="interest-desc">${escapeHtml(msg.content)}</p>
+                    ${msg.reply ? `
+                    <div class="reply-box">
+                        <p class="reply-text"><strong>Reply:<br/></strong> ${escapeHtml(msg.reply)}</p>
+                    </div>` : ''}
+                </div>`;
             }).join('');
         } catch (error) {
-            console.error('Load Error:', error);
             container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ff6b6b;">Failed to load messages.</p>`;
         }
     }
-
     document.addEventListener('DOMContentLoaded', loadMessages);
 </script>
