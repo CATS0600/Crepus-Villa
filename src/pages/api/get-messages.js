@@ -9,17 +9,16 @@ export const GET = async ({ request, locals }) => {
     let messages;
 
     if (token) {
-      // 这里的字段名完全匹配你 PRAGMA 的结果
+      // 当用户通过 token 查看自己的留言时，显示所有状态（包括 PENDING）
       const stmt = env.DB.prepare(
-        'SELECT id, content, reply, is_public, token, created_at, reply_method, email, title, type FROM messages WHERE UPPER(token) = UPPER(?) ORDER BY created_at DESC'
+        'SELECT * FROM messages WHERE UPPER(token) = UPPER(?) ORDER BY created_at DESC'
       );
       const result = await stmt.bind(token).all();
       messages = result.results || [];
     } else {
-      // 过滤掉 type 为 PENDING 的消息
+      // 公开留言板：只显示已回复且状态不是 PENDING 的消息
       const stmt = env.DB.prepare(
-        `SELECT id, content, reply, is_public, token, created_at, reply_method, email, title, type 
-         FROM messages 
+        `SELECT * FROM messages 
          WHERE is_public = 1 
          AND reply IS NOT NULL 
          AND UPPER(type) != 'PENDING' 
