@@ -29,17 +29,28 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <style>
+    /* 基础样式变量兜底 */
+    :root {
+        --text-main: #2c3e50;
+        --text-muted: #7f8c8d;
+        --card-bg: #ffffff;
+        --card-border: rgba(0,0,0,0.08);
+        --accent: #34495e;
+    }
+
     .page-title {
         text-align: center; 
         margin-bottom: 2.5rem;
         font-weight: 300;
         letter-spacing: 1px;
+        color: var(--text-main);
     }
 
+    /* 消息列表容器 */
     .message-list {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.2rem;
         min-height: 200px;
     }
 
@@ -49,101 +60,157 @@ import Header from '../components/Header.astro';
         animation: slideUp 0.5s ease forwards;
     }
 
+    /* 美化后的按钮 */
     .msg-btn {
         width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: var(--card-bg, #fff);
-        border: 1px solid var(--card-border, rgba(0,0,0,0.1));
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 12px;
         padding: 1.2rem 1.5rem;
         cursor: pointer;
         text-align: left;
-        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         position: relative;
         z-index: 2;
     }
 
     .msg-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        transform: translateY(-3px);
+        border-color: var(--accent);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     }
-    
+
+    /* 状态同步：展开时的视觉修正 */
     .msg-btn.active {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        border-bottom-color: transparent;
-        transform: none;
+        background: var(--card-bg);
         box-shadow: none;
     }
 
+    /* 动态箭头 */
+    .msg-btn::after {
+        content: '→';
+        font-family: serif;
+        font-size: 1.1rem;
+        margin-left: 1rem;
+        opacity: 0.3;
+        transition: transform 0.4s;
+    }
+
+    .msg-item.open .msg-btn::after {
+        transform: rotate(90deg);
+        opacity: 0.8;
+    }
+
     .btn-left { flex: 1; padding-right: 1rem; }
-    .btn-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); word-break: break-all; }
-    .btn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; min-width: 120px; }
+    .btn-title { 
+        font-size: 1.1rem; 
+        font-weight: 600; 
+        color: var(--text-main); 
+        word-break: break-all;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .btn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; min-width: 110px; }
 
     .status-badge {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 800;
         padding: 0.2rem 0.6rem;
         border-radius: 4px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
-        background: var(--text-main);
-        color: var(--bg-color, #fff);
+        background: var(--accent);
+        color: #fff;
     }
 
-    .msg-time { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
+    .msg-time { font-size: 0.75rem; color: var(--text-muted); font-family: ui-monospace, monospace; }
 
+    /* 详情展示区域 */
     .msg-detail-wrapper {
         display: grid;
         grid-template-rows: 0fr;
-        transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-        background: rgba(0,0,0,0.02);
+        transition: grid-template-rows 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        background: rgba(0,0,0,0.01);
         border: 1px solid transparent;
         border-top: none;
         border-radius: 0 0 12px 12px;
         margin-top: -1px;
+        overflow: hidden;
     }
 
     .msg-item.open .msg-detail-wrapper {
         grid-template-rows: 1fr;
-        border-color: var(--card-border, rgba(0,0,0,0.1));
+        border-color: var(--card-border);
+        background: var(--card-bg);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.02);
     }
 
-    .msg-detail-inner { overflow: hidden; }
     .detail-content { padding: 1.5rem; }
     .content-block { margin-bottom: 1.5rem; }
-    .block-label { display: inline-block; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px; }
-    .block-text { font-size: 1rem; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
-    .reply-block { padding-left: 1rem; border-left: 3px solid var(--text-main); }
-    .pending-block { padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 8px; color: var(--text-muted); text-align: center; font-size: 0.9rem; border: 1px dashed rgba(0,0,0,0.1); }
-
-    .detail-meta {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(0,0,0,0.05);
-        font-family: monospace;
+    .block-label { display: inline-block; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.6rem; letter-spacing: 1px; }
+    .block-text { font-size: 1rem; line-height: 1.7; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
+    
+    .reply-block { 
+        padding-left: 1.2rem; 
+        border-left: 2px solid var(--accent); 
+        background: rgba(0,0,0,0.01);
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 
+    .pending-block { padding: 1.2rem; background: rgba(0,0,0,0.02); border-radius: 8px; color: var(--text-muted); text-align: center; font-size: 0.85rem; border: 1px dashed var(--card-border); }
+
+    /* 底部导航 */
+    .nav-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 4rem; }
+    .nav-link { 
+        padding: 0.7rem 1.5rem; 
+        background: var(--card-bg); 
+        border: 1px solid var(--card-border); 
+        border-radius: 50px; 
+        text-decoration: none; 
+        color: var(--text-main); 
+        font-size: 0.85rem; 
+        transition: all 0.3s; 
+    }
+    
+    .nav-link:hover { 
+        background: var(--accent); 
+        color: #fff; 
+        transform: translateY(-2px);
+    }
+
+    /* 加载动画 */
+    .spinner {
+        width: 24px; height: 24px;
+        border: 2px solid var(--card-border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 1s ease forwards; }
+    .fade-in { animation: fadeIn 0.8s ease forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .nav-links { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
-    .nav-link { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; transition: 0.2s; }
-    .nav-link:hover { background: var(--text-main); color: var(--bg-color); }
-
     @media (prefers-color-scheme: dark) {
-        .msg-btn, .nav-link { background: #1c1c1e; border-color: rgba(255,255,255,0.05); }
-        .msg-detail-wrapper, .pending-block { background: rgba(255,255,255,0.02); }
-        .msg-item.open .msg-detail-wrapper { border-color: rgba(255,255,255,0.05); }
-        .status-badge { background: #f5f5f7; color: #000; }
-        .detail-meta { border-top-color: rgba(255,255,255,0.05); }
+        :root {
+            --text-main: #e1e1e6;
+            --text-muted: #8e8e93;
+            --card-bg: #1c1c1e;
+            --card-border: rgba(255,255,255,0.1);
+            --accent: #f5f5f7;
+        }
+        .msg-detail-wrapper { background: rgba(255,255,255,0.02); }
     }
 </style>
 
@@ -154,27 +221,31 @@ import Header from '../components/Header.astro';
         hour: '2-digit', minute: '2-digit', hour12: false
     });
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-        return text.replace(/[&<>"']/g, m => map[m]);
-    }
+    let currentOpenId = null;
 
     window.toggleMsg = function(id) {
         const item = document.getElementById(`msg-item-${id}`);
         const btn = item.querySelector('.msg-btn');
         
-        // 排他性展开
-        document.querySelectorAll('.msg-item.open').forEach(el => {
-            if (el.id !== `msg-item-${id}`) {
-                el.classList.remove('open');
-                el.querySelector('.msg-btn').classList.remove('active');
+        // 排他性展开逻辑：仅操作变化的部分，优化性能
+        if (currentOpenId && currentOpenId !== id) {
+            const prevItem = document.getElementById(`msg-item-${currentOpenId}`);
+            if (prevItem) {
+                prevItem.classList.remove('open');
+                prevItem.querySelector('.msg-btn').classList.remove('active');
             }
-        });
+        }
 
-        item.classList.toggle('open');
-        btn.classList.toggle('active');
+        const isOpen = item.classList.toggle('open');
+        btn.classList.toggle('active', isOpen);
+        currentOpenId = isOpen ? id : null;
     };
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
 
     async function loadMessages() {
         const container = document.getElementById('messageList');
@@ -218,10 +289,6 @@ import Header from '../components/Header.astro';
                                         <div class="block-text">${escapeHtml(msg.reply)}</div>
                                     </div>
                                     ` : `<div class="pending-block">暂无公开回复</div>`}
-                                    <div class="detail-meta">
-                                        <span>ID: ${msg.id}</span>
-                                        <span>${date}</span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
