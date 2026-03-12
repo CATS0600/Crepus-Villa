@@ -14,7 +14,7 @@ import Header from '../components/Header.astro';
                 <div id="messageList" class="message-list">
                     <div class="loading-state">
                         <div class="spinner"></div>
-                        <p>等待数据加载中...</p>
+                        <p>Loading...</p>
                     </div>
                 </div>
 
@@ -40,80 +40,48 @@ import Header from '../components/Header.astro';
     .message-list {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.5rem;
         min-height: 200px;
     }
 
-    .loading-state {
-        text-align: center;
-        padding: 3rem 0;
-        color: var(--text-muted);
-    }
-
-    .spinner {
-        width: 30px;
-        height: 30px;
-        border: 2px solid rgba(0,0,0,0.1);
-        border-top-color: var(--text-main);
-        border-radius: 50%;
-        margin: 0 auto 1rem;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* 留言项外层 */
-    .msg-item {
+    /* 留言卡片样式 */
+    .msg-card {
         width: 100%;
-        opacity: 0;
-        animation: slideUp 0.5s ease forwards;
-        margin-bottom: 0.5rem;
-    }
-
-    /* 留言美化按钮 */
-    .msg-btn {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         background: var(--card-bg, #ffffff);
         border: 1px solid var(--card-border, rgba(0, 0, 0, 0.08));
         border-radius: 16px;
-        padding: 1.4rem 1.8rem;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        padding: 1.8rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+        opacity: 0;
+        animation: slideUp 0.5s ease forwards;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
     }
 
-    .msg-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
-        border-color: var(--text-main, #333);
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding-bottom: 1rem;
     }
 
-    /* 信息图标样式 */
-    .info-icon {
-        width: 18px;
-        height: 18px;
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
         color: var(--text-main);
-        flex-shrink: 0;
+        word-break: break-word;
     }
 
-    .btn-left { 
-        display: flex; 
-        align-items: center; 
-        gap: 12px; 
-        flex: 1; 
-        padding-right: 1rem; 
+    .card-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.4rem;
+        min-width: 100px;
     }
-    
-    .btn-title { 
-        font-size: 1.1rem; 
-        font-weight: 600; 
-        color: var(--text-main); 
-        word-break: break-all;
-    }
-
-    .btn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; min-width: 120px; }
 
     .status-badge {
         font-size: 0.65rem;
@@ -122,36 +90,72 @@ import Header from '../components/Header.astro';
         border-radius: 20px;
         background: var(--text-main, #000);
         color: var(--bg-color, #fff);
+        text-transform: uppercase;
     }
 
-    .msg-time { font-size: 0.75rem; color: var(--text-muted); font-family: monospace; }
-
-    /* 详情容器 */
-    .msg-detail-wrapper {
-        display: grid;
-        grid-template-rows: 0fr;
-        transition: grid-template-rows 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-        background: var(--card-bg, #fff);
-        border-radius: 0 0 16px 16px;
-        overflow: hidden;
+    .msg-time {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-family: monospace;
     }
 
-    .msg-item.open .msg-detail-wrapper { grid-template-rows: 1fr; }
+    /* 正文区块 */
+    .content-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 
-    .detail-content { padding: 1.8rem; }
-    .block-label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); margin-bottom: 0.6rem; }
-    .block-text { font-size: 1rem; line-height: 1.7; white-space: pre-wrap; }
+    .block-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
+    .block-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-main);
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    /* 回复区块样式 */
+    .reply-section {
+        margin-top: 0.5rem;
+        padding: 1.2rem;
+        background: rgba(0,0,0,0.02);
+        border-left: 4px solid var(--text-main);
+        border-radius: 4px 12px 12px 4px;
+    }
+
+    .no-reply {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-style: italic;
+        text-align: center;
+        padding: 1rem;
+        border: 1px dashed var(--card-border, rgba(0,0,0,0.1));
+        border-radius: 12px;
+    }
+
+    /* 动画与导航 */
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 1s ease forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .nav-links { display: flex; gap: 0.8rem; justify-content: center; margin-top: 3rem; }
-    .nav-link { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; }
+    .nav-links { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
+    .nav-link { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.9rem; transition: 0.2s; }
+    .nav-link:hover { background: var(--text-main); color: var(--bg-color, #fff); }
 
+    /* 深色模式修正 */
     @media (prefers-color-scheme: dark) {
-        .msg-btn { background: #1c1c1e; border-color: rgba(255,255,255,0.1); }
+        .msg-card, .nav-link { background: #1c1c1e; border-color: rgba(255,255,255,0.1); }
+        .reply-section { background: rgba(255,255,255,0.04); }
         .status-badge { background: #f5f5f7; color: #000; }
+        .card-header { border-bottom-color: rgba(255,255,255,0.08); }
     }
 </style>
 
@@ -168,16 +172,6 @@ import Header from '../components/Header.astro';
         return text.replace(/[&<>"']/g, m => map[m]);
     }
 
-    window.toggleMsg = function(id) {
-        const item = document.getElementById(`msg-item-${id}`);
-        if (!item) return;
-        document.querySelectorAll('.msg-item.open').forEach(el => {
-            if (el.id !== `msg-item-${id}`) el.classList.remove('open');
-        });
-        item.classList.toggle('open');
-    };
-
-    // 2. 从云端获取数据并渲染
     async function loadMessages() {
         const container = document.getElementById('messageList');
         if (!container) return;
@@ -192,39 +186,33 @@ import Header from '../components/Header.astro';
                 return;
             }
 
-            // 4. 全部加载并渲染
             container.innerHTML = data.messages.map((msg, index) => {
                 const date = formatter.format(new Date(msg.created_at));
+                const type = msg.type || 'PUBLIC';
                 
                 return `
-                    <div class="msg-item" id="msg-item-${msg.id}" style="animation-delay: ${index * 0.05}s">
-                        <button class="msg-btn" onclick="toggleMsg('${msg.id}')">
-                            <div class="btn-left">
-                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                </svg>
-                                <div class="btn-title">${escapeHtml(msg.title || 'Untitled')}</div>
-                            </div>
-                            <div class="btn-right">
-                                <span class="status-badge">${msg.type || 'PUBLIC'}</span>
+                    <div class="msg-card" style="animation-delay: ${index * 0.1}s">
+                        <div class="card-header">
+                            <div class="card-title">${escapeHtml(msg.title || 'Untitled')}</div>
+                            <div class="card-meta">
+                                <span class="status-badge">${type}</span>
                                 <span class="msg-time">${date}</span>
                             </div>
-                        </button>
-                        <div class="msg-detail-wrapper">
-                            <div class="detail-content">
-                                <div class="content-block">
-                                    <span class="block-label">Message</span>
-                                    <div class="block-text">${escapeHtml(msg.content)}</div>
-                                </div>
-                                ${msg.reply ? `
-                                <div class="content-block reply-block">
-                                    <span class="block-label">Admin Reply</span>
-                                    <div class="block-text">${escapeHtml(msg.reply)}</div>
-                                </div>` : ''}
-                            </div>
                         </div>
+
+                        <div class="content-block">
+                            <span class="block-label">Message</span>
+                            <div class="block-text">${escapeHtml(msg.content)}</div>
+                        </div>
+
+                        ${msg.reply ? `
+                        <div class="reply-section">
+                            <span class="block-label">Admin Reply</span>
+                            <div class="block-text">${escapeHtml(msg.reply)}</div>
+                        </div>
+                        ` : `
+                        <div class="no-reply">尚未收到公开回复</div>
+                        `}
                     </div>
                 `;
             }).join('');
