@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-// 导入微信支付图片，Astro会自动优化
 import wechatQR from '../tipwechat/b.jpg';
 ---
 
@@ -10,178 +9,141 @@ import wechatQR from '../tipwechat/b.jpg';
   <main class="container sponsor-page">
     <section class="reveal active">
       <h1>Support My Work If You Like To</h1>
-      <h2>如果你觉得我的内容对帮助，欢迎通过以下方式支持我。</h2>
-      <p class="section-desc">btw，对于每一位Tip > 2USD的Villa Member，我都会将您的名字添加到PARTNERS & SPONSORS名单中。</p>
+      <h2>如果你觉得我的内容有帮助，欢迎支持。</h2>
+      <p class="section-desc">btw，对于每一位Tip > 2USD的Villa Member，我都会将您的名字添加到名单中。</p>
       
       <div class="sponsor-grid">
         <a href="https://qr.alipay.com/fkx14778gmv86oc2fjnar31" class="option-card">
           <h3>Alipay</h3>
-          <p class="description">点击跳转支付宝支付</p>
+          <!-- <p class="description">跳转支付宝支付</p> -->
         </a>
 
         <div class="option-card copy-card" data-address="0x6a9036be6bc85f50d73c8536f8cacf7a16f5e7ff">
           <h3>BNB / ETH / OKB</h3>
           <code class="address">0x6a90...e7ff</code>
-          <p class="tip">点击复制完整地址</p>
+          <!-- <p class="tip">点击复制地址</p> -->
         </div>
 
         <div class="option-card copy-card" data-address="bc1pcpn5ggzrtd47wqjvrrlz74nzdzdpusur7yq8tgzz3fe4ay0tm80srx67ex">
           <h3>BTC</h3>
           <code class="address">bc1pcp...67ex</code>
-          <p class="tip">点击复制完整地址</p>
+          <!-- <p class="tip">点击复制地址</p> -->
         </div>
       </div>
 
       <div class="wechat-solo">
         <div class="wechat-container">
           <h3>Wechat</h3>
-          <p class="description">扫描或右键保存图片支付</p>
           <img src={wechatQR.src} alt="Wechat QR" class="wechat-image" />
         </div>
       </div>
-
     </section>
   </main>
 
-  <div id="copy-toast" class="toast">地址已成功复制</div>
+  <div id="copy-toast" class="toast"> 地址已成功复制 </div>
 </Layout>
 
 <style>
   /* 基础页面样式 */
   .sponsor-page { padding-top: 100px; text-align: center; padding-bottom: 80px; }
-  h1 { font-size: 44px; font-weight: 800; margin-bottom: 20px; color: #1d1d1f; }
-  h2 { font-size: 1.3rem; color: #1d1d1f; margin-top: 10px; margin-bottom: 15px; }
-  
-  /* 调整整体描述文字大小 */
-  .section-desc { color: #86868b; font-size: 1rem; max-width: 600px; margin: 0 auto; line-height: 1.5; }
+  h1 { font-size: 44px; font-weight: 800; margin-bottom: 20px; }
+  h2 { font-size: 1.3rem; margin-bottom: 15px; }
+  .section-desc { font-size: 1rem; opacity: 0.8; max-width: 600px; margin: 0 auto 50px; }
 
-  /* 网格布局 */
-  /* 网格布局：默认一行 3 个，宽度太小时自动换行 */
+  /* 网格布局：强制正方形并支持自适应 */
   .sponsor-grid { 
-    margin: 50px auto;
     display: grid; 
-    /* 核心逻辑：尽可能平分空间，单项最小 280px */
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
     gap: 25px;
     max-width: 1100px;
+    margin: 0 auto 40px;
     padding: 0 20px;
   }
 
-  /* 强制卡片为正方形 */
-  .option-card {
-    background: #fff;
-    /* 设定宽高比为 1:1 */
+  /* 卡片基础样式：适配深浅模式 */
+  .option-card, .wechat-container {
+    background: var(--card-bg, #ffffff);
+    color: var(--card-text, #1d1d1f);
     aspect-ratio: 1 / 1; 
-    padding: 20px;
-    border-radius: 24px;
+    padding: 30px;
+    border-radius: 28px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    border: 1px solid rgba(128, 128, 128, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
   }
 
-  /* 调整卡片内标题大小，确保在正方形内不拥挤 */
-  .option-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-  }
-
-  /* 响应式微调：如果屏幕非常小，为了防止正方形太窄导致内容溢出，可以取消强制正方形 */
-  @media (max-width: 480px) {
-    .option-card {
-      aspect-ratio: auto;
-      height: auto;
-      padding: 40px 20px;
+  /* 深色模式适配逻辑 (假设你使用 prefers-color-scheme 或类名) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --card-bg: #1c1c1e;
+      --card-text: #f5f5f7;
+      --code-bg: #2c2c2e;
+    }
+    .option-card, .wechat-container {
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
   }
 
-  /* 微信单独区域保持美观 */
-  .wechat-solo {
-    margin-top: 40px;
-    padding: 0 20px;
-    display: flex;
-    justify-content: center;
+  .option-card:hover { transform: translateY(-8px); box-shadow: 0 15px 50px rgba(0,0,0,0.15); }
+  .copy-card { cursor: pointer; }
+
+  /* 标题居中与大小 */
+  h3 { font-size: 1.4rem; font-weight: 700; margin: 0 0 10px 0; text-align: center; width: 100%; }
+  .description { font-size: 1rem; opacity: 0.7; margin: 0; }
+
+  /* 代码块适配 */
+  .address {
+    background: var(--code-bg, #f5f5f7);
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-family: 'SF Mono', monospace;
+    font-size: 0.95rem;
+    margin: 15px 0;
+    word-break: break-all;
   }
 
-  .wechat-container {
-    background: #fff;
-    padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-    max-width: 400px; /* 微信卡片也稍微收窄，与上方风格统一 */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  .tip { font-size: 0.9rem; color: #0071e3; font-weight: 500; }
 
-  /* 调整微信图片样式，使其可右键 */
-  .wechat-image {
-    width: 200px; /* 适当调大 Wechat QR 大小 */
-    height: auto;
-    margin-top: 25px;
-    border-radius: 12px;
-    border: 1px solid #f5f5f7;
-    /* 确保图片本身可以被右键下载，不使用额外的遮罩层 */
-    display: block; 
-  }
+  /* 微信部分 */
+  .wechat-solo { display: flex; justify-content: center; padding: 0 20px; }
+  .wechat-container { aspect-ratio: auto; max-width: 350px; width: 100%; height: auto; padding: 40px; }
+  .wechat-image { width: 180px; height: auto; margin-top: 20px; border-radius: 12px; }
 
-  /* 自定义弹窗样式 */
+  /* 弹窗样式 */
   .toast {
-    position: fixed;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 14px 28px;
-    border-radius: 30px;
-    font-size: 1rem;
-    transition: transform 0.3s ease-out;
-    z-index: 1000;
-    pointer-events: none;
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: rgba(0, 0, 0, 0.85); color: white; padding: 14px 28px; border-radius: 30px;
+    font-size: 1rem; transition: transform 0.3s ease-out; z-index: 1000;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .option-card { aspect-ratio: auto; padding: 40px 20px; }
+  }
 </style>
 
 <script>
-  // 获取所有带有 copy-card 类的元素
   const copyCards = document.querySelectorAll('.copy-card');
   const toast = document.getElementById('copy-toast');
 
   copyCards.forEach(card => {
     card.addEventListener('click', async () => {
-      // 从 data-address 属性获取完整的区块链地址
       const address = card.getAttribute('data-address');
-
       if (address) {
         try {
-          // 执行复制操作
           await navigator.clipboard.writeText(address);
-          
-          // 显示自定义弹窗 (Toast)
-          showToast();
+          toast?.classList.add('show');
+          setTimeout(() => toast?.classList.remove('show'), 2000);
         } catch (err) {
-          console.error('无法复制地址: ', err);
+          console.error('Failed to copy: ', err);
         }
       }
     });
   });
-
-  function showToast() {
-    if (!toast) return;
-
-    // 添加显示类（触发 CSS 过渡动画）
-    toast.classList.add('show');
-
-    // 2.5秒后自动隐藏
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 2500);
-  }
 </script>

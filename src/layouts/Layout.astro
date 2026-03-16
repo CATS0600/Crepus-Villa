@@ -1,6 +1,6 @@
 ---
 interface Props {
-	title: string;
+    title: string;
 }
 
 const { title } = Astro.props;
@@ -8,190 +8,199 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="zh-CN">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Crepus Villa" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/CRVL-TypeB.svg" />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-		<footer class="site-footer">
-			<div class="safe-zone footer-content">
-				<p class="footer-text">Powered By CloudFlare & Crepuscular, Designed and Developed by Claude, Gemini and Cyril</p>
-				<p class="footer-text">
-					Copyright © 2026 Crepuscular's Villa. All rights reserved. 
-					<a class="privacy-link" href="/privacy" rel="external">Privacy Policy</a>
-				</p>
-			</div>
-		</footer>
-	</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content="Crepus Villa" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/CRVL-TypeB.svg" />
+        <title>{title}</title>
+    </head>
+    <body>
+        <slot />
+        <footer class="site-footer">
+            <div class="safe-zone footer-content">
+                <p class="footer-text">Powered By CloudFlare & Crepuscular, Designed and Developed by Claude, Gemini and Cyril</p>
+                <p class="footer-text">
+                    Copyright © 2026 Crepuscular's Villa. All rights reserved. 
+                    <a class="privacy-link" href="/privacy" rel="external">Privacy Policy</a>
+                </p>
+            </div>
+        </footer>
+
+        <script>
+            import Lenis from '@studio-freight/lenis'
+
+            // 初始化 Lenis
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                orientation: 'vertical',
+                smoothWheel: true,
+                wheelMultiplier: 1,
+                touchMultiplier: 2,
+                infinite: false,
+            })
+
+            // 循环渲染
+            function raf(time: number) {
+                lenis.raf(time)
+                requestAnimationFrame(raf)
+            }
+
+            requestAnimationFrame(raf)
+
+            // 处理 Astro 页面切换时的滚动复位（如果使用 View Transitions）
+            document.addEventListener('astro:after-swap', () => {
+                lenis.scrollTo(0, { immediate: true })
+            })
+        </script>
+    </body>
 </html>
 
 <style is:global>
-	.container {
-    	width: 100%;
-    	max-width: var(--container-max-width);
-    	margin: 0 auto;
-    	padding-left: var(--container-padding);
-    	padding-right: var(--container-padding);
-	}
-	:root {
-		--bg-color: #fbfbfd;
-		--text-main: #1d1d1f;
-		--text-muted: #86868b;
-		--card-bg: rgba(255, 255, 255, 0.8);
-		--card-border: rgba(0, 0, 0, 0.05);
-		--nav-bg: rgba(251, 251, 253, 0.8);
-		--fw-light: 300;
-		--fw-regular: 400;
-		--fw-medium: 500;
-		--fw-bold: 700;
-		--container-padding: 1.5rem; /* 移动端安全距离 */
-    	--container-max-width: 1000px; /* 正文最大宽度 */
-    	--safe-area: clamp(20px, 6vw, 80px); /* 全站安全区距离 */
-	}
+    /* --- Lenis 核心辅助样式 --- */
+    html.lenis, html.lenis body {
+        height: auto;
+    }
 
-	@media (prefers-color-scheme: dark) {
-		:root {
-			/* 自动切换深色模式变量 */
-			--bg-color: #000000;
-			--text-main: #f5f5f7;
-			--text-muted: #a1a1a6;
-			--card-bg: #1c1c1e;
-			--card-border: rgba(255, 255, 255, 0.1);
-			--nav-bg: rgba(0, 0, 0, 0.8);
-			--fw-light: 300;
-			--fw-regular: 400;
-			--fw-medium: 500;
-			--fw-bold: 700;
-			--accent-color: #f7c46c;
-			--container-padding: 2.5rem;
-		}
-	}
-	/* 在 Layout.astro 的 <style is:global> 中添加 */
-	@font-face {
-    	font-family: 'RAGE';
-    	src: url('/fonts/RAGE.woff2') format('woff2');
-    	font-weight: normal;
-    	font-style: normal;
-    	font-display: swap;
-	}
-	@font-face {
+    .lenis.lenis-smooth {
+        scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+        overflow: hidden;
+    }
+
+    .lenis.lenis-scrolling iframe {
+        pointer-events: none;
+    }
+
+    /* --- 原有全局样式 --- */
+    .container {
+        width: 100%;
+        max-width: var(--container-max-width);
+        margin: 0 auto;
+        padding-left: var(--container-padding);
+        padding-right: var(--container-padding);
+    }
+    :root {
+        --bg-color: #fbfbfd;
+        --text-main: #1d1d1f;
+        --text-muted: #86868b;
+        --card-bg: rgba(255, 255, 255, 0.8);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --nav-bg: rgba(251, 251, 253, 0.8);
+        --fw-light: 300;
+        --fw-regular: 400;
+        --fw-medium: 500;
+        --fw-bold: 700;
+        --container-padding: 1.5rem;
+        --container-max-width: 1000px;
+        --safe-area: clamp(20px, 6vw, 80px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg-color: #000000;
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --card-bg: #1c1c1e;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(0, 0, 0, 0.8);
+            --fw-light: 300;
+            --fw-regular: 400;
+            --fw-medium: 500;
+            --fw-bold: 700;
+            --accent-color: #f7c46c;
+            --container-padding: 2.5rem;
+        }
+    }
+
+    @font-face {
+        font-family: 'RAGE';
+        src: url('/fonts/RAGE.woff2') format('woff2');
+        font-weight: normal; font-style: normal; font-display: swap;
+    }
+    @font-face {
         font-family: 'Noto Sans TC Variable';
         src: url('/fonts/NotoSansTC-VF.woff2') format('woff2-supports-variations'),
              url('/fonts/NotoSansTC-VF.woff2') format('woff2');
-        font-weight: 100 900;
-        font-style: normal;
-        font-display: swap;
+        font-weight: 100 900; font-style: normal; font-display: swap;
     }
-	@font-face {
+    @font-face {
         font-family: 'Segoe UI Emoji';
         src: url('/fonts/seguiemj.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
+        font-weight: normal; font-style: normal; font-display: swap;
     }
-	html {
-		font-family: 'Noto Sans TC Variable', -apple-system, BlinkMacSystemFont, sans-serif;
-		background: var(--bg-color);
-		color: var(--text-main);
-		-webkit-font-smoothing: antialiased;
-		transition: background 0.3s ease;
-	}
-	.logo, .special-heading {
+
+    html {
+        font-family: 'Noto Sans TC Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-main);
+        -webkit-font-smoothing: antialiased;
+        transition: background 0.3s ease;
+        /* 注意：使用 Lenis 时不要在这里写 scroll-behavior: smooth; */
+    }
+
+    .logo, .special-heading {
         font-family: 'RAGE', cursive;
-        /* RAGE 字体通常较小，可能需要微调大小 */
         font-size: 1.2em; 
     }
-	h1, h2, h3 {
-		font-weight: var(--fw-bold);
-		letter-spacing: -0.02em;
-	}
-	p {
-		font-weight: var(--fw-light); /* 苹果风常在长文本使用较细的字重来营造呼吸感 */
-		line-height: 1.6;
-	}
-	body {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
+    h1, h2, h3 {
+        font-weight: var(--fw-bold);
+        letter-spacing: -0.02em;
+    }
+    p {
+        font-weight: var(--fw-light);
+        line-height: 1.6;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-	/* 确保固定 header 不会遭盖内容 */
-	main {
-		padding-top: 52px; /* 与 .apple-header height 保持一致 */
-	}
+    main {
+        padding-top: 52px;
+    }
 
-	/* 全局安全区类 */
-	.safe-zone { padding-left: var(--safe-area); padding-right: var(--safe-area); }
+    .safe-zone { padding-left: var(--safe-area); padding-right: var(--safe-area); }
 
-	/* 锚点跳转时预留 header 高度 */
-	h1, h2, h3 { scroll-margin-top: calc(52px + 1rem); }
+    h1, h2, h3 { scroll-margin-top: calc(52px + 1rem); }
 
-	* {
-		box-sizing: inherit;
-	}
+    * {
+        box-sizing: inherit;
+    }
 
-	/* 统一的布局样式 */
-	.main-content { background-color: var(--bg-color); overflow-x: hidden; }
-	.content-section {
-		min-height: 100vh;
-		display: flex;
-		align-items: center;
-		position: relative;
-		z-index: 1;
-	}
+    .main-content { background-color: var(--bg-color); overflow-x: hidden; }
+    
+    a.privacy-link { color: inherit; text-decoration: none; }
+    a.privacy-link:hover { text-decoration: underline; }
 
-	/* link style for privacy policy, keep normal color */
-	a.privacy-link { color: inherit; text-decoration: none; }
-	a.privacy-link:hover { text-decoration: underline; }
+    .site-footer {
+        background: var(--bg-color);
+        border-top: 1px solid rgba(0,0,0,0.1);
+        margin-top: 0;
+    }
 
-	/* Site Footer */
-	.site-footer {
-		background: var(--bg-color);
-		border-top: 1px solid rgba(0,0,0,0.1);
-		margin-top: 0;
-	}
+    .footer-content {
+        padding: 40px var(--container-padding, 1.5rem);
+        text-align: center;
+    }
 
-	.footer-content {
-		padding: 40px var(--container-padding, 1.5rem);
-		text-align: center;
-	}
+    .footer-text {
+        margin: 10px 0;
+        font-size: 13px;
+        color: #86868b;
+        line-height: 1.4;
+    }
 
-	.footer-text {
-		margin: 10px 0;
-		font-size: 13px;
-		color: #86868b;
-		line-height: 1.4;
-	}
-
-	.privacy-link {
-		color: #86868b;
-		text-decoration: none;
-		transition: color 0.3s;
-	}
-
-	.privacy-link:hover {
-		color: #1d1d1f;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.site-footer {
-			border-top-color: rgba(255, 255, 255, 0.1);
-		}
-		.footer-divider {
-			background: rgba(255, 255, 255, 0.1);
-		}
-		.footer-text {
-			color: #a1a1a6;
-		}
-		.privacy-link {
-			color: #a1a1a6;
-		}
-		.privacy-link:hover {
-			color: #f5f5f7;
-		}
-	}
+    @media (prefers-color-scheme: dark) {
+        .site-footer { border-top-color: rgba(255, 255, 255, 0.1); }
+        .footer-text { color: #a1a1a6; }
+    }
 </style>

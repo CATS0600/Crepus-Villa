@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
+    "@studio-freight/lenis": "^1.0.42",
     "astro": "^5.17.1"
   }
 }
