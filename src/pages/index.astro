@@ -2,11 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import villav4icon from '../v4icon/villav4icon.jpg';
+// 引入位于 switchphoto 中的电影比例图片
+import switchImg from '../switchphoto/a.jpg';
 
 const images = await Astro.glob('/src/photos/*.{jpg,jpeg,png,webp,avif}');
 
 // 2 & 6. 在 const 中定义图片注释
-// 你可以按顺序写下每张图片的注释，如果图片多于注释，后面会默认留空
 const photoCaptions = [
     "Shenzhen, China, Apr 2023",
     "Dali, China,Jul 2023",
@@ -14,19 +15,19 @@ const photoCaptions = [
     "Nanning, China, Feb 2024",
     "Robloxia, Jun 2024",
     "New York, Robloxia, Jul 2024",
-	"Bangkok, Thailand, Aug 2024",
-	"Chiang Mai, Thailand, Aug 2024",
-	"Robloxia, Nov 2024",
-	"Frappe, Robloxia, Oct 2024",
-	"Sara, Robloxia, Dec 2024",
-	"Greenville, Robloxia, Jan 2025",
-	"Shanghai, China, Aug 2025",
-	"Changsha, China, May 2025",
-	"Nanning, China, Jun 2025",
-	"Beihai, China, Oct 2025",
-	"Slong City, Cities: Skylines, Dec 2025",
-	"Chongqing, China, Feb 2026",
-	"Guangxi, China, Feb 2026",
+    "Bangkok, Thailand, Aug 2024",
+    "Chiang Mai, Thailand, Aug 2024",
+    "Robloxia, Nov 2024",
+    "Frappe, Robloxia, Oct 2024",
+    "Sara, Robloxia, Dec 2024",
+    "Greenville, Robloxia, Jan 2025",
+    "Shanghai, China, Aug 2025",
+    "Changsha, China, May 2025",
+    "Nanning, China, Jun 2025",
+    "Beihai, China, Oct 2025",
+    "Slong City, Cities: Skylines, Dec 2025",
+    "Chongqing, China, Feb 2026",
+    "Guangxi, China, Feb 2026",
 ];
 
 const partners = ["Paramecium", "Hydrolight", "Odysphere", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
@@ -41,7 +42,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
 <Layout title="Crepuscular's Villa">
     <Header />
-    <!-- 1. TEST -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
     <main class="main-content">
         <div class="scrolling-text" id="scrollText">CREPUSCULAR'S VILLA, RELAX AND ENJOY LIFE STYLES.DA BEST PIZZA IN ALL OF AMERICA AND ALL OF GLOBE A DOLLA A SLICE YOU AINT FINDIN THIS TASTE ANYWHERE ELSE ONLY AT NEW YOK</div>
 
@@ -83,7 +85,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     <span class="quote-author">— Lando Norris</span>
                 </div>
 
-                <!-- Send Button Section -->
                 <div class="send-section" style="margin: 80px 0; text-align: center;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Have something to say?</p>
                     <div class="button-group">
@@ -124,7 +125,17 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             </div>
         </section>
 
-        <!-- Applications Section -->
+        <section class="cl16-switch-section safe-zone">
+            <div class="cl16-container" id="cl16Trigger">
+                <div class="cl16-overlay"></div>
+                <img src={switchImg.src} alt="Cinematic Visual" class="cl16-bg" />
+                <div class="cl16-content">
+                    <h2 class="cl16-title">RACING SPIRIT</h2>
+                    <p class="cl16-subtitle">Click to switch</p>
+                </div>
+            </div>
+        </section>
+
         <section class="applications-section">
             <div class="safe-zone" style="max-width: 1000px; margin: 0 auto;">
                 <div class="app-header" style="text-align: center; margin-bottom: 60px;">
@@ -181,7 +192,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     </a>
                 </div>
 
-                <!-- Explore Section with Region Choice -->
                 <div style="margin-top: 60px; margin-bottom: 60px;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Want to explore something random?</p>
                     <div class="explore-buttons" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
@@ -195,7 +205,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         </button>
                     </div>
                     
-                    <!-- Villa V4 Icon Below Random Buttons -->
                     <div class="villa-icon-below-random" style="margin-top: 100px;">
                         <img src={villav4icon.src} alt="Crepus Villa V4 Icon" class="villa-v4-icon" title="Crepuscular's Villa V4" />
                         <span class="photo-annotation"><br/>i really drew this during the english exam, 3 mar 2026</span>
@@ -207,6 +216,72 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 </Layout>
 
 <style>
+    /* CL16 Switch Section Style */
+    .cl16-switch-section {
+        padding: 60px 0;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .cl16-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 21 / 9; /* 电影比例 */
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cl16-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    .cl16-bg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1.01); /* 避免某些浏览器边缘白边 */
+    }
+    .cl16-overlay {
+        position: absolute;
+        inset: 0;
+        /* 使用渐变色拉低亮度，让居中的白色文字显著 */
+        background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+        z-index: 1;
+    }
+    .cl16-content {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        text-align: center;
+        /* 防止文本被选中影响点击体验 */
+        user-select: none; 
+    }
+    .cl16-title {
+        font-size: clamp(32px, 5vw, 64px);
+        font-weight: 800;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .cl16-subtitle {
+        font-size: clamp(14px, 1.5vw, 20px);
+        margin-top: 12px;
+        font-weight: 500;
+        letter-spacing: 2px;
+        opacity: 0.9;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* 原有样式保持不变 */
     /* Explore Section - Improved Button Design */
     .action-button {
         display: flex;
@@ -566,8 +641,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         margin: 12vh auto;
         text-align: center;
         max-width: 1600px;
-		font-family: 'RAGE', cursive;
-		font-size: 1.75rem;
+        font-family: 'RAGE', cursive;
+        font-size: 1.75rem;
     }
 
     .quote-text {
@@ -660,6 +735,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 </style>
 
 <script>
+    //@ts-nocheck
     // 随机跳转网站列表（在源代码头部定义）
     // 大陆用户推荐网站
     const jumpWebsiteCN = [
@@ -736,6 +812,64 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         if (btnGlobal) {
             btnGlobal.addEventListener('click', () => {
                 window.location.href = jumpWebsiteGlobal[Math.floor(Math.random() * jumpWebsiteGlobal.length)];
+            });
+        }
+
+        // --- CL16 GSAP 交互逻辑 (下-右-下) ---
+        const cl16Trigger = document.getElementById('cl16Trigger');
+        const cl16Title = document.querySelector('.cl16-title');
+        const cl16Subtitle = document.querySelector('.cl16-subtitle');
+        
+        if (cl16Trigger && typeof gsap !== 'undefined') {
+            let isSwitched = false;
+            // 防止在动画过程中重复点击
+            let isAnimating = false;
+
+            cl16Trigger.addEventListener('click', () => {
+                if(isAnimating) return;
+                isAnimating = true;
+
+                let tl = gsap.timeline({
+                    onComplete: () => isAnimating = false
+                });
+
+                // 1. 下
+                tl.to([cl16Title, cl16Subtitle], { 
+                    y: 40, 
+                    duration: 0.25, 
+                    ease: "power2.in" 
+                })
+                // 2. 右 (移动并渐渐消失)
+                .to([cl16Title, cl16Subtitle], { 
+                    x: 100, 
+                    opacity: 0, 
+                    duration: 0.25, 
+                    ease: "power2.in" 
+                })
+                // 切换文字内容
+                .call(() => {
+                    isSwitched = !isSwitched;
+                    cl16Title.innerText = isSwitched ? "THE NEXT CHAPTER" : "RACING SPIRIT";
+                    cl16Subtitle.innerText = isSwitched ? "Pushing limits" : "Click to switch";
+                })
+                // 将元素隐式设置到左上方，为进入做准备
+                .set([cl16Title, cl16Subtitle], { 
+                    x: -100, 
+                    y: -40 
+                })
+                // 从左上进入中心偏上位置
+                .to([cl16Title, cl16Subtitle], { 
+                    x: 0, 
+                    opacity: 1, 
+                    duration: 0.3, 
+                    ease: "power2.out" 
+                })
+                // 3. 下 (平滑落回避位)
+                .to([cl16Title, cl16Subtitle], { 
+                    y: 0, 
+                    duration: 0.25, 
+                    ease: "power2.out" 
+                });
             });
         }
     });

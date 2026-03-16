@@ -28,36 +28,46 @@ const { title } = Astro.props;
         </footer>
 
         <script>
-            import Lenis from '@studio-freight/lenis'
+            import Lenis from '@studio-freight/lenis';
+            import gsap from 'gsap';
+            import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-            // 初始化 Lenis
+            // 1. 注册插件
+            gsap.registerPlugin(ScrollTrigger);
+
+            // 2. 初始化 Lenis
             const lenis = new Lenis({
                 duration: 1.2,
                 easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                orientation: 'vertical',
                 smoothWheel: true,
-                wheelMultiplier: 1,
-                touchMultiplier: 2,
-                infinite: false,
-            })
+            });
 
-            // 循环渲染
-            function raf(time: number) {
-                lenis.raf(time)
-                requestAnimationFrame(raf)
-            }
+            // 3. 核心：同步 Lenis 与 ScrollTrigger
+            // 每当 Lenis 滚动时，通知 ScrollTrigger 更新位置
+            lenis.on('scroll', ScrollTrigger.update);
 
-            requestAnimationFrame(raf)
+            // 4. 使用 GSAP 的 Ticker 统一管理每一帧
+            // 这确保了惯性滚动和动画在同一个刷新频率下，防止画面撕裂
+            gsap.ticker.add((time) => {
+                lenis.raf(time * 1000);
+            });
 
-            // 处理 Astro 页面切换时的滚动复位（如果使用 View Transitions）
+            gsap.ticker.lagSmoothing(0);
+
+            // 5. 处理 Astro 页面切换（如果使用了 View Transitions）
             document.addEventListener('astro:after-swap', () => {
-                lenis.scrollTo(0, { immediate: true })
-            })
+                ScrollTrigger.refresh();
+                lenis.scrollTo(0, { immediate: true });
+            });
         </script>
     </body>
 </html>
 
 <style is:global>
+	html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
     /* --- Lenis 核心辅助样式 --- */
     html.lenis, html.lenis body {
         height: auto;
