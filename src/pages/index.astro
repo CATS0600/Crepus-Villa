@@ -125,18 +125,20 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             </div>
         </section>
 
-        <section class="cl16-switch-section safe-zone">
+        <!-- ✅ 修改1：图片扩大到占满界面左右，移除 safe-zone 限制和 max-width -->
+        <section class="cl16-switch-section">
             <div class="cl16-container" id="cl16Trigger">
                 <div class="cl16-overlay"></div>
                 <img src={switchImg.src} alt="Cinematic Visual" class="cl16-bg" />
                 <div class="cl16-content">
                     <h2 class="cl16-title">RACING SPIRIT</h2>
-                    <p class="cl16-subtitle">Click to switch</p>
+                    <!-- ✅ 修改2：移除"Click to switch"副标题 -->
                 </div>
             </div>
         </section>
 
-        <section class="applications-section">
+        <!-- ✅ 修改3：各模块间距加大，统一使用 section-gap class -->
+        <section class="applications-section section-gap">
             <div class="safe-zone" style="max-width: 1000px; margin: 0 auto;">
                 <div class="app-header" style="text-align: center; margin-bottom: 60px;">
                     <h2 class="partner-sub-title" style="margin-bottom: 10px;">APPLICATIONS</h2>
@@ -159,7 +161,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             </div>
         </section>
 
-            <div class="contact-container safe-zone" style="padding-bottom: 100px;">
+            <div class="contact-container safe-zone section-gap" style="padding-bottom: 100px;">
                 <h2 class="contact-title">WHAT'S UP ON INTERNET</h2>
                 <p class="partner-desc">Follow Me on socials</p>
                 <div class="social-links">
@@ -184,7 +186,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         <span class="social-name">Roblox</span>
                     </a>
                 </div>
-                <p class="partner-desc" style="margin-top: 60px; margin-bottom: 30px;">Radio check? send me</p>
+
+                <!-- ✅ 修改3：Radio check 与上方间距加大 -->
+                <p class="partner-desc" style="margin-top: 120px; margin-bottom: 30px;">Radio check? send me</p>
                 <div class="email-container" style="margin-top: 50px;">
                     <a href="mailto:E-Crepuscular@outlook.com" class="email-button">
                         <span class="email-icon">✉</span>
@@ -192,7 +196,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     </a>
                 </div>
 
-                <div style="margin-top: 60px; margin-bottom: 60px;">
+                <!-- ✅ 修改3：explore something random 与上方间距加大 -->
+                <div style="margin-top: 120px; margin-bottom: 60px;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Want to explore something random?</p>
                     <div class="explore-buttons" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
                         <button id="jumpBtnCN" class="action-button cn-button">
@@ -216,18 +221,17 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 </Layout>
 
 <style>
-    /* CL16 Switch Section Style */
+    /* ✅ 修改1：CL16 图片占满全宽，无 safe-zone、无 max-width、无左右 padding */
     .cl16-switch-section {
         padding: 60px 0;
         width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
     }
     .cl16-container {
         position: relative;
         width: 100%;
-        aspect-ratio: 21 / 9; /* 电影比例 */
-        border-radius: 20px;
+        aspect-ratio: 21 / 9;
+        /* ✅ 移除 border-radius，让图片真正贴边 */
+        border-radius: 0;
         overflow: hidden;
         cursor: pointer;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -242,12 +246,11 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         height: 100%;
         object-fit: cover;
         display: block;
-        transform: scale(1.01); /* 避免某些浏览器边缘白边 */
+        transform: scale(1.01);
     }
     .cl16-overlay {
         position: absolute;
         inset: 0;
-        /* 使用渐变色拉低亮度，让居中的白色文字显著 */
         background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
         z-index: 1;
     }
@@ -261,7 +264,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         align-items: center;
         color: #ffffff;
         text-align: center;
-        /* 防止文本被选中影响点击体验 */
         user-select: none; 
     }
     .cl16-title {
@@ -272,17 +274,14 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         letter-spacing: 4px;
         text-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .cl16-subtitle {
-        font-size: clamp(14px, 1.5vw, 20px);
-        margin-top: 12px;
-        font-weight: 500;
-        letter-spacing: 2px;
-        opacity: 0.9;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    /* ✅ 修改2：cl16-subtitle 样式保留但已从 HTML 中移除，不影响其他元素 */
+
+    /* ✅ 修改3：底部模块间距统一加大 */
+    .section-gap {
+        padding-top: 160px !important;
     }
 
-    /* 原有样式保持不变 */
-    /* Explore Section - Improved Button Design */
+    /* Explore Section */
     .action-button {
         display: flex;
         align-items: center;
@@ -370,14 +369,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
 
     /* Villa V4 Icon Section */
-    .villa-icon-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 30px 0;
-        margin: 40px 0 20px 0;
-    }
-
     .villa-v4-icon {
         width: clamp(80px, 15vw, 250px);
         height: auto;
@@ -396,12 +387,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         .villa-v4-icon {
             box-shadow: 0 8px 24px rgba(255,255,255,0.1);
         }
-
         .villa-v4-icon:hover {
             box-shadow: 0 12px 32px rgba(255,255,255,0.15);
         }
     }
-    
 
     .button-group {
         display: flex;
@@ -546,19 +535,15 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             background: rgba(32, 32, 34, 0.5);
             border-color: rgba(255, 255, 255, 0.1);
         }
-
         .app-card-title {
             color: #f5f5f7;
         }
-
         .app-card-desc {
             color: #a1a1a6;
         }
-
         .app-card:hover {
             border-color: rgba(255, 255, 255, 0.2);
         }
-
         .applications-section {
             background: #000000;
         }
@@ -579,9 +564,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         .main-content { background-color: #000000; }
     }
 
-    /* --- 新图片模块样式 --- */
+    /* --- 图片模块样式 --- */
     .photo-gallery-section {
-        padding: 15vh var(--safe-area); /* 增加左右安全区 */
+        padding: 15vh var(--safe-area);
         display: flex;
         justify-content: center;
     }
@@ -591,19 +576,17 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         flex-direction: column;
         width: 100%;
         max-width: 2000px;
-        gap: 12vh; /* 使用视口高度单位控制间距，更具动态感 */
+        gap: 12vh;
     }
 
     .photo-container {
         display: flex;
         flex-direction: column;
         position: relative;
-        /* 5. 左右摆放逻辑 */
         &.align-left { align-self: flex-start; }
         &.align-right { align-self: flex-end; }
     }
 
-    /* 1. 动态大小控制：基于视口宽度 (vw) */
     .size-s { width: 35vw; min-width: 250px; max-width: 650px; }
     .size-m { width: 45vw; min-width: 300px; max-width: 750px; }
     .size-l { width: 55vw; min-width: 350px; max-width: 850px; }
@@ -618,7 +601,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         width: 100%;
         height: auto;
         display: block;
-        /* 5. 不用圆角 */
         border-radius: 0;
         transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -627,7 +609,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         transform: scale(1.05);
     }
 
-    /* 2 & 6. 注释小字样式 */
     .photo-annotation {
         font-size: 10px;
         letter-spacing: 0.1em;
@@ -660,10 +641,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         }
     }
 
-    /* --- 原有样式兼容 --- */
+    /* --- 原有样式 --- */
     .logo-name { font-family: 'RAGE', cursive; font-size: 48px; font-weight: 600; color: #1d1d1f; }
     .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; }
-        .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
+    .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
     .hero-title { font-size: clamp(44px, 12vw, 130px); font-weight: 800; line-height: 1.1; }
     .accent-text { color: var(--accent-color); }
     .auto-scroll-section { padding: 100px 0; background: #f5f5f7; overflow: hidden; }
@@ -720,10 +701,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
     .reveal.active { opacity: 1; transform: translateY(0); }
     @media (max-width: 768px) {
-        .scrolling-text {
-            font-size: 20vw; /* 调整在小屏幕上的文本大小 */
-        }
-
+        .scrolling-text { font-size: 20vw; }
         .social-links { grid-template-columns: repeat(4, 1fr); }
     }
     @media (max-width: 600px) {
@@ -736,41 +714,22 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
 <script>
     //@ts-nocheck
-    // 随机跳转网站列表（在源代码头部定义）
-    // 大陆用户推荐网站
     const jumpWebsiteCN = [
         "https://www.bilibili.com/video/BV18SFyzoEwn/",
         "https://www.bilibili.com/video/BV1CqP1zbEiJ/",
         "https://www.bilibili.com/video/BV1PEZXBPEM4/",
-        // "https://v.douyin.com/2BlAvGPNdkw/",
-        // "https://www.douyin.com",
-        // "https://www.qq.com",
-        // "https://www.163.com",
-        // "https://www.aliyun.com",
-        // "https://www.baidu.com",
-        // "https://www.taobao.com"
+        "https://v.douyin.com/mcHOL2GE6EE/",
+        "https://lab.magiconch.com/nbnhhsh/",
+
     ];
 
-    // 全球网站
     const jumpWebsiteGlobal = [
         "https://youtu.be/fMjZJZ5c-6U?si=k0gwh7myLX6ljdBb",
         "https://https://gemini.google.com/",
         "https://www.youtube.com/@comgg-s7x",
-        // "https://astro.build",
-        // "https://www.roblox.com",
-        // "https://paramecium2010.top",
-        // "https://hydrolight.top",
-        // "https://www.odysphere.tech",
-        // "https://gemini.google.com",
-        // "https://stackoverflow.com",
-        // "https://www.wikipedia.org",
-        // "https://www.youtube.com",
-        // "https://twitter.com",
-        // "https://reddit.com",
-        // "https://www.instagram.com"
+        "https://claude.ai/",
     ];
 
-    // 打字机与滚动逻辑保持不变
     const words = ["Define.", "Spark.", "Breathe.", "Manifest.", "Endure."];
     let wordIndex = 0, charIndex = 0, isDeleting = false;
     
@@ -800,7 +759,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // Random Jump Logic
         const btnCN = document.getElementById('jumpBtnCN');
         const btnGlobal = document.getElementById('jumpBtnGlobal');
 
@@ -815,14 +773,12 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             });
         }
 
-        // --- CL16 GSAP 交互逻辑 (下-右-下) ---
+        // --- CL16 GSAP 交互逻辑（仅保留标题动画，副标题已移除）---
         const cl16Trigger = document.getElementById('cl16Trigger');
         const cl16Title = document.querySelector('.cl16-title');
-        const cl16Subtitle = document.querySelector('.cl16-subtitle');
         
-        if (cl16Trigger && typeof gsap !== 'undefined') {
+        if (cl16Trigger && cl16Title && typeof gsap !== 'undefined') {
             let isSwitched = false;
-            // 防止在动画过程中重复点击
             let isAnimating = false;
 
             cl16Trigger.addEventListener('click', () => {
@@ -833,39 +789,32 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     onComplete: () => isAnimating = false
                 });
 
-                // 1. 下
-                tl.to([cl16Title, cl16Subtitle], { 
+                tl.to(cl16Title, { 
                     y: 40, 
                     duration: 0.25, 
                     ease: "power2.in" 
                 })
-                // 2. 右 (移动并渐渐消失)
-                .to([cl16Title, cl16Subtitle], { 
+                .to(cl16Title, { 
                     x: 100, 
                     opacity: 0, 
                     duration: 0.25, 
                     ease: "power2.in" 
                 })
-                // 切换文字内容
                 .call(() => {
                     isSwitched = !isSwitched;
                     cl16Title.innerText = isSwitched ? "THE NEXT CHAPTER" : "RACING SPIRIT";
-                    cl16Subtitle.innerText = isSwitched ? "Pushing limits" : "Click to switch";
                 })
-                // 将元素隐式设置到左上方，为进入做准备
-                .set([cl16Title, cl16Subtitle], { 
+                .set(cl16Title, { 
                     x: -100, 
                     y: -40 
                 })
-                // 从左上进入中心偏上位置
-                .to([cl16Title, cl16Subtitle], { 
+                .to(cl16Title, { 
                     x: 0, 
                     opacity: 1, 
                     duration: 0.3, 
                     ease: "power2.out" 
                 })
-                // 3. 下 (平滑落回避位)
-                .to([cl16Title, cl16Subtitle], { 
+                .to(cl16Title, { 
                     y: 0, 
                     duration: 0.25, 
                     ease: "power2.out" 

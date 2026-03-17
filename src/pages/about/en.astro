@@ -138,6 +138,50 @@ import Header from '../../components/Header.astro';
             </div>
         </section>
 
+        <!-- About Projects Section -->
+        <section class="about-section content-card scroll-reveal">
+            <div class="safe-zone">
+                <h2 class="section-title">About Projects</h2>
+                <div class="section-content">
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-icon">🤖</div>
+                            <div class="project-info">
+                                <h3 class="project-title">Cyril-Steward</h3>
+                                <p class="project-type">QQ Bot</p>
+                                <p class="project-desc">A Steward based on the QQ platform, providing automated services and group chat management. Although not used frequently, it has laid some groundwork for future internet projects like VS Code, Gemini+coding, and more.</p>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <div class="project-icon">🏠</div>
+                            <div class="project-info">
+                                <h3 class="project-title">Crepuscular's Villa</h3>
+                                <p class="project-type">Personal Website</p>
+                                <p class="project-desc">The place you are currently visiting. Built with the Astro framework, this is my personal homepage and also my largest internet project.</p>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <div class="project-icon">☕</div>
+                            <div class="project-info">
+                                <h3 class="project-title">Romi Cafe Mix</h3>
+                                <p class="project-type">Restaurant Tycoon 3</p>
+                                <p class="project-desc">An immersive restaurant experience built on the Roblox platform. Welcome to come for a cup of coffee.</p>
+                            </div>
+                        </div>
+                        <a href="mailto:E-Crepuscular@outlook.com" class="project-card project-card--collab">
+                            <div class="project-icon">🤝</div>
+                            <div class="project-info">
+                                <h3 class="project-title">Business Collaboration</h3>
+                                <p class="project-type">Business</p>
+                                <p class="project-desc">We support business collaborations, welcome to contact us for discussions.</p>
+                                <span class="project-link">E-Crepuscular@outlook.com<br/>→</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- About DPMBG Section -->
         <section class="about-section content-card scroll-reveal">
             <div class="safe-zone">
@@ -196,6 +240,12 @@ import Header from '../../components/Header.astro';
                         </li>
                         <li>
                             <strong>12 Mar 2026</strong> - Villa V4 Block 12 was released, bringing enhancements and improvements to various sections.
+                        </li>
+                        <li>
+                            <strong>16 Mar 2026</strong> - Smooooooth operator now onbroadcasting with Villa V4 Block 16, enjoy the silky-smooth experience.
+                        </li>
+                        <li>
+                            <strong>17 Mar 2026</strong> - Villa V4 Block 32, why not?
                         </li>
                     </ul>
                 </div>
@@ -429,6 +479,133 @@ import Header from '../../components/Header.astro';
 
         .interest-desc {
             color: #a1a1a6;
+        }
+    }
+
+
+    /* Projects Grid */
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .project-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 24px;
+        background: rgba(251, 251, 253, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .project-card--collab {
+        border: 1px solid rgba(29, 29, 31, 0.15);
+        background: linear-gradient(135deg, rgba(29, 29, 31, 0.04) 0%, rgba(66, 66, 69, 0.04) 100%);
+        cursor: pointer;
+    }
+
+    .project-card--collab:hover {
+        border-color: rgba(29, 29, 31, 0.3);
+        box-shadow: 0 8px 24px rgba(29, 29, 31, 0.12);
+    }
+
+    .project-icon {
+        font-size: 2rem;
+        flex-shrink: 0;
+        line-height: 1;
+        margin-top: 2px;
+    }
+
+    .project-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .project-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1d1d1f;
+        margin: 0;
+    }
+
+    .project-type {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #86868b;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 0;
+    }
+
+    .project-desc {
+        font-size: 0.9rem;
+        color: #424245;
+        line-height: 1.6;
+        margin: 4px 0 0 0;
+    }
+
+    .project-link {
+        display: inline-block;
+        margin-top: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #1d1d1f;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+    }
+
+    .project-card--collab:hover .project-link {
+        opacity: 1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .project-card {
+            background: rgba(44, 44, 46, 0.8);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .project-card:hover {
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08);
+        }
+
+        .project-card--collab {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(200, 200, 200, 0.04) 100%);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .project-card--collab:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+        }
+
+        .project-title {
+            color: #f5f5f7;
+        }
+
+        .project-desc {
+            color: #e0e0e2;
+        }
+
+        .project-link {
+            color: #f5f5f7;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .projects-grid {
+            grid-template-columns: 1fr;
         }
     }
 
