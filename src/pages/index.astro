@@ -131,7 +131,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <div class="cl16-overlay"></div>
                 <img src={switchImg.src} alt="Cinematic Visual" class="cl16-bg" />
                 <div class="cl16-content">
-                    <h2 class="cl16-title">RACING SPIRIT</h2>
+                    <h2 class="cl16-title">Dont judge others by what they cant do...</h2>
                     <!-- ✅ 修改2：移除"Click to switch"副标题 -->
                 </div>
             </div>
@@ -267,10 +267,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         user-select: none; 
     }
     .cl16-title {
+        font-family: 'RAGE', cursive;
         font-size: clamp(32px, 5vw, 64px);
         font-weight: 800;
         margin: 0;
-        text-transform: uppercase;
         letter-spacing: 4px;
         text-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
@@ -802,7 +802,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 })
                 .call(() => {
                     isSwitched = !isSwitched;
-                    cl16Title.innerText = isSwitched ? "THE NEXT CHAPTER" : "RACING SPIRIT";
+                    cl16Title.innerText = isSwitched ? "Judge yourself by what you can do." : "Don't judge others by what they can't do...";
                 })
                 .set(cl16Title, { 
                     x: -100, 
