@@ -126,24 +126,28 @@ import Header from '../components/Header.astro';
         tabName === 'send' ? loadMessages() : loadApplications();
     }
 
-    window.loadMessages = async function() {
-        const container = document.getElementById('messagesList');
-        try {
-            const res = await fetch('/api/admin', { headers: { 'X-Admin-Token': adminToken } });
-            const data = await res.json();
-            const order = { 'PENDING': 0, 'COMPLETE': 1, 'ARCHIVED': 2 };
-            const sorted = (data.messages || []).sort((a, b) => order[a.type] - order[b.type]);
+    // admin.astro 中的 <script> 部分
 
-            container.innerHTML = sorted.map((msg, idx) => `
-                <div class="msg-unit">
-                    <button class="item-entry-btn" onclick="toggleFold('msg-${msg.id}')">
-                        <span class="entry-title">${escapeHtml(msg.title || 'UNTITLED')}</span>
-                        <span class="status-pill status-${(msg.type || 'PENDING').toLowerCase()}">${msg.type || 'PENDING'}</span>
-                    </button>
-                    <div id="fold-msg-${msg.id}" class="detail-fold">
-                        <div class="info-block"><span class="info-label">Title</span><input id="in-title-${msg.id}" class="admin-textarea" value="${escapeHtml(msg.title)}" /></div>
-                        <div class="info-block"><span class="info-label">Content</span><textarea id="in-content-${msg.id}" class="admin-textarea">${escapeHtml(msg.content)}</textarea></div>
-                        <div class="info-block"><span class="info-label">Reply</span><textarea id="in-reply-${msg.id}" class="admin-textarea" style="color:#0071e3">${escapeHtml(msg.reply)}</textarea></div>
+// 1. 修改 loadMessages 的 HTML 模板
+window.loadMessages = async function() {
+    const container = document.getElementById('messagesList');
+    try {
+        const res = await fetch('/api/admin', { headers: { 'X-Admin-Token': adminToken } });
+        const data = await res.json();
+        const sorted = (data.messages || []).sort((a, b) => a.id - b.id); // 或按时间排序
+
+        container.innerHTML = sorted.map((msg, idx) => `
+            <div class="msg-unit">
+                <button class="item-entry-btn" onclick="toggleFold('msg-${msg.id}')">
+                    <span class="entry-title">${escapeHtml(msg.title || 'UNTITLED')}</span>
+                    <span class="status-pill status-${(msg.type || 'PENDING').toLowerCase()}">${msg.type || 'PENDING'}</span>
+                </button>
+                <div id="fold-msg-${msg.id}" class="detail-fold">
+                    <div class="info-block"><span class="info-label">Title</span><input id="in-title-${msg.id}" class="admin-textarea" value="${escapeHtml(msg.title)}" /></div>
+                    <div class="info-block"><span class="info-label">Content</span><textarea id="in-content-${msg.id}" class="admin-textarea">${escapeHtml(msg.content)}</textarea></div>
+                    <div class="info-block"><span class="info-label">Reply</span><textarea id="in-reply-${msg.id}" class="admin-textarea" style="color:#0071e3">${escapeHtml(msg.reply)}</textarea></div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="info-block">
                             <span class="info-label">Status</span>
                             <select id="in-type-${msg.id}" class="admin-textarea">
@@ -152,43 +156,64 @@ import Header from '../components/Header.astro';
                                 <option value="ARCHIVED" ${msg.type === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
                             </select>
                         </div>
-                        <div class="ops-row">
-                            <button class="btn-sync" onclick="updateMessage(${msg.id})">UPDATE</button>
-                            <button class="btn-delete" onclick="deleteData('send', ${msg.id})">DELETE</button>
+                        <div class="info-block">
+                            <span class="info-label">Visibility</span>
+                            <select id="in-public-${msg.id}" class="admin-textarea">
+                                <option value="1" ${msg.is_public == 1 ? 'selected' : ''}>PUBLIC</option>
+                                <option value="0" ${msg.is_public == 0 ? 'selected' : ''}>PRIVATE</option>
+                            </select>
                         </div>
                     </div>
-                    ${idx !== sorted.length - 1 ? '<div class="admin-divider">---</div>' : ''}
-                </div>
-            `).join('');
-        } catch (e) { container.innerHTML = 'LOAD ERROR'; }
-    }
 
-    window.loadApplications = async function() {
-        const group = document.getElementById('groupFilter').value;
-        const container = document.getElementById('applicationsList');
-        try {
-            const res = await fetch(`/api/exam/admin?group=${group}`, { headers: { 'X-Admin-Token': adminToken } });
-            const data = await res.json();
-            if (res.status !== 200) throw new Error(data.error);
-
-            container.innerHTML = (data.applications || []).map((app, idx) => `
-                <div class="app-unit">
-                    <button class="item-entry-btn" onclick="toggleFold('app-${app.id}')">
-                        <span class="entry-title">${escapeHtml(app.username)}</span>
-                        <span class="status-pill status-pending">${app.status}</span>
-                    </button>
-                    <div id="fold-app-${app.id}" class="detail-fold">
-                        <div class="info-block" style="white-space: pre-wrap; font-size: 14px;">${escapeHtml(app.answers)}</div>
-                        <div class="ops-row">
-                            <button class="btn-sync" style="background:#22c55e" onclick="updateExamStatus(${app.id}, 'approved')">APPROVE</button>
-                            <button class="btn-delete" style="background:rgba(255,69,58,0.1)" onclick="deleteData('exam', ${app.id})">DELETE</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="info-block">
+                            <span class="info-label">Reply Method</span>
+                            <input id="in-method-${msg.id}" class="admin-textarea" value="${escapeHtml(msg.reply_method)}" />
+                        </div>
+                        <div class="info-block">
+                            <span class="info-label">Email</span>
+                            <input id="in-email-${msg.id}" class="admin-textarea" value="${escapeHtml(msg.email)}" placeholder="N/A" />
                         </div>
                     </div>
-                    ${idx !== data.applications.length - 1 ? '<div class="admin-divider">---</div>' : ''}
+
+                    <div class="ops-row">
+                        <button class="btn-sync" onclick="updateMessage(${msg.id})">UPDATE</button>
+                        <button class="btn-delete" onclick="deleteData('send', ${msg.id})">DELETE</button>
+                    </div>
                 </div>
-            `).join('') || '<p style="text-align:center; padding:40px; opacity:0.5;">NO DATA</p>';
-        } catch (e) { container.innerHTML = `<div class="info-block" style="color:#ff453a; text-align:center;">API ERROR: ${e.message}</div>`; }
+                ${idx !== sorted.length - 1 ? '<div class="admin-divider">---</div>' : ''}
+            </div>
+        `).join('');
+    } catch (e) { container.innerHTML = 'LOAD ERROR'; }
+}
+
+// 2. 修改 updateMessage 提交逻辑
+window.updateMessage = async function(id) {
+    const payload = {
+        id,
+        title: document.getElementById(`in-title-${id}`).value,
+        type: document.getElementById(`in-type-${id}`).value,
+        content: document.getElementById(`in-content-${id}`).value,
+        reply: document.getElementById(`in-reply-${id}`).value,
+        // 【关键】获取新增字段的值
+        email: document.getElementById(`in-email-${id}`).value,
+        reply_method: document.getElementById(`in-method-${id}`).value,
+        is_public: document.getElementById(`in-public-${id}`).value === "1"
+    };
+    
+    const res = await fetch('/api/admin', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+        body: JSON.stringify(payload)
+    });
+
+    if(res.ok) {
+        alert("SUCCESS");
+        loadMessages();
+    } else {
+        alert("UPDATE FAILED");
     }
+}
 
     window.toggleFold = function(id) {
         const target = document.getElementById(`fold-${id}`);
@@ -197,21 +222,21 @@ import Header from '../components/Header.astro';
         target.style.display = isCurrentlyVisible ? 'none' : 'block';
     }
 
-    window.updateMessage = async function(id) {
-        const payload = {
-            id,
-            title: document.getElementById(`in-title-${id}`).value,
-            type: document.getElementById(`in-type-${id}`).value,
-            content: document.getElementById(`in-content-${id}`).value,
-            reply: document.getElementById(`in-reply-${id}`).value
-        };
-        await fetch('/api/admin', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-            body: JSON.stringify(payload)
-        });
-        loadMessages();
-    }
+    // window.updateMessage = async function(id) {
+    //     const payload = {
+    //         id,
+    //         title: document.getElementById(`in-title-${id}`).value,
+    //         type: document.getElementById(`in-type-${id}`).value,
+    //         content: document.getElementById(`in-content-${id}`).value,
+    //         reply: document.getElementById(`in-reply-${id}`).value
+    //     };
+    //     await fetch('/api/admin', {
+    //         method: 'PUT',
+    //         headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+    //         body: JSON.stringify(payload)
+    //     });
+    //     loadMessages();
+    // }
 
     window.updateExamStatus = async function(id, status) {
         await fetch('/api/exam/admin', {
