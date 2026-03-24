@@ -52,5 +52,35 @@ export const PUT = async ({ request, locals }) => {
         return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
     }
 }
+    export const DELETE = async ({ request, locals }) => {
+    try {
+        const clientToken = request.headers.get('X-Admin-Token');
+        if (clientToken !== ADMIN_HASH) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+        }
 
-// DELETE 逻辑保持不变...
+        const env = locals.runtime?.env;
+        if (!env?.DB) throw new Error('Database not available');
+
+        const data = await request.json();
+        const { id } = data;
+
+        if (!id) {
+            return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400 });
+        }
+
+        // 执行删除
+        const stmt = env.DB.prepare('DELETE FROM messages WHERE id = ?');
+        const result = await stmt.bind(id).run();
+
+        // 如果没有行受影响，说明 ID 不存在
+        if (result.meta.changes === 0) {
+            return new Response(JSON.stringify({ error: 'Message not found' }), { status: 404 });
+        }
+
+        return new Response(JSON.stringify({ success: true, message: 'Deleted' }), { status: 200 });
+    } catch (error) {
+        console.error('DELETE Error:', error);
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+    }
+}
