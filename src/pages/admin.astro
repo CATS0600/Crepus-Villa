@@ -168,7 +168,10 @@ window.loadMessages = async function() {
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="info-block">
                             <span class="info-label">Reply Method</span>
-                            <input id="in-method-${msg.id}" class="admin-textarea" value="${escapeHtml(msg.reply_method)}" />
+                            <select id="in-reply-method-${msg.id}" class="admin-textarea">
+                                <option value="web" ${msg.reply_method === 'web' ? 'selected' : ''}>Web</option>
+                                <option value="email" ${msg.reply_method === 'email' ? 'selected' : ''}>Email</option>
+                            </select>
                         </div>
                         <div class="info-block">
                             <span class="info-label">Email</span>
@@ -195,9 +198,9 @@ window.updateMessage = async function(id) {
         type: document.getElementById(`in-type-${id}`).value,
         content: document.getElementById(`in-content-${id}`).value,
         reply: document.getElementById(`in-reply-${id}`).value,
-        // 【关键】获取新增字段的值
         email: document.getElementById(`in-email-${id}`).value,
-        reply_method: document.getElementById(`in-method-${id}`).value,
+        // 【关键】确保 ID 与你新改的 HTML 对应
+        reply_method: document.getElementById(`in-reply-method-${id}`).value, 
         is_public: document.getElementById(`in-public-${id}`).value === "1"
     };
     

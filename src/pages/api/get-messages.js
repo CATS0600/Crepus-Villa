@@ -9,8 +9,8 @@ export const GET = async ({ request, locals }) => {
     let messages;
 
     if (token) {
-      // --- 场景 A：用户通过私密 Token 查看 ---
-      // 这种情况下可以返回完整字段，方便用户确认自己的信息
+      // 场景 A：凭 Token 访问
+      // 逻辑：只要 Token 对上了，哪怕是 ARCHIVED 或 PENDING 都能看
       const stmt = env.DB.prepare(
         'SELECT * FROM messages WHERE UPPER(token) = UPPER(?) ORDER BY created_at DESC'
       );
@@ -23,9 +23,9 @@ export const GET = async ({ request, locals }) => {
         `SELECT id, title, type, content, reply, created_at 
          FROM messages 
          WHERE is_public = 1 
-         AND reply IS NOT NULL 
-         AND UPPER(type) = 'COMPLETE' 
-         ORDER BY created_at DESC`
+        AND reply IS NOT NULL 
+        AND UPPER(type) = 'COMPLETE' 
+        ORDER BY created_at DESC`
       );
       const result = await stmt.all();
       messages = result.results || [];

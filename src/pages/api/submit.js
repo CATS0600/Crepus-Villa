@@ -31,10 +31,7 @@ export const POST = async ({ request, locals }) => {
     }
 
     // 4. 私密留言生成查询 Token
-    let token = null;
-    if (finalIsPublic === 0) {
-      token = crypto.randomUUID().slice(0, 8);
-    }
+    const token = crypto.randomUUID().slice(0, 8);
 
     // 5. 执行插入 (注意：这里不需要插入 reply 字段，SQL 里硬编码为 NULL)
     const stmt = env.DB.prepare(
@@ -43,10 +40,10 @@ export const POST = async ({ request, locals }) => {
 
     const result = await stmt.bind(
       content.trim(),
-      finalIsPublic,
-      token,
-      finalReplyMethod,
-      finalEmail
+      is_public ? 1 : 0,
+      token, // 始终插入 token
+      reply_method || 'web',
+      email || null
     ).run();
 
     return new Response(JSON.stringify({
