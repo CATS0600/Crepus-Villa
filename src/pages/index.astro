@@ -28,6 +28,8 @@ const photoCaptions = [
     "Slong City, Cities: Skylines, Dec 2025",
     "Chongqing, China, Feb 2026",
     "Guangxi, China, Feb 2026",
+    "Daybreak, Virtual, Mar 2026",
+    "Way To You, Virtual, Apr 2026",
 ];
 
 const partners = ["Paramecium", "Hydrolight", "Odysphere", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
@@ -135,7 +137,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <div class="cl16-overlay"></div>
                 <img src={switchImg.src} alt="Cinematic Visual" class="cl16-bg" />
                 <div class="cl16-content">
-                    <h2 class="cl16-title">Dont judge others by what they cant do...</h2>
+                    <h2 class="cl16-title">Im tired dont touch me</h2>
                     <!-- ✅ 修改2：移除"Click to switch"副标题 -->
                 </div>
             </div>
@@ -149,12 +151,14 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     <p class="partner-desc">Join Our Communities</p>
                 </div>
                 <div class="applications-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                    <!-- 临时注释掉 DPMBG 应用卡片
                     <a href="/application/dpmbg" class="app-card" style="text-decoration: none;">
                         <div class="app-card-icon">🌍</div>
                         <h3 class="app-card-title">DPMBG Application (Coming Soon)</h3>
                         <p class="app-card-desc">Disaster Prevention and Mitigation Basic Group</p>
                         <span class="app-arrow">→</span>
                     </a>
+                    -->
                     <a href="https://ks.wjx.com/vm/e7vWXP0.aspx#" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                         <div class="app-card-icon">📻</div>
                         <h3 class="app-card-title">KEMDR Application</h3>
@@ -189,6 +193,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         <span class="social-icon">✨</span>
                         <span class="social-name">Roblox</span>
                     </a>
+                    <a href="https://vrchat.com/home/user/usr_4d79b47c-3237-4761-9fb7-c6b149b4bc67" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">🥽</span>
+                        <span class="social-name">VRChat</span>
+                    </a>
                 </div>
 
                 <!-- ✅ 修改3：Radio check 与上方间距加大 -->
@@ -202,7 +210,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
                 <!-- ✅ 修改3：explore something random 与上方间距加大 -->
                 <div style="margin-top: 120px; margin-bottom: 60px;">
-                    <p class="partner-desc" style="margin-bottom: 20px;">Want to explore something random?</p>
+                    <p class="partner-desc" style="margin-bottom: 20px;">Explore.</p>
                     <div class="explore-buttons" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
                         <button id="jumpBtnCN" class="action-button cn-button">
                             <span class="action-icon">🐍</span>
@@ -271,7 +279,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         user-select: none; 
     }
     .cl16-title {
-        font-family: 'RAGE', cursive;
+        font-family: 'Noto Sans TC', sans-serif;
         font-size: clamp(32px, 5vw, 64px);
         font-weight: 800;
         margin: 0;
@@ -687,7 +695,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         .email-icon { color: #f5f5f7; }
         .email-text { color: #f5f5f7; }
     }
-    .social-links { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(12px, 3vw, 24px); width: 100%; max-width: 1000px; margin: 0 auto; }
+    .social-links { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(12px, 3vw, 24px); width: 100%; max-width: 1000px; margin: 0 auto; }
     .social-card { width: 100%; aspect-ratio: 1; background: #fff; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: all 0.3s ease; text-decoration: none; border: none; cursor: pointer; }
     .social-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
     .social-card:hover .social-icon { color: var(--accent-color); }
@@ -706,7 +714,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     .reveal.active { opacity: 1; transform: translateY(0); }
     @media (max-width: 768px) {
         .scrolling-text { font-size: 20vw; }
-        .social-links { grid-template-columns: repeat(4, 1fr); }
+        .social-links { grid-template-columns: repeat(5, 1fr); }
     }
     @media (max-width: 600px) {
         .social-links { grid-template-columns: repeat(3, 1fr); }
@@ -749,6 +757,24 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         setTimeout(type, delta);
     }
 
+    // CL16 的随机文字数组
+    const cl16Words = [
+        "Don't judge others by what they can't do, \n judge yourself by what you can do.",
+        "In the cracks, find the gold.",
+        "Everyone has their own path.",
+        "Potential lies in the journey.",
+        "Every moment shapes who you are.",
+        "Your effort defines your story.",
+        "Growth comes from acceptance.",
+        "You are not the best, but you are not the worst.",
+        "To live, to enjoy.",
+        "Focus on the step, not the mountain.",
+        "You are a work in progress, and that is enough.",
+        "Success is measured by the obstacles you've overcome, not the finish line.",
+        "Bloom where you are planted, even in the shadows."
+
+    ];
+
     function handleScroll() {
         const scrolled = window.scrollY;
         const scrollText = document.getElementById('scrollText');
@@ -777,12 +803,11 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             });
         }
 
-        // --- CL16 GSAP 交互逻辑（仅保留标题动画，副标题已移除）---
+        // --- CL16 GSAP 交互逻辑（随机显示文字）---
         const cl16Trigger = document.getElementById('cl16Trigger');
         const cl16Title = document.querySelector('.cl16-title');
         
         if (cl16Trigger && cl16Title && typeof gsap !== 'undefined') {
-            let isSwitched = false;
             let isAnimating = false;
 
             cl16Trigger.addEventListener('click', () => {
@@ -805,8 +830,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     ease: "power2.in" 
                 })
                 .call(() => {
-                    isSwitched = !isSwitched;
-                    cl16Title.innerText = isSwitched ? "Judge yourself by what you can do." : "Don't judge others by what they can't do...";
+                    // 随机选择一个文字
+                    const randomIndex = Math.floor(Math.random() * cl16Words.length);
+                    cl16Title.innerText = cl16Words[randomIndex];
                 })
                 .set(cl16Title, { 
                     x: -100, 

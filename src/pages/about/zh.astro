@@ -114,6 +114,14 @@ import Header from '../../components/Header.astro';
                             <p class="music-desc">有可能经常更新。不要错过！<br/>Bilibili 超时空辉夜姬『毕业演唱会』，包含 瞬間、シンフォニー。 与 Reply</p>
                         </a>
                     </div>
+                    <!-- 另起一行，添加网易音乐 -->
+                    <div class="music-grid-full">
+                        <a href="https://music.163.com/#/playlist?id=8369421831&uct2=U2FsdGVkX19EdPnaxkc/gbSJbatcIca6b0IERVNYW9w=" target="_blank" rel="noopener noreferrer" class="music-card">
+                            <div class="music-card-icon">🎵</div>
+                            <h3 class="music-category">Netease Music</h3>
+                            <p class="music-desc">可能是世界最好的歌单<br/>My favourite tracks</p>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -182,7 +190,7 @@ import Header from '../../components/Header.astro';
             </div>
         </section>
 
-        <!-- About DPMBG Section -->
+        <!-- 临时注释掉 About DPMBG Section
         <section class="about-section content-card scroll-reveal">
             <div class="safe-zone">
                 <h2 class="section-title">关于 DPMBG</h2>
@@ -196,8 +204,7 @@ import Header from '../../components/Header.astro';
                 </div>
             </div>
         </section>
-
-        <!-- About EEW Kono Broadcasting Bureau Section -->
+        -->
         <section class="about-section content-card scroll-reveal">
             <div class="safe-zone">
                 <h2 class="section-title">关于 KEMDR</h2>
@@ -243,10 +250,10 @@ import Header from '../../components/Header.astro';
                             <strong>7 Mar 2026 V4</strong> - 经过半月艰苦Push后，Villa V4正式与大家见面。
                         </li>
                         <li>
-                            <strong>12-17 Mar 2026 V4 Block 12-32</strong> - 无论是Lenis平滑，还是页面的美化，Villa V4的每一个批次都在不断提升用户体验。
+                            <strong>12 / 17 / 25 Mar 2026 V4 - Block 12 / 32 / 52 <br/></strong>无论是Lenis平滑，还是页面的美化，Villa V4的每一个批次都在不断提升用户体验。
                         </li>
                         <li>
-                            <strong>25 Mar 2026 V4 Block 50</strong> - Villa V4 Block 50，Why not?
+                            <strong>25 Mar 2026 V4 Block 77</strong> - Villa V4 Block 77，Why not?
                         </li>
                     </ul>
                 </div>
@@ -388,6 +395,30 @@ import Header from '../../components/Header.astro';
         flex-direction: column;
         align-items: center;
         gap: 12px;
+    }
+
+    
+    /* 新增：专门用于占据满宽度的音乐卡片容器 */
+    .music-grid-full {
+        display: grid;
+        grid-template-columns: 1fr; /* 强制单列 */
+        margin-top: 20px;
+    }
+
+    /* 调整原有 music-card 在满宽模式下的表现 */
+    .music-grid-full .music-card {
+        flex-direction: row; /* 横向排列图标和文字 */
+        justify-content: center;
+        padding: 20px;
+        gap: 24px;
+    }
+
+/* 响应式微调：小屏幕下回到堆叠布局 */
+    @media (max-width: 768px) {
+        .music-grid-full .music-card {
+        flex-direction: column;
+        gap: 12px;
+        }
     }
 
     .music-card:hover {

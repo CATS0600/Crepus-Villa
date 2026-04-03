@@ -114,7 +114,14 @@ import Header from '../../components/Header.astro';
                             <h3 class="music-category">Special</h3>
                             <p class="music-desc">Current obsession—don't miss out!<br/>Reply - Super Kaguya-hime</p>
                         </a>
-                    </div>
+                    </div>                    <!-- break line for music grid -->
+                    <div class="music-grid-full">
+                        <a href="https://music.163.com/#/playlist?id=8369421831&uct2=U2FsdGVkX19EdPnaxkc/gbSJbatcIca6b0IERVNYW9w=" target="_blank" rel="noopener noreferrer" class="music-card">
+                            <div class="music-card-icon">🎵</div>
+                            <h3 class="music-category">Netease Music</h3>
+                            <p class="music-desc">Playlist on Netease Cloud Music<br/>My favourite tracks</p>
+                        </a>
+                    </div>           
                 </div>
             </div>
         </section>
@@ -182,7 +189,7 @@ import Header from '../../components/Header.astro';
             </div>
         </section>
 
-        <!-- About DPMBG Section -->
+        <!-- 临时注释掉 About DPMBG Section
         <section class="about-section content-card scroll-reveal">
             <div class="safe-zone">
                 <h2 class="section-title">About DPMBG</h2>
@@ -196,7 +203,7 @@ import Header from '../../components/Header.astro';
                 </div>
             </div>
         </section>
-        <!-- About EEW Kono Broadcasting Bureau Section -->
+        -->
         <section class="about-section content-card scroll-reveal">
             <div class="safe-zone">
                 <h2 class="section-title">About KEMDR</h2>
@@ -242,12 +249,11 @@ import Header from '../../components/Header.astro';
                             <strong>7 Mar 2026</strong> - After a grueling two-week push, the Villa V4 has officially been released.
                         </li>
                         <li>
-                            <strong>12-17 Mar 2026 V4 Block 12-32</strong> - Whether Lenis smoothing or page beautification, each batch of Villa V4 continuously improves the user experience.
+                            <strong>12 / 17 / 25 Mar 2026 V4 <br/> Block 12 / 32 / 52 </strong> - Whether Lenis smoothing or page beautification, each batch of Villa V4 continuously improves the user experience.
                         </li>
                         <li>
-                            <strong>25 Mar 2026 V4 Block 50</strong> - Villa V4 Block 50，Why not?
+                            <strong>25 Mar 2026 V4 Block 77</strong> - Villa V4 Block 77，Why not?
                         </li>
-                    </ul>
                     </ul>
                 </div>
             </div>
@@ -371,6 +377,29 @@ import Header from '../../components/Header.astro';
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 20px;
         margin-top: 20px;
+    }
+
+    /* 新增：专门用于占据满宽度的音乐卡片容器 */
+    .music-grid-full {
+        display: grid;
+        grid-template-columns: 1fr; /* 强制单列 */
+        margin-top: 20px;
+    }
+
+    /* 调整原有 music-card 在满宽模式下的表现 */
+    .music-grid-full .music-card {
+        flex-direction: row; /* 横向排列图标和文字 */
+        justify-content: center;
+        padding: 20px;
+        gap: 24px;
+    }
+
+/* 响应式微调：小屏幕下回到堆叠布局 */
+    @media (max-width: 768px) {
+        .music-grid-full .music-card {
+        flex-direction: column;
+        gap: 12px;
+        }
     }
 
     .music-card {
