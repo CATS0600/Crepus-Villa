@@ -82,12 +82,17 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     );
                 })}
 
-                <div class="gallery-quote-box">
+                <div class="gallery-quote-box" id="galleryQuoteBox">
                     <p class="quote-text">{galleryQuote}</p>
                     <span class="quote-author">— Lando Norris</span>
                 </div>
 
-                <div class="send-section" style="margin: 80px 0; text-align: center;">
+                {/* 快捷按钮：滑动到引言处 */}
+                <button id="scrollToQuoteBtn" class="scroll-to-quote-btn" title="Scroll down to quote">
+                    <span class="quote-btn-icon">↓</span>
+                </button>
+
+                <div class="send-section" style="margin: 180px 0 80px 0; text-align: center;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Have something to say?</p>
                     <div class="button-group">
                         <a href="/send" class="send-button">
@@ -137,7 +142,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <div class="cl16-overlay"></div>
                 <img src={switchImg.src} alt="Cinematic Visual" class="cl16-bg" />
                 <div class="cl16-content">
-                    <h2 class="cl16-title">Im tired dont touch me</h2>
+                    <h2 class="cl16-title">To live, to feel, to enjoy.</h2>
                     <!-- ✅ 修改2：移除"Click to switch"副标题 -->
                 </div>
             </div>
@@ -204,7 +209,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 </div>
 
                 <!-- ✅ 修改3：Radio check 与上方间距加大 -->
-                <p class="partner-desc" style="margin-top: 120px; margin-bottom: 30px;">Radio check? send me</p>
+                <p class="partner-desc" style="margin-top: 240px; margin-bottom: 30px;">Radio check? send me</p>
                 <div class="email-container" style="margin-top: 50px;">
                     <a href="mailto:io@crepus.asia" class="email-button">
                         <span class="email-icon">✉</span>
@@ -213,7 +218,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 </div>
 
                 <!-- ✅ 修改3：explore something random 与上方间距加大 -->
-                <div style="margin-top: 120px; margin-bottom: 60px;">
+                <div style="margin-top: 240px; margin-bottom: 60px;">
                     <p class="partner-desc" style="margin-bottom: 20px;">Explore.</p>
                     <div class="explore-buttons" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
                         <button id="jumpBtnCN" class="action-button cn-button">
@@ -294,7 +299,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
     /* ✅ 修改3：底部模块间距统一加大 */
     .section-gap {
-        padding-top: 160px !important;
+        padding-top: 280px !important;
     }
 
     /* Explore Section */
@@ -617,7 +622,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         width: 100%;
         height: auto;
         display: block;
-        border-radius: 0;
+        border-radius: 16px;
         transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -726,6 +731,74 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     @media (max-width: 450px) {
         .social-links { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* 快捷滑动按钮样式 */
+    .scroll-to-quote-btn {
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1d1d1f 0%, #424245 100%);
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        opacity: 0;
+        pointer-events: none;
+        cursor: pointer;
+        z-index: 100;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s ease;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    .scroll-to-quote-btn.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .scroll-to-quote-btn:hover {
+        transform: scale(1.1) translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .scroll-to-quote-btn:active {
+        transform: scale(0.95) translateY(-4px);
+    }
+
+    .quote-btn-icon {
+        display: inline-block;
+        animation: bounce-down 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce-down {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(6px); }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .scroll-to-quote-btn {
+            background: linear-gradient(135deg, #f5f5f7 0%, #d1d1d6 100%);
+            color: #1d1d1f;
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+        }
+        .scroll-to-quote-btn:hover {
+            box-shadow: 0 12px 32px rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .scroll-to-quote-btn {
+            width: 48px;
+            height: 48px;
+            bottom: 30px;
+            right: 30px;
+            font-size: 20px;
+        }
+    }
 </style>
 
 <script>
@@ -771,7 +844,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         "Your effort defines your story.",
         "Growth comes from acceptance.",
         "You are not the best, but you are not the worst.",
-        "To live, to enjoy.",
         "Focus on the step, not the mountain.",
         "You are a work in progress, and that is enough.",
         "Success is measured by the obstacles you've overcome, not the finish line.",
@@ -785,7 +857,44 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         if (scrollText) scrollText.style.transform = `translateX(-${scrolled * 0.4}px)`;
     }
 
+    // 预加载所有图片
+    function preloadImages() {
+        const images = document.querySelectorAll('.photo-wrapper img');
+        images.forEach((img) => {
+            const src = img.src;
+            const imgElement = new Image();
+            imgElement.src = src;
+        });
+    }
+
+    // 快捷按钮：滑动到 gallery-quote-box
+    function setupScrollToQuoteBtn() {
+        const btn = document.getElementById('scrollToQuoteBtn');
+        const quoteBox = document.getElementById('galleryQuoteBox');
+        if (!btn || !quoteBox) return;
+
+        btn.addEventListener('click', () => {
+            quoteBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        // 滚动时显示/隐藏按钮
+        window.addEventListener('scroll', () => {
+            const gallerySection = document.querySelector('.photo-gallery-section');
+            if (gallerySection) {
+                const rect = gallerySection.getBoundingClientRect();
+                // 当画廊下方超过窗口下沿时，显示按钮
+                if (rect.bottom < window.innerHeight) {
+                    btn.classList.remove('show');
+                } else {
+                    btn.classList.add('show');
+                }
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        preloadImages();
+        setupScrollToQuoteBtn();
         type();
         window.addEventListener('scroll', handleScroll);
         const observer = new IntersectionObserver((entries) => {
