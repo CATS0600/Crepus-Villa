@@ -775,8 +775,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     }
 
     @keyframes bounce-down {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(6px); }
+        0% { transform: translateY(-2px); }
+        50% { transform: translateY(2px); }
+        100% { transform: translateY(-2px); }
     }
 
     @media (prefers-color-scheme: dark) {
@@ -873,12 +874,20 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         const quoteBox = document.getElementById('galleryQuoteBox');
         if (!btn || !quoteBox) return;
 
-        btn.addEventListener('click', () => {
+        let isScrolling = false;
+
+        // 当点击按钮时，防止滚动事件冲突
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isScrolling = true;
             quoteBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // 滚动完成后，恢复正常状态
+            setTimeout(() => { isScrolling = false; }, 1000);
         });
 
         // 滚动时显示/隐藏按钮
         window.addEventListener('scroll', () => {
+            if (isScrolling) return; // 如果正在滚动，不更新按钮状态
             const gallerySection = document.querySelector('.photo-gallery-section');
             if (gallerySection) {
                 const rect = gallerySection.getBoundingClientRect();
