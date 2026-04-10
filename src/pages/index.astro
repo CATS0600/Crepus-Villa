@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import villav4icon from '../v4icon/villav4icon.jpg';
+import villav4icon from '../villav4icon/villav5icon.webp';
 // 引入位于 switchphoto 中的电影比例图片
 import switchImg from '../switchphoto/a.jpg';
 
@@ -232,13 +232,24 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     </div>
                     
                     <div class="villa-icon-below-random" style="margin-top: 100px;">
-                        <img src={villav4icon.src} alt="Crepus Villa V4 Icon" class="villa-v4-icon" title="Crepuscular's Villa V4" />
-                        <span class="photo-annotation"><br/>i really drew this during the english exam, 3 mar 2026</span>
+                        <img src={villav4icon.src} alt="Crepus Villa V4 Icon" class="villa-v4-icon" title="Crepuscular's Villa V4" id="villaIcon" />
+                        <span class="photo-annotation"><br/>SEBASTIAN VETTEL #SV5 ??</span>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const villaIcon = document.getElementById('villaIcon');
+            if (villaIcon) {
+                villaIcon.addEventListener('click', () => {
+                    window.location.href = 'https://www.formula1.com';
+                });
+            }
+        });
+    </script>
 </Layout>
 
 <style>
@@ -800,6 +811,15 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             font-size: 20px;
         }
     }
+    .villa-icon-below-random {
+        margin-top: 100px;
+        display: flex;           /* 开启 flex 布局 */
+        flex-direction: column;  /* 让图标和文字垂直排列 */
+        align-items: center;     /* 水平居中核心属性 */
+        justify-content: center; /* 垂直居中 */
+        text-align: center;      /* 确保多行文字也居中 */
+        width: 100%;             /* 确保占满宽度以相对于页面居中 */
+    }  
 </style>
 
 <script>

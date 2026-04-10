@@ -233,26 +233,26 @@ import Header from '../../components/Header.astro';
                         A brief timeline of Crepuscular's Villa:
                     </p>
                     <ul class="timeline">
-                        <li>
+                        <li data-key="timeline-en-1">
                             <strong>20 Feb 2026</strong> - Villa V1 , successfully created the Astro framework.
                         </li>
-                        <li>
+                        <li data-key="timeline-en-2">
                             <strong>20 Feb 2026</strong> - Villa V2 was released on the same day, marking the initial deployment of Villa.
                         </li>
-                        <li>
+                        <li data-key="timeline-en-3">
                             <strong>21 Feb 2026</strong> - The rapid release of Villa V3 greatly improved the infrastructure.
                         </li>
-                        <li>
+                        <li data-key="timeline-en-4">
                             <strong>3 Mar 2026</strong> - Villa V4E was released with ./about , No-where, Now-here.
                         </li>
-                         <li>
+                         <li data-key="timeline-en-5">
                             <strong>7 Mar 2026</strong> - After a grueling two-week push, the Villa V4 has officially been released.
                         </li>
-                        <li>
+                        <li data-key="timeline-en-6">
                             <strong>12 / 17 / 25 Mar 2026 V4 <br/> Block 12 / 32 / 52 / 77 </strong> - Whether Lenis smoothing or page beautification, each batch of Villa V4 continuously improves the user experience.
                         </li>
-                        <li>
-                            <strong>25 Mar 2026 V4 Block 99</strong> - Villa V4 Block 99，Why not?
+                        <li contenteditable="true" data-key="timeline-en-7">
+                            <strong>25 Mar 2026 V4 Block 99</strong> - <i>Villa V4 Block 99，Why not?</i>
                         </li>
                     </ul>
                 </div>
@@ -279,6 +279,28 @@ import Header from '../../components/Header.astro';
     // Observe all scroll-reveal elements
     document.querySelectorAll('.scroll-reveal').forEach(element => {
         observer.observe(element);
+    });
+
+    // Editable timeline functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const timelineItems = document.querySelectorAll('.timeline li[contenteditable]');
+
+        // Load saved content from localStorage
+        timelineItems.forEach(item => {
+            const key = item.getAttribute('data-key');
+            const savedContent = localStorage.getItem(`timeline_${key}`);
+            if (savedContent) {
+                item.innerHTML = savedContent;
+            }
+        });
+
+        // Save content to localStorage on input
+        timelineItems.forEach(item => {
+            item.addEventListener('input', () => {
+                const key = item.getAttribute('data-key');
+                localStorage.setItem(`timeline_${key}`, item.innerHTML);
+            });
+        });
     });
 </script>
 

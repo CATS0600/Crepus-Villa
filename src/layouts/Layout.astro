@@ -1,4 +1,8 @@
 ---
+import BgmPanel from '../components/BgmPanel.astro';
+import '../styles/tailwind.css';
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
     title: string;
 }
@@ -17,6 +21,8 @@ const { title } = Astro.props;
     </head>
     <body>
         <slot />
+        <ViewTransitions />
+        <BgmPanel client:load transition:persist />
         <footer class="site-footer">
             <div class="safe-zone footer-content">
                 <p class="footer-text">Powered By CloudFlare & Crepuscular, Designed and Developed by Claude, Gemini and Cyril</p>
@@ -31,9 +37,12 @@ const { title } = Astro.props;
             import Lenis from '@studio-freight/lenis';
             import gsap from 'gsap';
             import { ScrollTrigger } from 'gsap/ScrollTrigger';
+            import { bgmController } from '../lib/BgmController';
 
             // 1. 注册插件
             gsap.registerPlugin(ScrollTrigger);
+
+            bgmController.init({ autoplay: true, volume: 0.5 });
 
             // 2. 初始化 Lenis
             const lenis = new Lenis({
@@ -58,6 +67,7 @@ const { title } = Astro.props;
             document.addEventListener('astro:after-swap', () => {
                 ScrollTrigger.refresh();
                 lenis.scrollTo(0, { immediate: true });
+                bgmController.restoreStateOnPageSwap();
             });
         </script>
     </body>

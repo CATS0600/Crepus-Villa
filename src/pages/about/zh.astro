@@ -234,26 +234,26 @@ import Header from '../../components/Header.astro';
                         Crepuscular's Villa 的简要时间线：
                     </p>
                     <ul class="timeline">
-                        <li>
+                        <li data-key="timeline-1">
                             <strong>20 Feb 2026 V1</strong> - Villa V1, 成功创建了Astro框架。
                         </li>
-                        <li>
+                        <li data-key="timeline-2">
                             <strong>20 Feb 2026 V2</strong> - 同日发布 Villa V2，初步部署Villa
                         </li>
-                        <li>
+                        <li data-key="timeline-3">
                             <strong>21 Feb 2026 V3</strong> - 迅速地发布 Villa V3，极大完善了基础设施。
                         </li>
-                        <li>
+                        <li data-key="timeline-4">
                             <strong>3 Mar 2026 V4E</strong> - Villa V4E 发布，全新加入./about, No-where, Now-here。
                         </li>
-                         <li>
+                         <li data-key="timeline-5">
                             <strong>7 Mar 2026 V4</strong> - 经过半月艰苦Push后，Villa V4正式与大家见面。
                         </li>
-                        <li>
+                        <li data-key="timeline-6">
                             <strong>12 / 17 / 25 Mar 2026 V4 - Block 12 / 32 / 52 / 77 <br/></strong>无论是Lenis平滑，还是页面的美化，Villa V4的每一个批次都在不断提升用户体验。
                         </li>
-                        <li>
-                            <strong>25 Mar 2026 V4 Block 99</strong> - Villa V4 Block 99，Why not?
+                        <li contenteditable="true" data-key="timeline-7">
+                            <strong>25 Mar 2026 V4 Block 99</strong> - <i>Villa V4 Block 99，Why not?</i>
                         </li>
                     </ul>
                 </div>
@@ -282,6 +282,28 @@ import Header from '../../components/Header.astro';
     // Observe all scroll-reveal elements
     document.querySelectorAll('.scroll-reveal').forEach(element => {
         observer.observe(element);
+    });
+
+    // Editable timeline functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const timelineItems = document.querySelectorAll('.timeline li[contenteditable]');
+
+        // Load saved content from localStorage
+        timelineItems.forEach(item => {
+            const key = item.getAttribute('data-key');
+            const savedContent = localStorage.getItem(`timeline_${key}`);
+            if (savedContent) {
+                item.innerHTML = savedContent;
+            }
+        });
+
+        // Save content to localStorage on input
+        timelineItems.forEach(item => {
+            item.addEventListener('input', () => {
+                const key = item.getAttribute('data-key');
+                localStorage.setItem(`timeline_${key}`, item.innerHTML);
+            });
+        });
     });
 </script>
 

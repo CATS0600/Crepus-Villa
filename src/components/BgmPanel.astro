@@ -1,0 +1,265 @@
+---
+import { getBgmPlaylist } from '../lib/BgmController.ts';
+const tracks = getBgmPlaylist();
+---
+
+<div id="bgm-panel" data-tracks={JSON.stringify(tracks)} class="fixed left-4 bottom-4 z-50 w-[min(95vw,360px)] rounded-3xl border border-white/15 bg-slate-950/70 p-4 shadow-2xl shadow-black/40 backdrop-blur-xl text-slate-100 transition-all duration-300">
+  <div class="space-y-3">
+    <div class="flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <p class="text-[10px] uppercase tracking-[0.35em] text-slate-400">Villa BGM</p>
+        <p id="bgm-current-title" class="mt-1 truncate text-sm font-semibold text-white">Loading...</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="bgm-collapse" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition hover:bg-white/10">◁</button>
+        <button id="bgm-toggle" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition hover:bg-white/10">▶</button>
+        <button id="bgm-next" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition hover:bg-white/10">⏭</button>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between gap-2">
+      <button id="bgm-expand" type="button" class="inline-flex items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-slate-100 transition hover:bg-white/10">
+        <span>Tracks</span>
+        <span id="bgm-expand-icon">▾</span>
+      </button>
+      <button id="bgm-sort" type="button" class="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-slate-100 transition hover:bg-white/10">按列表排序</button>
+    </div>
+
+    <div id="bgm-list-container" class="hidden max-h-72 overflow-hidden rounded-3xl border border-white/10 bg-slate-950/70">
+      <div class="flex items-center justify-between gap-2 border-b border-white/10 px-3 py-2 text-xs uppercase tracking-[0.23em] text-slate-400">
+        <span id="bgm-list-mode">按列表排序</span>
+        <span id="bgm-list-count">0 首</span>
+      </div>
+      <ul id="bgm-track-list" class="max-h-64 overflow-auto"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  //@ts-nocheck
+  import { bgmController } from '../lib/BgmController';
+
+  const STORAGE_COLLAPSE_KEY = 'CrepusVilla-BGM-Panel-Collapsed';
+  const STORAGE_SORT_KEY = 'CrepusVilla-BGM-Panel-Sort';
+  const STORAGE_ORDER_KEY = 'CrepusVilla-BGM-Panel-Random-Order';
+
+  let panel = null;
+  let tracks = [];
+  let listContainer = null;
+  let currentTitle = null;
+  let toggleButton = null;
+  let collapseButton = null;
+  let nextButton = null;
+  let expandButton = null;
+  let sortButton = null;
+  let sortModeLabel = null;
+  let countLabel = null;
+  let trackList = null;
+
+  let expanded = true;
+  let sortMode = 'list';
+  let randomOrder = [];
+
+  function loadRandomOrder() {
+    if (typeof sessionStorage === 'undefined') {
+      return shuffleArray(tracks.map((item) => item.id));
+    }
+    const stored = sessionStorage.getItem(STORAGE_ORDER_KEY);
+    if (!stored) {
+      return shuffleArray(tracks.map((item) => item.id));
+    }
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length === tracks.length) {
+        return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return shuffleArray(tracks.map((item) => item.id));
+  }
+
+  function savePanelState() {
+    if (typeof sessionStorage === 'undefined') return;
+    sessionStorage.setItem(STORAGE_COLLAPSE_KEY, expanded ? 'true' : 'false');
+    sessionStorage.setItem(STORAGE_SORT_KEY, sortMode);
+    sessionStorage.setItem(STORAGE_ORDER_KEY, JSON.stringify(randomOrder));
+  }
+
+  function getOrderedTracks() {
+    return [...tracks].sort((a, b) => a.title.localeCompare(b.title, 'zh-CN', { sensitivity: 'base' }));
+  }
+
+  function shuffleArray(array) {
+    const result = [...array];
+    for (let i = result.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  function renderTrackList() {
+    const orderedTracks = getOrderedTracks();
+    countLabel.textContent = `${orderedTracks.length} 首`;
+    sortModeLabel.textContent = sortMode === 'random' ? '随机模式' : '列表模式';
+    sortButton.textContent = sortMode === 'random' ? '随机排序' : '按列表排序';
+
+    trackList.innerHTML = orderedTracks
+      .map((track) => {
+        const active = track.id === bgmController.currentTrackId;
+        return `
+          <li>
+            <button data-track-id="${track.id}" type="button" class="w-full px-4 py-3 text-left text-sm transition ${active ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/5'}">
+              <span class="block truncate">${track.title}</span>
+            </button>
+          </li>
+        `;
+      })
+      .join('');
+
+    const buttons = Array.from(trackList.querySelectorAll('button[data-track-id]'));
+    buttons.forEach((button) => {
+      button.onclick = () => {
+        const id = Number(button.dataset.trackId);
+        if (!Number.isNaN(id)) {
+          bgmController.playTrack(id);
+          updatePanelState();
+        }
+      };
+    });
+  }
+
+  function applyCollapsed() {
+    if (expanded) {
+      listContainer.classList.remove('hidden');
+      const icon = expandButton.querySelector('#bgm-expand-icon');
+      if (icon) icon.textContent = '▾';
+    } else {
+      listContainer.classList.add('hidden');
+      const icon = expandButton.querySelector('#bgm-expand-icon');
+      if (icon) icon.textContent = '▸';
+    }
+    savePanelState();
+  }
+
+  function updatePanelState() {
+    if (!currentTitle || !toggleButton) return;
+    const track = bgmController.playlist[bgmController.currentTrackId];
+    currentTitle.textContent = track?.title ?? '未知曲目';
+    toggleButton.textContent = bgmController.audio?.paused ? '▶' : '❚❚';
+    renderTrackList();
+  }
+
+  function togglePlay() {
+    bgmController.togglePlay();
+    updatePanelState();
+  }
+
+  function playNext() {
+    bgmController.next();
+    updatePanelState();
+  }
+
+  function toggleExpand() {
+    expanded = !expanded;
+    applyCollapsed();
+  }
+
+  function toggleSortMode() {
+    sortMode = sortMode === 'list' ? 'random' : 'list';
+    bgmController.setMode(sortMode);
+    if (sortMode === 'random') {
+      randomOrder = shuffleArray(tracks.map((item) => item.id));
+    }
+    savePanelState();
+    updatePanelState();
+  }
+
+  function attachAudioListeners() {
+    if (!bgmController.audio) return;
+    bgmController.audio.removeEventListener('play', updatePanelState);
+    bgmController.audio.removeEventListener('pause', updatePanelState);
+    bgmController.audio.removeEventListener('ended', updatePanelState);
+    bgmController.audio.addEventListener('play', updatePanelState);
+    bgmController.audio.addEventListener('pause', updatePanelState);
+    bgmController.audio.addEventListener('ended', updatePanelState);
+  }
+
+  function attachEventListeners() {
+    panel = document.getElementById('bgm-panel');
+    if (!panel) {
+      console.warn('BGM panel not found');
+      return;
+    }
+    tracks = JSON.parse(panel.dataset.tracks || '[]');
+    listContainer = panel.querySelector('#bgm-list-container');
+    currentTitle = panel.querySelector('#bgm-current-title');
+    toggleButton = panel.querySelector('#bgm-toggle');
+    collapseButton = panel.querySelector('#bgm-collapse');
+    nextButton = panel.querySelector('#bgm-next');
+    expandButton = panel.querySelector('#bgm-expand');
+    sortButton = panel.querySelector('#bgm-sort');
+    sortModeLabel = panel.querySelector('#bgm-list-mode');
+    countLabel = panel.querySelector('#bgm-list-count');
+    trackList = panel.querySelector('#bgm-track-list');
+
+    if (!listContainer || !currentTitle || !toggleButton || !collapseButton || !nextButton || !expandButton || !sortButton || !sortModeLabel || !countLabel || !trackList) {
+      console.warn('BGM panel initialization failed. Some DOM nodes are missing.');
+      return;
+    }
+
+    expanded = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(STORAGE_COLLAPSE_KEY) !== 'false' : true;
+    sortMode = bgmController.mode;
+    randomOrder = loadRandomOrder();
+
+    toggleButton.onclick = togglePlay;
+    nextButton.onclick = playNext;
+    collapseButton.onclick = () => {
+      const isCollapsed = panel.classList.contains('bgm-collapsed');
+      if (isCollapsed) {
+        panel.classList.remove('bgm-collapsed');
+        collapseButton.textContent = '◁';
+      } else {
+        panel.classList.add('bgm-collapsed');
+        collapseButton.textContent = '▷';
+      }
+    };
+    expandButton.onclick = toggleExpand;
+    sortButton.onclick = toggleSortMode;
+
+    window.removeEventListener('bgm-play', updatePanelState);
+    window.removeEventListener('bgm-pause', updatePanelState);
+    window.removeEventListener('bgm-trackEnded', updatePanelState);
+    window.addEventListener('bgm-play', updatePanelState);
+    window.addEventListener('bgm-pause', updatePanelState);
+    window.addEventListener('bgm-trackEnded', updatePanelState);
+
+    attachAudioListeners();
+    applyCollapsed();
+    updatePanelState();
+  }
+
+  function initBgmUI() {
+    attachEventListeners();
+    // 立即查询当前状态并同步UI
+    updatePanelState();
+  }
+
+  document.addEventListener('astro:page-load', initBgmUI);
+</script>
+
+<style>
+  #bgm-panel.bgm-collapsed {
+    width: auto;
+    padding: 0.5rem;
+  }
+  
+  #bgm-panel.bgm-collapsed .space-y-3 > :not(:first-child) {
+    display: none;
+  }
+  
+  #bgm-panel.bgm-collapsed .flex.items-center.justify-between.gap-3 .min-w-0 {
+    display: none;
+  }
+</style>
