@@ -11,7 +11,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "@studio-freight/lenis": "^1.0.42",
-    "astro": "^5.17.1",
+    "astro": "^5.18.1",
     "gsap": "^3.14.2"
   },
   "devDependencies": {
