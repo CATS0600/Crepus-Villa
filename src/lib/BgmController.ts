@@ -38,7 +38,6 @@ const TRACK_NAMES = [
   'MUJI BGM - último Desejo.mp3',
 ];
 
-// 统一生成歌单
 export const getBgmPlaylist = (): BgmTrack[] =>
   TRACK_NAMES.map((fileName, index) => ({
     id: index,
@@ -90,13 +89,12 @@ export class BgmController {
     }
   }
 
-  // 改进的音量淡入逻辑
   private fadeInVolume(target: number = 0.3) {
     if (!this.audio) return;
     if (this.fadeInterval) clearInterval(this.fadeInterval);
 
     this.audio.volume = 0;
-    const step = target / 30; // 30步完成淡入
+    const step = target / 30;
     this.fadeInterval = window.setInterval(() => {
       if (!this.audio) return;
       const nextVolume = this.audio.volume + step;
@@ -106,12 +104,11 @@ export class BgmController {
       } else {
         this.audio.volume = nextVolume;
       }
-    }, 50); // 约1.5秒完成
+    }, 50);
   }
 
   public init(options?: { autoplay?: boolean; volume?: number }) {
-    if (this.restoreCalled || typeof window === 'undefined') return;
-    this.restoreCalled = true;
+    if (typeof window === 'undefined') return;
 
     if (options?.volume !== undefined) this.targetVolume = options.volume;
 
@@ -126,16 +123,38 @@ export class BgmController {
       this.audio.addEventListener('pause', () => { this.isPlaying = false; this.dispatchEvent('pause'); });
     }
 
-    const stored = this.loadState();
-    if (stored) {
-      this.applyState(stored);
-    } else {
-      this.currentTrackId = this.randomQueue[0] ?? 0;
-      this.queueIndex = 0;
-      this.setActiveTrack(this.currentTrackId, 0, options?.autoplay);
+    // 只有在第一次真正初始化时加载状态
+    if (!this.restoreCalled) {
+      this.restoreCalled = true;
+      const stored = this.loadState();
+      if (stored) {
+        this.applyState(stored);
+      } else {
+        this.currentTrackId = this.randomQueue[0] ?? 0;
+        this.queueIndex = 0;
+        this.setActiveTrack(this.currentTrackId, 0, options?.autoplay);
+      }
     }
 
     this.preloadNextTrack();
+  }
+
+  /**
+   * 处理 Astro ViewTransitions 切换后的恢复
+   */
+  public restoreStateOnPageSwap() {
+    if (!this.audio) return;
+    
+    if (this.pendingAutoplay || this.isPlaying) {
+      setTimeout(() => {
+        this.play()?.catch(() => {
+          console.warn('BGM resume blocked after swap.');
+          this.isPlaying = false;
+          this.dispatchEvent('pause');
+        });
+      }, 100);
+      this.pendingAutoplay = false;
+    }
   }
 
   public togglePlay() {
@@ -148,8 +167,8 @@ export class BgmController {
     if (!this.audio.src) this.setActiveTrack(this.currentTrackId);
     
     this.fadeInVolume(this.targetVolume);
-    return this.audio.play().catch(() => {
-      console.warn('BGM Play blocked by browser policy.');
+    return this.audio.play().catch((err) => {
+      console.warn('BGM Play blocked:', err);
     });
   }
 
@@ -159,7 +178,6 @@ export class BgmController {
     this.persistState();
   }
 
-  // 专门为 UI 提供的选歌方法
   public playTrack(trackId: number) {
     this.setActiveTrack(trackId, 0, true);
   }
@@ -192,9 +210,7 @@ export class BgmController {
       this.audio.currentTime = startTime;
     }
 
-    if (autoPlay) {
-      this.play();
-    }
+    if (autoPlay) this.play();
     
     this.persistState();
     this.preloadNextTrack();
@@ -227,7 +243,7 @@ export class BgmController {
     this.persistTimer = window.setTimeout(() => {
       this.persistTimer = null;
       this.persistState();
-    }, 2000); // 降低持久化频率至2秒，减轻存储压力
+    }, 2000);
   }
 
   private loadState(): BgmState | null {

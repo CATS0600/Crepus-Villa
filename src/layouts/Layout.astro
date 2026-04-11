@@ -1,7 +1,7 @@
 ---
 import BgmPanel from '../components/BgmPanel.astro';
 import '../styles/tailwind.css';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
     title: string;
@@ -21,8 +21,9 @@ const { title } = Astro.props;
     </head>
     <body>
         <slot />
-        <ViewTransitions />
+        <ClientRouter />
         <BgmPanel client:load transition:persist />
+        
         <footer class="site-footer">
             <div class="safe-zone footer-content">
                 <p class="footer-text">Powered By CloudFlare & Crepuscular, Designed and Developed by Claude, Gemini and Cyril</p>
@@ -39,45 +40,56 @@ const { title } = Astro.props;
             import { ScrollTrigger } from 'gsap/ScrollTrigger';
             import { bgmController } from '../lib/BgmController';
 
-            // 1. 注册插件
             gsap.registerPlugin(ScrollTrigger);
 
+            let lenis: Lenis | null = null;
+
+            // 统一的 RAF 更新函数
+            const updateLenis = (time: number) => {
+                lenis?.raf(time * 1000);
+            };
+
+            function initScroll() {
+                // 清理旧实例防止多重叠加
+                if (lenis) {
+                    lenis.destroy();
+                    gsap.ticker.remove(updateLenis);
+                }
+
+                lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    smoothWheel: true,
+                });
+
+                // 同步 ScrollTrigger
+                lenis.on('scroll', ScrollTrigger.update);
+
+                gsap.ticker.add(updateLenis);
+                gsap.ticker.lagSmoothing(0);
+            }
+
+            // 初始化 BGM 控制器
             bgmController.init({ autoplay: true, volume: 0.5 });
 
-            // 2. 初始化 Lenis
-            const lenis = new Lenis({
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                smoothWheel: true,
-            });
-
-            // 3. 核心：同步 Lenis 与 ScrollTrigger
-            // 每当 Lenis 滚动时，通知 ScrollTrigger 更新位置
-            lenis.on('scroll', ScrollTrigger.update);
-
-            // 4. 使用 GSAP 的 Ticker 统一管理每一帧
-            // 这确保了惯性滚动和动画在同一个刷新频率下，防止画面撕裂
-            gsap.ticker.add((time) => {
-                lenis.raf(time * 1000);
-            });
-
-            gsap.ticker.lagSmoothing(0);
-
-            // 5. 处理 Astro 页面切换（如果使用了 View Transitions）
-            document.addEventListener('astro:after-swap', () => {
-                ScrollTrigger.refresh();
-                lenis.scrollTo(0, { immediate: true });
+            // 每次页面加载（包括初次和 ViewTransitions 切换后）
+            document.addEventListener('astro:page-load', () => {
+                initScroll();
                 bgmController.restoreStateOnPageSwap();
+            });
+
+            // 页面切换前销毁实例，释放内存和监听器
+            document.addEventListener('astro:before-swap', () => {
+                if (lenis) {
+                    lenis.destroy();
+                    gsap.ticker.remove(updateLenis);
+                }
             });
         </script>
     </body>
 </html>
 
 <style is:global>
-	html.lenis, html.lenis body { height: auto; }
-    .lenis.lenis-smooth { scroll-behavior: auto !important; }
-    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-    .lenis.lenis-stopped { overflow: hidden; }
     /* --- Lenis 核心辅助样式 --- */
     html.lenis, html.lenis body {
         height: auto;
@@ -99,14 +111,7 @@ const { title } = Astro.props;
         pointer-events: none;
     }
 
-    /* --- 原有全局样式 --- */
-    .container {
-        width: 100%;
-        max-width: var(--container-max-width);
-        margin: 0 auto;
-        padding-left: var(--container-padding);
-        padding-right: var(--container-padding);
-    }
+    /* --- 全局变量与样式 --- */
     :root {
         --bg-color: #FAFAFA;
         --text-main: #1d1d1f;
@@ -131,12 +136,7 @@ const { title } = Astro.props;
             --card-bg: #1c1c1e;
             --card-border: rgba(255, 255, 255, 0.1);
             --nav-bg: rgba(0, 0, 0, 0.8);
-            --fw-light: 300;
-            --fw-regular: 400;
-            --fw-medium: 500;
-            --fw-bold: 700;
             --accent-color: #f7c46c;
-            --container-padding: 2.5rem;
         }
     }
 
@@ -147,14 +147,8 @@ const { title } = Astro.props;
     }
     @font-face {
         font-family: 'Noto Sans TC Variable';
-        src: url('/fonts/NotoSansTC-VF.woff2') format('woff2-supports-variations'),
-             url('/fonts/NotoSansTC-VF.woff2') format('woff2');
+        src: url('/fonts/NotoSansTC-VF.woff2') format('woff2');
         font-weight: 100 900; font-style: normal; font-display: swap;
-    }
-    @font-face {
-        font-family: 'Segoe UI Emoji';
-        src: url('/fonts/seguiemj.ttf') format('truetype');
-        font-weight: normal; font-style: normal; font-display: swap;
     }
 
     html {
@@ -163,48 +157,21 @@ const { title } = Astro.props;
         color: var(--text-main);
         -webkit-font-smoothing: antialiased;
         transition: background 0.3s ease;
-        /* 注意：使用 Lenis 时不要在这里写 scroll-behavior: smooth; */
     }
 
-    .logo, .special-heading {
-        font-family: 'RAGE', cursive;
-        font-size: 1.2em; 
-    }
-    h1, h2, h3 {
-        font-weight: var(--fw-bold);
-        letter-spacing: -0.02em;
-    }
-    p {
-        font-weight: var(--fw-light);
-        line-height: 1.6;
-    }
     body {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
 
-    main {
-        padding-top: 52px;
-    }
-
+    main { padding-top: 52px; }
     .safe-zone { padding-left: var(--safe-area); padding-right: var(--safe-area); }
-
     h1, h2, h3 { scroll-margin-top: calc(52px + 1rem); }
-
-    * {
-        box-sizing: inherit;
-    }
-
-    .main-content { background-color: var(--bg-color); overflow-x: hidden; }
-    
-    a.privacy-link { color: inherit; text-decoration: none; }
-    a.privacy-link:hover { text-decoration: underline; }
 
     .site-footer {
         background: var(--bg-color);
         border-top: 1px solid rgba(0,0,0,0.1);
-        margin-top: 0;
     }
 
     .footer-content {
@@ -216,11 +183,13 @@ const { title } = Astro.props;
         margin: 10px 0;
         font-size: 13px;
         color: #86868b;
-        line-height: 1.4;
     }
 
     @media (prefers-color-scheme: dark) {
         .site-footer { border-top-color: rgba(255, 255, 255, 0.1); }
         .footer-text { color: #a1a1a6; }
     }
+    
+    .privacy-link { color: inherit; text-decoration: none; }
+    .privacy-link:hover { text-decoration: underline; }
 </style>

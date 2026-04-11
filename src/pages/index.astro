@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import villav4icon from '../villav4icon/villav5icon.webp';
+import villav5icon from '../icon/villav5icon.webp';
 // 引入位于 switchphoto 中的电影比例图片
 import switchImg from '../switchphoto/a.jpg';
 import { Image } from 'astro:assets';
@@ -239,7 +239,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     </div>
                     
                     <div class="villa-icon-below-random" style="margin-top: 100px;">
-                        <img src={villav4icon.src} alt="Crepus Villa V4 Icon" class="villa-v4-icon" title="Crepuscular's Villa V4" id="villaIcon" />
+                        <img src={villav5icon.src} alt="Crepus Villa V5 Icon" class="villa-v5-icon" title="Crepuscular's Villa V5" id="villaIcon" />
                         <span class="photo-annotation"><br/>SEBASTIAN VETTEL #SV5 ??</span>
                     </div>
                 </div>
@@ -252,7 +252,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             const villaIcon = document.getElementById('villaIcon');
             if (villaIcon) {
                 villaIcon.addEventListener('click', () => {
-                    window.location.href = 'https://www.formula1.com';
+                    window.location.href = 'https://www.formula1.com/en/information/drivers-hall-of-fame-sebastian-vettel.GBy6vPkxKOKUV89QOhZe5';
                 });
             }
         });
@@ -407,8 +407,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         }
     }
 
-    /* Villa V4 Icon Section */
-    .villa-v4-icon {
+    /* Villa V5 Icon Section */
+    .villa-v5-icon {
         width: clamp(80px, 15vw, 250px);
         height: auto;
         border-radius: 16px;
@@ -417,16 +417,16 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         cursor: pointer;
     }
 
-    .villa-v4-icon:hover {
+    .villa-v5-icon:hover {
         transform: scale(1.05) rotate(2deg);
         box-shadow: 0 12px 32px rgba(0,0,0,0.15);
     }
 
     @media (prefers-color-scheme: dark) {
-        .villa-v4-icon {
+        .villa-v5-icon {
             box-shadow: 0 8px 24px rgba(255,255,255,0.1);
         }
-        .villa-v4-icon:hover {
+        .villa-v5-icon:hover {
             box-shadow: 0 12px 32px rgba(255,255,255,0.15);
         }
     }
