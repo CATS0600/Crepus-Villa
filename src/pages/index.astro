@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import villav4icon from '../villav4icon/villav5icon.webp';
 // 引入位于 switchphoto 中的电影比例图片
 import switchImg from '../switchphoto/a.jpg';
+import { Image } from 'astro:assets';
 
 const images = await Astro.glob('/src/photos/*.{jpg,jpeg,png,webp,avif}');
 
@@ -76,7 +77,13 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                                 <span class="photo-annotation">{photoCaptions[index]}</span>
                             )}
                             <div class="photo-wrapper">
-                                <img src={img.default.src} alt={`Gallery item ${index}`} loading="lazy" />
+                                <Image 
+                                     src={img.default} 
+                                    alt={`Gallery item ${index}`} 
+                                    width={800} 
+                                    format="webp"
+                                    quality="mid"
+                                />
                             </div>
                         </div>
                     );
@@ -675,7 +682,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
     /* --- 原有样式 --- */
     .logo-name { font-family: 'RAGE', cursive; font-size: 48px; font-weight: 600; color: #1d1d1f; }
-    .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; }
+    .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; transform: translateZ(0); backface-visibility: hidden; }
     .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
     .hero-title { font-size: clamp(44px, 12vw, 130px); font-weight: 800; line-height: 1.1; }
     .accent-text { color: var(--accent-color); }
@@ -686,7 +693,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     .horizontal-view { display: flex; flex-direction: column; gap: 60px; }
     .partner-sub-title { font-size: var(--sub-title-size); font-weight: 800; line-height: 1; margin: 0; }
     .partner-desc { font-size: clamp(16px, 2vw, 24px); color: #86868b; margin: 0 0 60px 0; font-weight: var(--fw-light); line-height: 1.6; }
-    .infinite-scroll-container { width: 100%; overflow: hidden; display: flex; -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+    .infinite-scroll-container { will-change: transform; width: 100%; overflow: hidden; display: flex; -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
     .partner-list { display: flex; gap: 40px; padding: 20px 0; animation: scroll-left 30s linear infinite; width: max-content; }
     .logo-card { width: 320px; height: 200px; background: #fff; border-radius: 30px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex-shrink: 0; transition: all 0.3s ease; text-decoration: none; }
     .logo-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
@@ -921,7 +928,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('astro:page-load', () => {
         preloadImages();
         setupScrollToQuoteBtn();
         type();

@@ -61,22 +61,13 @@ const tracks = getBgmPlaylist();
   let randomOrder = [];
 
   function loadRandomOrder() {
-    if (typeof sessionStorage === 'undefined') {
-      return shuffleArray(tracks.map((item) => item.id));
-    }
+    if (typeof sessionStorage === 'undefined') return [];
     const stored = sessionStorage.getItem(STORAGE_ORDER_KEY);
-    if (!stored) {
-      return shuffleArray(tracks.map((item) => item.id));
-    }
+    if (!stored) return shuffleArray(tracks.map(t => t.id));
     try {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length === tracks.length) {
-        return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return shuffleArray(tracks.map((item) => item.id));
+      return (Array.isArray(parsed) && parsed.length === tracks.length) ? parsed : shuffleArray(tracks.map(t => t.id));
+    } catch { return []; }
   }
 
   function savePanelState() {
@@ -100,6 +91,7 @@ const tracks = getBgmPlaylist();
   }
 
   function renderTrackList() {
+    if (!trackList || !countLabel) return;
     const orderedTracks = getOrderedTracks();
     countLabel.textContent = `${orderedTracks.length} 首`;
     sortModeLabel.textContent = sortMode === 'random' ? '随机模式' : '列表模式';
@@ -110,40 +102,30 @@ const tracks = getBgmPlaylist();
         const active = track.id === bgmController.currentTrackId;
         return `
           <li>
-            <button data-track-id="${track.id}" type="button" class="w-full px-4 py-3 text-left text-sm transition ${active ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/5'}">
+            <button data-track-id="${track.id}" type="button" class="bgm-track-select w-full px-4 py-3 text-left text-sm transition ${active ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/5'}">
               <span class="block truncate">${track.title}</span>
             </button>
           </li>
         `;
       })
       .join('');
-
-    const buttons = Array.from(trackList.querySelectorAll('button[data-track-id]'));
-    buttons.forEach((button) => {
-      button.onclick = () => {
-        const id = Number(button.dataset.trackId);
-        if (!Number.isNaN(id)) {
-          bgmController.playTrack(id);
-          updatePanelState();
-        }
-      };
-    });
   }
 
   function applyCollapsed() {
+    if (!listContainer || !expandButton) return;
+    const icon = expandButton.querySelector('#bgm-expand-icon');
     if (expanded) {
       listContainer.classList.remove('hidden');
-      const icon = expandButton.querySelector('#bgm-expand-icon');
       if (icon) icon.textContent = '▾';
     } else {
       listContainer.classList.add('hidden');
-      const icon = expandButton.querySelector('#bgm-expand-icon');
       if (icon) icon.textContent = '▸';
     }
     savePanelState();
   }
 
   function updatePanelState() {
+    if (!currentTitle || !toggleButton || !bgmController.playlist) return;
     if (!currentTitle || !toggleButton) return;
     const track = bgmController.playlist[bgmController.currentTrackId];
     currentTitle.textContent = track?.title ?? '未知曲目';
@@ -188,10 +170,8 @@ const tracks = getBgmPlaylist();
 
   function attachEventListeners() {
     panel = document.getElementById('bgm-panel');
-    if (!panel) {
-      console.warn('BGM panel not found');
-      return;
-    }
+    if (!panel) return;
+
     tracks = JSON.parse(panel.dataset.tracks || '[]');
     listContainer = panel.querySelector('#bgm-list-container');
     currentTitle = panel.querySelector('#bgm-current-title');
@@ -204,36 +184,31 @@ const tracks = getBgmPlaylist();
     countLabel = panel.querySelector('#bgm-list-count');
     trackList = panel.querySelector('#bgm-track-list');
 
-    if (!listContainer || !currentTitle || !toggleButton || !collapseButton || !nextButton || !expandButton || !sortButton || !sortModeLabel || !countLabel || !trackList) {
-      console.warn('BGM panel initialization failed. Some DOM nodes are missing.');
-      return;
-    }
+    if (!trackList || !toggleButton) return;
 
-    expanded = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(STORAGE_COLLAPSE_KEY) !== 'false' : true;
+    // 事件委托处理选歌 (修复点击问题)
+    trackList.onclick = (e) => {
+        const btn = e.target.closest('.bgm-track-select');
+        if (!btn) return;
+        const id = Number(btn.dataset.trackId);
+        if (!Number.isNaN(id)) {
+            bgmController.playTrack(id); 
+            updatePanelState();
+        }
+    };
+
+    expanded = (typeof sessionStorage !== 'undefined') ? sessionStorage.getItem(STORAGE_COLLAPSE_KEY) !== 'false' : true;
     sortMode = bgmController.mode;
     randomOrder = loadRandomOrder();
 
     toggleButton.onclick = togglePlay;
     nextButton.onclick = playNext;
     collapseButton.onclick = () => {
-      const isCollapsed = panel.classList.contains('bgm-collapsed');
-      if (isCollapsed) {
-        panel.classList.remove('bgm-collapsed');
-        collapseButton.textContent = '◁';
-      } else {
-        panel.classList.add('bgm-collapsed');
-        collapseButton.textContent = '▷';
-      }
+      panel.classList.toggle('bgm-collapsed');
+      collapseButton.textContent = panel.classList.contains('bgm-collapsed') ? '▷' : '◁';
     };
     expandButton.onclick = toggleExpand;
     sortButton.onclick = toggleSortMode;
-
-    window.removeEventListener('bgm-play', updatePanelState);
-    window.removeEventListener('bgm-pause', updatePanelState);
-    window.removeEventListener('bgm-trackEnded', updatePanelState);
-    window.addEventListener('bgm-play', updatePanelState);
-    window.addEventListener('bgm-pause', updatePanelState);
-    window.addEventListener('bgm-trackEnded', updatePanelState);
 
     attachAudioListeners();
     applyCollapsed();
@@ -242,10 +217,18 @@ const tracks = getBgmPlaylist();
 
   function initBgmUI() {
     attachEventListeners();
-    // 立即查询当前状态并同步UI
-    updatePanelState();
   }
 
+  function handleFirstUserInteraction() {
+    if (bgmController.isPlaying && bgmController.audio?.paused) {
+        bgmController.play();
+    }
+    document.removeEventListener('click', handleFirstUserInteraction);
+    document.removeEventListener('keydown', handleFirstUserInteraction);
+  }
+
+  document.addEventListener('click', handleFirstUserInteraction);
+  document.addEventListener('keydown', handleFirstUserInteraction);
   document.addEventListener('astro:page-load', initBgmUI);
 </script>
 
