@@ -56,7 +56,7 @@ const tracks = getBgmPlaylist();
   let countLabel = null;
   let trackList = null;
 
-  let expanded = true;
+  let expanded = false;
   let sortMode = 'list';
   let randomOrder = [];
 
@@ -112,14 +112,18 @@ const tracks = getBgmPlaylist();
   }
 
   function applyCollapsed() {
-    if (!listContainer || !expandButton) return;
+    if (!panel || !listContainer || !expandButton || !collapseButton) return;
     const icon = expandButton.querySelector('#bgm-expand-icon');
     if (expanded) {
+      panel.classList.remove('bgm-collapsed');
       listContainer.classList.remove('hidden');
       if (icon) icon.textContent = '▾';
+      collapseButton.textContent = '◁';
     } else {
+      panel.classList.add('bgm-collapsed');
       listContainer.classList.add('hidden');
       if (icon) icon.textContent = '▸';
+      collapseButton.textContent = '▷';
     }
     savePanelState();
   }
@@ -197,16 +201,18 @@ const tracks = getBgmPlaylist();
         }
     };
 
-    expanded = (typeof sessionStorage !== 'undefined') ? sessionStorage.getItem(STORAGE_COLLAPSE_KEY) !== 'false' : true;
+    if (typeof sessionStorage !== 'undefined') {
+      const storedCollapse = sessionStorage.getItem(STORAGE_COLLAPSE_KEY);
+      expanded = storedCollapse === null ? false : storedCollapse !== 'false';
+    } else {
+      expanded = false;
+    }
     sortMode = bgmController.mode;
     randomOrder = loadRandomOrder();
 
     toggleButton.onclick = togglePlay;
     nextButton.onclick = playNext;
-    collapseButton.onclick = () => {
-      panel.classList.toggle('bgm-collapsed');
-      collapseButton.textContent = panel.classList.contains('bgm-collapsed') ? '▷' : '◁';
-    };
+    collapseButton.onclick = toggleExpand;
     expandButton.onclick = toggleExpand;
     sortButton.onclick = toggleSortMode;
 

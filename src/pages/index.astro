@@ -879,10 +879,16 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
     ];
 
+    let scrollPending = false;
     function handleScroll() {
-        const scrolled = window.scrollY;
-        const scrollText = document.getElementById('scrollText');
-        if (scrollText) scrollText.style.transform = `translateX(-${scrolled * 0.4}px)`;
+        if (scrollPending) return;
+        scrollPending = true;
+        window.requestAnimationFrame(() => {
+            const scrolled = window.scrollY;
+            const scrollText = document.getElementById('scrollText');
+            if (scrollText) scrollText.style.transform = `translateX(-${scrolled * 0.4}px)`;
+            scrollPending = false;
+        });
     }
 
     // 预加载所有图片
@@ -912,20 +918,21 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             setTimeout(() => { isScrolling = false; }, 1000);
         });
 
-        // 滚动时显示/隐藏按钮
-        window.addEventListener('scroll', () => {
-            if (isScrolling) return; // 如果正在滚动，不更新按钮状态
-            const gallerySection = document.querySelector('.photo-gallery-section');
-            if (gallerySection) {
-                const rect = gallerySection.getBoundingClientRect();
-                // 当画廊下方超过窗口下沿时，显示按钮
-                if (rect.bottom < window.innerHeight) {
-                    btn.classList.remove('show');
-                } else {
-                    btn.classList.add('show');
-                }
+        // 使用 IntersectionObserver 显示/隐藏按钮，避免滚动事件过度触发
+        const gallerySection = document.querySelector('.photo-gallery-section');
+        if (!gallerySection) return;
+
+        const galleryObserver = new IntersectionObserver((entries) => {
+            const entry = entries[0];
+            if (!entry) return;
+            if (entry.boundingClientRect.bottom <= window.innerHeight) {
+                btn.classList.remove('show');
+            } else {
+                btn.classList.add('show');
             }
-        });
+        }, { threshold: [0] });
+
+        galleryObserver.observe(gallerySection);
     }
 
     document.addEventListener('astro:page-load', () => {
