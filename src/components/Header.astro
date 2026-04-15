@@ -73,10 +73,11 @@
 </style>
 
 <script is:inline>
-// 保持原有的彩蛋逻辑
 let clickTimes = [];
-const logoLink = document.querySelector('.logo');
-if (logoLink) {
+
+function attachLogoEasterEgg() {
+  const logoLink = document.querySelector('.logo');
+  if (!logoLink) return;
   logoLink.addEventListener('click', (e) => {
     const now = Date.now();
     clickTimes.push(now);
@@ -88,4 +89,190 @@ if (logoLink) {
     }
   });
 }
+
+// CONST HERE
+const isBirthdaySpecialized = true;
+// BOOL TYPE, true OR false
+
+
+
+function gaussianRandom() {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function createBirthdayCanvas() {
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '9999';
+  canvas.style.opacity = '1';
+  document.body.appendChild(canvas);
+  return canvas;
+}
+
+function initBirthdayParticles() {
+  const canvas = createBirthdayCanvas();
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  let width = 0;
+  let height = 0;
+  let rafId = null;
+  const maxSpawnTime = 1000;
+  const spawnInterval = 70;
+  let spawnWindowEnd = performance.now() + maxSpawnTime;
+  let lastSpawn = performance.now();
+
+  const colors = ['#ff7fbf', '#ffd37f', '#7fdbff', '#a67fff', '#ff9a7f', '#81ff9a'];
+
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function randomColor() {
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function spawnAutoParticle() {
+    const size = 16 + Math.random() * 14;
+    particles.push({
+      type: 'balloon',
+      x: Math.random() * width,
+      y: -size * 2,
+      size,
+      vy: 320 + Math.random() * 140,
+      color: randomColor(),
+      gaussSigma: 0.18 + Math.random() * 0.18,
+    });
+  }
+
+  function spawnClickParticle(clientX, clientY) {
+    const size = 30 + Math.random() * 20;
+    const now = performance.now();
+    particles.push({
+      type: 'burst',
+      x: clientX,
+      y: clientY,
+      size,
+      color: randomColor(),
+      createdAt: now,
+      duration: 500,
+      alpha: 1,
+    });
+  }
+
+  function updateParticles(deltaTime) {
+    const now = performance.now();
+    if (now < spawnWindowEnd && now - lastSpawn >= spawnInterval) {
+      for (let i = 0; i < 2; i += 1) spawnAutoParticle();
+      lastSpawn = now;
+    }
+
+    for (let i = particles.length - 1; i >= 0; i -= 1) {
+      const p = particles[i];
+      if (p.type === 'balloon') {
+        p.x += gaussianRandom() * p.gaussSigma * deltaTime * 0.12;
+        p.y += p.vy * deltaTime * 0.001;
+        if (p.y - p.size > height) {
+          particles.splice(i, 1);
+          continue;
+        }
+      } else {
+        const elapsed = now - p.createdAt;
+        const progress = Math.min(1, elapsed / p.duration);
+        p.alpha = 1 - progress;
+        p.drawSize = p.size * progress;
+        if (progress >= 1) {
+          particles.splice(i, 1);
+          continue;
+        }
+      }
+    }
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, width, height);
+    for (const p of particles) {
+      if (p.type === 'burst') {
+        ctx.globalAlpha = p.alpha;
+      } else {
+        ctx.globalAlpha = 0.95;
+      }
+      ctx.fillStyle = p.color;
+      const radius = p.type === 'burst' ? (p.drawSize || 0) * 0.5 : p.size * 0.7;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      if (p.type === 'balloon') {
+        ctx.globalAlpha = 0.6;
+        ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y + radius);
+        ctx.lineTo(p.x, p.y + radius + 18);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  let lastTimestamp = performance.now();
+  function animationLoop(timestamp) {
+    const deltaTime = timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+    updateParticles(deltaTime);
+    drawParticles();
+    rafId = requestAnimationFrame(animationLoop);
+  }
+
+  function handleNavigationClick(event) {
+    const anchor = event.target.closest('a');
+    if (!anchor || !anchor.href) return;
+    const url = new URL(anchor.href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+    const rect = anchor.getBoundingClientRect();
+    spawnClickParticle(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('mousedown', (event) => {
+    if (event.target.closest('a')) return;
+    spawnClickParticle(event.clientX, event.clientY);
+  });
+  window.addEventListener('click', handleNavigationClick, true);
+  window.addEventListener('touchstart', (event) => {
+    const touch = event.touches[0];
+    if (!touch || event.target.closest('a')) return;
+    spawnClickParticle(touch.clientX, touch.clientY);
+  }, { passive: true });
+
+  resizeCanvas();
+  rafId = requestAnimationFrame(animationLoop);
+
+  return () => {
+    cancelAnimationFrame(rafId);
+    window.removeEventListener('resize', resizeCanvas);
+    window.removeEventListener('click', handleNavigationClick, true);
+  };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  attachLogoEasterEgg();
+  if (isBirthdaySpecialized) {
+    initBirthdayParticles();
+  }
+});
 </script>
