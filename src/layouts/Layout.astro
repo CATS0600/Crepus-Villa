@@ -18,10 +18,15 @@ const { title } = Astro.props;
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/CRVL-TypeB.svg" />
         <title>{title}</title>
+        <script>
+            if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+                window.history.scrollRestoration = 'manual';
+            }
+        </script>
     </head>
     <body>
         <slot />
-        <ClientRouter />
+        <ClientRouter data-astro-history="replace" disable-scroll-propagation />
         <BgmPanel client:load transition:persist />
         
         <footer class="site-footer">
@@ -42,15 +47,48 @@ const { title } = Astro.props;
 
             gsap.registerPlugin(ScrollTrigger);
 
-            let lenis: Lenis | null = null;
+            if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+                window.history.scrollRestoration = 'manual';
+            }
 
-            // 统一的 RAF 更新函数
+            let lenis: Lenis | null = null;
+            let lenisScrollAllowed = true;
+            let lastFrameTime = 0;
+            let scrollBlockerInstalled = false;
+
+            const safeScrollUpdate = () => {
+                if (!lenisScrollAllowed) return;
+                ScrollTrigger.update();
+            };
+
             const updateLenis = (time: number) => {
+                if (!lenisScrollAllowed) return;
+                if (typeof time !== 'number') return;
+                if (time === lastFrameTime) return;
+                const delta = time - lastFrameTime;
+                if (delta > 0 && delta < 0.008) return;
+                lastFrameTime = time;
                 lenis?.raf(time * 1000);
             };
 
+            function installScrollBlockers() {
+                if (scrollBlockerInstalled) return;
+                scrollBlockerInstalled = true;
+
+                window.addEventListener('scroll', (event) => {
+                    if (lenis) {
+                        event.stopImmediatePropagation();
+                    }
+                }, { capture: true, passive: true });
+
+                window.addEventListener('scrollend', (event) => {
+                    if (lenis) {
+                        event.stopImmediatePropagation();
+                    }
+                }, { capture: true, passive: true });
+            }
+
             function initScroll() {
-                // 清理旧实例防止多重叠加
                 if (lenis) {
                     lenis.destroy();
                     gsap.ticker.remove(updateLenis);
@@ -58,15 +96,18 @@ const { title } = Astro.props;
 
                 lenis = new Lenis({
                     duration: 1.2,
-                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                     smoothWheel: true,
+                    wrapper: window as unknown as HTMLElement,
+                    content: document.documentElement as HTMLElement,
                 });
 
-                // 同步 ScrollTrigger
-                lenis.on('scroll', ScrollTrigger.update);
+                lenis.on('scroll', () => {
+                    safeScrollUpdate();
+                });
 
                 gsap.ticker.add(updateLenis);
                 gsap.ticker.lagSmoothing(0);
+                installScrollBlockers();
             }
 
             // 初始化 BGM 控制器
@@ -74,12 +115,14 @@ const { title } = Astro.props;
 
             // 每次页面加载（包括初次和 ViewTransitions 切换后）
             document.addEventListener('astro:page-load', () => {
+                lenisScrollAllowed = true;
                 initScroll();
                 bgmController.restoreStateOnPageSwap();
             });
 
             // 页面切换前销毁实例，释放内存和监听器
             document.addEventListener('astro:before-swap', () => {
+                lenisScrollAllowed = false;
                 if (lenis) {
                     lenis.destroy();
                     gsap.ticker.remove(updateLenis);

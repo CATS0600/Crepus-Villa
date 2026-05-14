@@ -10,30 +10,31 @@ import wechatQR from '../tipwechat/b.jpg';
     <section class="reveal active">
       <h1>Support My Work If You Like To</h1>
       <h2>因为有你们对Crepus-Villa的支持，Cyril得以用更优质的资源投入创作。<br/>Thanks to your support of Crepus-Villa, Cyril is able to dedicate higher-quality resources to his creative work.</h2>
-      <p class="section-desc">仅需2 USD (14 CNY)，即可成为Villa Member，享受Villa专属内容。<br/>Become a Villa Member for only 2 USD (320 JPY / 3000 KRW / 1.8 EUR) and enjoy exclusive Villa content.</p>
-      <div class="sponsor-grid">
-        <a href="https://qr.alipay.com/fkx14778gmv86oc2fjnar31" class="option-card">
-          <h3>Alipay</h3>
-          <!-- <p class="description">跳转支付宝支付</p> -->
+      <p class="section-desc">仅需 2 USD (14 CNY)，即可成为 Villa Member，享受 Villa 专属内容。</p>
+
+      <div class="sponsor-stack">
+        <!-- Alipay Card -->
+        <a href="https://qr.alipay.com/fkx14778gmv86oc2fjnar31" class="option-card wide-card">
+          <div class="card-info">
+            <h3>Alipay</h3>
+            <p class="description">跳转至支付宝进行赞助</p>
+          </div>
+          <div class="action-area">
+            <span class="description">Press to Pay</span>
+          </div>
         </a>
 
-        <div class="option-card copy-card" data-address="0x6a9036be6bc85f50d73c8536f8cacf7a16f5e7ff">
-          <h3>BNB / ETH / OKB</h3>
-          <code class="address">0x6a90...e7ff</code>
-          <!-- <p class="tip">点击复制地址</p> -->
-        </div>
-
-        <div class="option-card copy-card" data-address="bc1pcpn5ggzrtd47wqjvrrlz74nzdzdpusur7yq8tgzz3fe4ay0tm80srx67ex">
-          <h3>BTC</h3>
-          <code class="address">bc1pcp...67ex</code>
-          <!-- <p class="tip">点击复制地址</p> -->
-        </div>
-      </div>
-
-      <div class="wechat-solo">
-        <div class="wechat-container">
-          <h3>Wechat</h3>
-          <img src={wechatQR.src} alt="Wechat QR" class="wechat-image" />
+        <!-- Wechat Card -->
+        <div class="wechat-container wide-card">
+          <div class="wechat-content-wrapper">
+            <div class="card-info">
+              <h3>Wechat Pay</h3>
+              <p class="description">使用微信扫描二维码赞助</p>
+            </div>
+            <div class="qr-wrapper">
+              <img src={wechatQR.src} alt="Wechat QR" class="wechat-image-large" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -44,105 +45,144 @@ import wechatQR from '../tipwechat/b.jpg';
 
 <style>
   /* 基础页面样式 */
-  .sponsor-page { padding-top: 100px; text-align: center; padding-bottom: 80px; }
-  h1 { font-size: 44px; font-weight: 800; margin-bottom: 20px; }
-  h2 { font-size: 1.3rem; margin-bottom: 15px; }
-  .section-desc { font-size: 1rem; opacity: 0.8; max-width: 600px; margin: 0 auto 50px; }
-
-  /* 网格布局：强制正方形并支持自适应 */
-  .sponsor-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 25px;
-    max-width: 1100px;
-    margin: 0 auto 40px;
-    padding: 0 20px;
+  .sponsor-page { 
+    padding-top: 100px; 
+    text-align: center; 
+    padding-bottom: 80px; 
   }
+  h1 { font-size: 44px; font-weight: 800; margin-bottom: 20px; }
+  h2 { font-size: 1.2rem; margin-bottom: 15px; line-height: 1.6; opacity: 0.9; }
+  .section-desc { font-size: 1.1rem; opacity: 0.7; max-width: 700px; margin: 0 auto 50px; }
 
-  /* 卡片基础样式：适配深浅模式 */
-  .option-card, .wechat-container {
-    background: var(--card-bg, #ffffff);
-    color: var(--card-text, #1d1d1f);
-    aspect-ratio: 1 / 1; 
-    padding: 30px;
-    border-radius: 28px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-    border: 1px solid rgba(128, 128, 128, 0.1);
+  /* 垂直堆叠布局 */
+  .sponsor-stack {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-decoration: none;
+    gap: 30px;
+    padding: 0 20px;
   }
 
-  /* 深色模式适配逻辑 (假设你使用 prefers-color-scheme 或类名) */
+  /* 长方形大卡片 */
+  .wide-card {
+    background: var(--card-bg, #ffffff);
+    color: var(--card-text, #1d1d1f);
+    
+    /* 宽度：屏幕宽度减去保留边距 */
+    width: calc(100vw - 80px);
+    max-width: 1000px;
+    
+    /* 增加高度与内边距 */
+    min-height: 180px;
+    padding: 40px 60px;
+    
+    border-radius: 32px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    box-sizing: border-box;
+  }
+
+  /* 信息区块 */
+  .card-info {
+    text-align: left;
+  }
+  .card-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+  }
+  .card-info .description {
+    font-size: 1.1rem;
+    opacity: 0.6;
+    margin: 0;
+  }
+
+  /* 支付宝按钮区域 */
+  .action-btn {
+    background: #0071e3;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .wide-card:hover .action-btn {
+    background: #0077ed;
+  }
+
+  /* 微信二维码显示 */
+  .wechat-content-wrapper {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .qr-wrapper {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  .wechat-image-large {
+    width: 160px; /* 显著加大二维码 */
+    height: 160px;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* 悬停动效 */
+  .wide-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+  }
+
+  /* 深色模式 */
   @media (prefers-color-scheme: dark) {
     :root {
       --card-bg: #1c1c1e;
       --card-text: #f5f5f7;
-      --code-bg: #2c2c2e;
     }
-    .option-card, .wechat-container {
+    .wide-card {
       box-shadow: 0 10px 40px rgba(0,0,0,0.3);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
+    /* 即使在深色模式下，二维码背景也建议保持浅色以便扫描 */
+    .qr-wrapper {
+      background: #f5f5f7;
+    }
   }
 
-  .option-card:hover { transform: translateY(-8px); box-shadow: 0 15px 50px rgba(0,0,0,0.15); }
-  .copy-card { cursor: pointer; }
-
-  /* 标题居中与大小 */
-  h3 { font-size: 1.4rem; font-weight: 700; margin: 0 0 10px 0; text-align: center; width: 100%; }
-  .description { font-size: 1rem; opacity: 0.7; margin: 0; }
-
-  /* 代码块适配 */
-  .address {
-    background: var(--code-bg, #f5f5f7);
-    padding: 10px 15px;
-    border-radius: 10px;
-    font-family: 'SF Mono', monospace;
-    font-size: 0.95rem;
-    margin: 15px 0;
-    word-break: break-all;
+  /* 响应式适配 */
+  @media (max-width: 768px) {
+    .wide-card {
+      width: calc(100vw - 40px);
+      padding: 30px;
+      min-height: auto;
+    }
+    .card-info h3 { font-size: 1.5rem; }
   }
 
-  .tip { font-size: 0.9rem; color: #0071e3; font-weight: 500; }
+  @media (max-width: 550px) {
+    .wechat-content-wrapper {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+    .card-info { text-align: center; }
+    .wide-card { flex-direction: column; gap: 20px; }
+  }
 
-  /* 微信部分 */
-  .wechat-solo { display: flex; justify-content: center; padding: 0 20px; }
-  .wechat-container { aspect-ratio: auto; max-width: 350px; width: 100%; height: auto; padding: 40px; }
-  .wechat-image { width: 180px; height: auto; margin-top: 20px; border-radius: 12px; }
-
-  /* 弹窗样式 */
+  /* Toast 样式 */
   .toast {
     position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px);
     background: rgba(0, 0, 0, 0.85); color: white; padding: 14px 28px; border-radius: 30px;
     font-size: 1rem; transition: transform 0.3s ease-out; z-index: 1000;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
-
-  @media (max-width: 480px) {
-    .option-card { aspect-ratio: auto; padding: 40px 20px; }
-  }
 </style>
-
-<script>
-  const copyCards = document.querySelectorAll('.copy-card');
-  const toast = document.getElementById('copy-toast');
-
-  copyCards.forEach(card => {
-    card.addEventListener('click', async () => {
-      const address = card.getAttribute('data-address');
-      if (address) {
-        try {
-          await navigator.clipboard.writeText(address);
-          toast?.classList.add('show');
-          setTimeout(() => toast?.classList.remove('show'), 2000);
-        } catch (err) {
-          console.error('Failed to copy: ', err);
-        }
-      }
-    });
-  });
-</script>
