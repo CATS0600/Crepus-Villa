@@ -1,0 +1,350 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+---
+
+<Layout title="VILLA SYSTEM - EXAMINATION">
+    <Header />
+    
+    <main class="main-content">
+        <section class="content-section reveal active">
+            <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
+                
+                <!-- 头部标题区域 (参考 dpmbg 风格) -->
+                <h1 style="text-align: center; margin-bottom: 1rem;">
+                    <span>🛡️ VILLA 准入测试</span>
+                </h1>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
+                    Gateway Verification Protocol<br/>
+                    <span style="font-size: 0.9em; opacity: 0.8;">请如实作答，系统将根据物理设备标识与社交 ID 建立双向审计映射</span>
+                </p>
+
+                <!-- 表单主容器 -->
+                <div class="form-container" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem;">
+                    
+                    <!-- 步骤 1：输入 QQID -->
+                    <div id="intro-step">
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label for="qqid-input" style="display: block; margin-bottom: 0.5rem; color: #eee;">QQ ID (必填) *</label>
+                            <input 
+                                type="number" 
+                                id="qqid-input" 
+                                style="width: 100%; padding: 0.8rem 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: sans-serif;"
+                                placeholder="请输入纯数字 QQ 账号" 
+                                required 
+                            />
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">此凭证将作为你在本社区的唯一长期标识，请勿随意借用他人设备或账号。</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <button id="start-btn" class="send-button" style="padding: 0.8rem 2.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; transition: all 0.2s;">
+                                开始考核
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 2：考试题目 -->
+                    <div id="questions-step" style="display: none;">
+                        <div class="progress-container" style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;">
+                            <div id="progress-bar" style="width: 0%; height: 100%; background: #fff; transition: width 0.3s ease;"></div>
+                        </div>
+
+                        <form id="exam-form">
+                            <!-- Q1 -->
+                            <div class="form-group question-item active-q" data-q="1">
+                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">01 / 后端 submit.js 执行双向校验的目的是什么？</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q1" value="A" required /> <span>A. 追踪设备变化与QQ号对应关系，防止代考或换号刷分</span></label>
+                                    <label class="radio-label"><input type="radio" name="q1" value="B" /> <span>B. 加快数据库读取速率</span></label>
+                                    <label class="radio-label"><input type="radio" name="q1" value="C" /> <span>C. 仅仅为了向玩家展示酷炫的提示语</span></label>
+                                    <label class="radio-label"><input type="radio" name="q1" value="D" /> <span>D. 清除浏览器缓存</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="form-group question-item" data-q="2">
+                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">02 / 若一个 QQ 在新设备上进行考试，系统会产生什么标记？</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q2" value="A" required /> <span>A. [ACHTUNG] QQID修改</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="B" /> <span>B. [ACHTUNG] 同用户环境修改</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="C" /> <span>C. 直接封禁账号</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="D" /> <span>D. 不产生任何标记</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="form-group question-item" data-q="3">
+                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">03 / Cloudflare D1 底层基于哪种轻量级数据库？</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q3" value="A" required /> <span>A. PostgreSQL</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="B" /> <span>B. MongoDB</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="C" /> <span>C. SQLite</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="D" /> <span>D. Redis</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Q4 -->
+                            <div class="form-group question-item" data-q="4">
+                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">04 / Astro 在 Cloudflare Pages 部署时的渲染模式是？</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q4" value="A" required /> <span>A. 只能全静态生成(SSG)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="B" /> <span>B. 只能客户端纯JS渲染(SPA)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="C" /> <span>C. 仅支持本地模拟部署</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="D" /> <span>D. 支持混合/按需服务器端渲染(SSR)以及静态生成</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Q5 -->
+                            <div class="form-group question-item" data-q="5">
+                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">05 / 在高并发下，如何保证 D1 数据库中访问量自增的准确性？</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q5" value="A" required /> <span>A. 在前端把数值自加1后再发给云端</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="B" /> <span>B. 依靠 D1 底层原子 UPDATE RETURNING 语句在云端递增</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="C" /> <span>C. 用 localStorage 本地计数，离线同步</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="D" /> <span>D. 多建几个表分开统计</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Q6 (简答) -->
+                            <div class="form-group question-item" data-q="6">
+                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">06 / 简答题：请简述你加入 Villa 的契机，以及你对这个社区未来的展望。</label>
+                                <textarea 
+                                    name="essay" 
+                                    style="width: 100%; min-height: 120px; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: sans-serif; resize: vertical;"
+                                    placeholder="请在此输入你的回答（限 200 字内）..." 
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
+                                <button type="button" id="prev-btn" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; visibility: hidden; font-size: 0.95rem;">&larr; 上一步</button>
+                                <button type="button" id="next-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer;">下一步 &rarr;</button>
+                                <button type="submit" id="submit-btn" style="display: none; background: #fff; color: #000; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: bold;">提交答卷</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- 步骤 3：结果反馈 -->
+                    <div id="result-step" style="display: none; text-align: center;">
+                        <h2 style="margin-bottom: 0.5rem;">数据已入库</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">审核员将在后台对简答题部分进行评阅</p>
+
+                        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+                            <div style="padding: 1.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; min-width: 120px;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">客观题得分</div>
+                                <div style="font-size: 2.5rem; color: #fff;" id="res-score">0</div>
+                            </div>
+                            <div style="padding: 1.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; min-width: 120px;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">历史记录次数</div>
+                                <div style="font-size: 2.5rem; color: #fff;" id="res-times">0</div>
+                            </div>
+                        </div>
+
+                        <!-- 异常告警框 (与 dpmbg 风格一致的圆角扁平设计) -->
+                        <div id="achtung-warning" style="display: none; background: rgba(255, 60, 60, 0.1); border: 1px solid rgba(255, 60, 60, 0.3); border-radius: 8px; padding: 1.2rem; text-align: left; margin-bottom: 2rem;">
+                            <h4 style="color: #ff5f56; margin: 0 0 0.5rem 0; font-size: 0.95rem;">⚠️ 审计系统记录</h4>
+                            <p id="achtung-text" style="margin: 0; color: #fcc; font-size: 0.85rem; line-height: 1.5;"></p>
+                        </div>
+
+                        <a href="/" style="display: inline-block; text-decoration: none; padding: 0.6rem 2rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; font-size: 0.9rem;">返回主页</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<script is:inline>
+    // 自动生成或读取 user_uuid
+    let userUuid = localStorage.getItem('user_uuid');
+    if (!userUuid) {
+        userUuid = 'u_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now().toString(36);
+        localStorage.setItem('user_uuid', userUuid);
+    }
+
+    let currentQuestion = 1;
+    const totalQuestions = 6;
+    let userQqid = '';
+
+    const introStep = document.getElementById('intro-step');
+    const questionsStep = document.getElementById('questions-step');
+    const resultStep = document.getElementById('result-step');
+    
+    const startBtn = document.getElementById('start-btn');
+    const qqidInput = document.getElementById('qqid-input');
+    
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const examForm = document.getElementById('exam-form');
+
+    startBtn.addEventListener('click', () => {
+        const val = qqidInput.value.trim();
+        if (!val || isNaN(parseInt(val, 10))) {
+            alert('请输入有效的纯数字 QQ 账号');
+            return;
+        }
+        userQqid = val;
+        introStep.style.display = 'none';
+        questionsStep.style.display = 'block';
+        updateQuestionView();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentQuestion > 1) {
+            currentQuestion--;
+            updateQuestionView();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (!validateCurrentQuestion()) {
+            alert('请先完成当前题目的作答');
+            return;
+        }
+        if (currentQuestion < totalQuestions) {
+            currentQuestion++;
+            updateQuestionView();
+        }
+    });
+
+    function validateCurrentQuestion() {
+        if (currentQuestion <= 5) {
+            return document.querySelector(`input[name="q${currentQuestion}"]:checked`) !== null;
+        } else {
+            return document.querySelector('textarea[name="essay"]').value.trim().length > 0;
+        }
+    }
+
+    function updateQuestionView() {
+        const percent = ((currentQuestion - 1) / totalQuestions) * 100;
+        progressBar.style.width = `${percent}%`;
+
+        document.querySelectorAll('.question-item').forEach(item => {
+            const qNum = parseInt(item.getAttribute('data-q'), 10);
+            item.style.display = (qNum === currentQuestion) ? 'block' : 'none';
+        });
+
+        prevBtn.style.visibility = currentQuestion === 1 ? 'hidden' : 'visible';
+        
+        if (currentQuestion === totalQuestions) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'inline-block';
+        } else {
+            nextBtn.style.display = 'inline-block';
+            submitBtn.style.display = 'none';
+        }
+    }
+
+    examForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!validateCurrentQuestion()) {
+            alert('简答题不能为空');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = '提交中...';
+
+        const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+        const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+        const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+        const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+        const q5 = document.querySelector('input[name="q5"]:checked')?.value;
+        const essay = document.querySelector('textarea[name="essay"]').value.trim();
+
+        const payload = {
+            user_uuid: userUuid,
+            qqid: parseInt(userQqid, 10),
+            answers: { q1, q2, q3, q4, q5, essay }
+        };
+
+        try {
+            const response = await fetch('/api/exam/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                progressBar.style.width = '100%';
+                questionsStep.style.display = 'none';
+                resultStep.style.display = 'block';
+
+                document.getElementById('res-score').innerText = data.exam_result;
+                document.getElementById('res-times').innerText = data.exam_times;
+
+                if (data.notes) {
+                    document.getElementById('achtung-text').innerText = `防刷策略被触发，已记录标记：${data.notes}。请确保未恶意借用设备或账号。`;
+                    document.getElementById('achtung-warning').style.display = 'block';
+                }
+            } else {
+                alert(data.error || '提交异常，请稍后再试。');
+                submitBtn.disabled = false;
+                submitBtn.innerText = '提交答卷';
+            }
+        } catch (err) {
+            alert('网络请求失败，请检查网络连接。');
+            submitBtn.disabled = false;
+            submitBtn.innerText = '提交答卷';
+        }
+    });
+</script>
+
+<style>
+    /* 与 dpmbg 保持统一的柔和化表单元素样式 */
+    .question-item {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    .question-item.active-q {
+        display: block;
+    }
+    .options-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .radio-label {
+        display: flex;
+        align-items: center;
+        background: rgba(0,0,0,0.15);
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 1rem 1.2rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #ddd;
+    }
+    .radio-label:hover {
+        background: rgba(255,255,255,0.05);
+    }
+    .radio-label input[type="radio"] {
+        margin-right: 1rem;
+        accent-color: #fff;
+        transform: scale(1.1);
+    }
+    
+    /* 选中状态稍微提亮 */
+    .radio-label:has(input[type="radio"]:checked) {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.2);
+        color: #fff;
+    }
+
+    input:focus, textarea:focus {
+        outline: none;
+        border-color: rgba(255,255,255,0.3) !important;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>

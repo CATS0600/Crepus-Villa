@@ -37,7 +37,7 @@ const photoCaptions = [
 
 const partners = ["Paramecium", "Hydrolight", "Odysphere", "J Zhang", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
 const pr_web = [
-    "https://paramecium2010.top", "https://hydrolight.top", "https://www.odysphere.tech", "https://official.kounoeew.top", "https://www.roblox.com",
+    "https://paramecium2010.top", "https://www.bilibili.com/video/BV1AU4y1i7Vr/", "https://www.odysphere.tech", "https://official.kounoeew.top", "https://www.roblox.com",
     "https://www.google.com", "https://www.cloudflare.com", "https://astro.build",
     "https://github.com", "https://gemini.google.com", "./sponsor"
 ];
@@ -57,6 +57,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <h1 class="hero-title">
                     Where Ideas <br/><span id="lineBreak"></span><span id="typewriter" class="accent-text"></span><span class="cursor"></span>
                 </h1>
+                <div class="member-counter-box" style="margin-top: 24px; font-size: 1rem; color: #f8f8f2;">
+                    <span id="member-counter">正在加载 Villa 信息...</span>
+                </div>
             </div>
         </section>
 
@@ -248,6 +251,49 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         </section>
     </main>
 
+    <script type="module">
+        async function updateMemberCounter() {
+            const counterEl = document.getElementById('member-counter');
+            if (!counterEl) return;
+
+            const storageValue = localStorage.getItem('isnew');
+            const isFirstVisit = storageValue === null;
+            const method = isFirstVisit ? 'POST' : 'GET';
+            const url = '/api/site-counter';
+
+            if (isFirstVisit) {
+                localStorage.setItem('isnew', 'true');
+            }
+
+            try {
+                const response = await fetch(url, { method });
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+                const data = await response.json();
+                const count = data?.count;
+                if (typeof count !== 'number') {
+                    throw new Error('Invalid response format');
+                }
+
+                counterEl.textContent = `你是第 ${count} 个进入Villa的Member!`;
+
+                if (isFirstVisit) {
+                    localStorage.setItem('isnew', 'false');
+                }
+            } catch (error) {
+                console.error('site-counter fetch error:', error);
+                counterEl.textContent = '欢迎来到 Villa';
+            }
+        }
+
+        if (typeof window !== 'undefined') {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateMemberCounter);
+            } else {
+                updateMemberCounter();
+            }
+        }
     </script>
 </Layout>
 
