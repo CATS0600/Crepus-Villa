@@ -414,36 +414,44 @@ import Header from '../../components/Header.astro';
     });
 
     function validateCurrentQuestion() {
-        const currentItem = document.querySelector(`.question-item[data-q="${currentQuestion}"]`);
-
-        // 校验输入框 (文本/数字/邮箱)
-        const inputs = currentItem.querySelectorAll('input[type="text"], input[type="number"], input[type="email"]');
-        for (let input of inputs) {
-            if (input.required && !input.value.trim()) return false;
+    const currentItem = document.querySelector(`.question-item[data-q="${currentQuestion}"]`); // 
+    
+    // 校验输入框 (文本/数字/邮箱)
+    const inputs = currentItem.querySelectorAll('input[type="text"], input[type="number"], input[type="email"]'); // [cite: 139]
+    for (let input of inputs) { // [cite: 140]
+        if (input.required && !input.value.trim()) return false; // [cite: 140]
+        
+        // 新增：显式校验邮箱格式（必须包含 @ 且前后有有效字符）
+        if (input.type === 'email') {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(input.value.trim())) {
+                return false;
+            }
         }
-
-        // 校验文本域 (简答)
-        const textareas = currentItem.querySelectorAll('textarea');
-        for (let ta of textareas) {
-            if (ta.hasAttribute('required') && !ta.value.trim()) return false;
-        }
-
-        // 校验单选
-        const radios = currentItem.querySelectorAll('input[type="radio"]');
-        if (radios.length > 0) {
-            const name = radios[0].name;
-            return document.querySelector(`input[name="${name}"]:checked`) !== null;
-        }
-
-        // 校验多选
-        const checkboxes = currentItem.querySelectorAll('input[type="checkbox"]');
-        if (checkboxes.length > 0) {
-            const name = checkboxes[0].name;
-            return document.querySelectorAll(`input[name="${name}"]:checked`).length > 0;
-        }
-
-        return true;
     }
+
+    // 校验文本域 (简答)
+    const textareas = currentItem.querySelectorAll('textarea'); // [cite: 141]
+    for (let ta of textareas) { // [cite: 142]
+        if (ta.hasAttribute('required') && !ta.value.trim()) return false; // [cite: 142]
+    } // [cite: 143]
+
+    // 校验单选
+    const radios = currentItem.querySelectorAll('input[type="radio"]'); // [cite: 143]
+    if (radios.length > 0) { // [cite: 144]
+        const name = radios[0].name; // [cite: 144]
+        return document.querySelector(`input[name="${name}"]:checked`) !== null; // [cite: 145]
+    }
+
+    // 校验多选
+    const checkboxes = currentItem.querySelectorAll('input[type="checkbox"]'); // [cite: 145]
+    if (checkboxes.length > 0) { // [cite: 146]
+        const name = checkboxes[0].name; // [cite: 146]
+        return document.querySelectorAll(`input[name="${name}"]:checked`).length > 0; // [cite: 147]
+    }
+
+    return true; // [cite: 147]
+}
 
     function updateQuestionView() {
         const percent = ((currentQuestion - 1) / (totalQuestions - 1)) * 100;
