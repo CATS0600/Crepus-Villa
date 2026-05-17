@@ -51,11 +51,9 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <script is:inline>
-    // 匹配后端的 SHA-256 密文
     const TARGET_HASH = "6524aa49a54679d4e6a2234633fb9b23e33a2ed8724cbf887f0204098b6fd803";
     let adminToken = "";
 
-    // Web Crypto API: 生成不可逆的 SHA-256 哈希
     async function sha256(string) {
         const utf8 = new TextEncoder().encode(string);
         const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -89,7 +87,6 @@ import Header from '../components/Header.astro';
 
     async function loadMessages() {
         try {
-            // 修复点：添加有效的鉴权请求头支持
             const res = await fetch('/api/get-messages', {
                 headers: { 'X-Admin-Token': adminToken }
             });
@@ -102,17 +99,35 @@ import Header from '../components/Header.astro';
                 return;
             }
 
+            // 严格按照：TIME + ID + TITLE + REPLYMETHOD + REPLY + MESSAGE +... 顺序编排输出
             list.innerHTML = data.map(item => `
                 <div class="record-card">
                     <div class="record-meta">
-                        <span>ID: #${item.id}</span>
-                        <span>SENDER: ${escapeHtml(item.username)}</span>
-                    </div>
-                    <div class="record-body">
-                        <p>${escapeHtml(item.message)}</p>
-                    </div>
-                    <div class="record-footer">
                         <span>TIME: ${new Date(item.created_at).toLocaleString()}</span>
+                        <span>ID: #${item.id}</span>
+                        <span>TITLE: <strong class="highlight-text">${escapeHtml(item.title || 'Untitled')}</strong></span>
+                    </div>
+                    
+                    <div class="record-body" style="margin-top: 10px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px; font-family: monospace;">
+                            REPLY METHOD: <span style="color: #aaa;">${escapeHtml(item.reply_method || 'web')}</span> 
+                            ${item.email ? ` | EMAIL: <span style="color: #aaa;">${escapeHtml(item.email)}</span>` : ''}
+                            ${item.type ? ` | STATUS: <span style="color: #aaa;">${escapeHtml(item.type)}</span>` : ''}
+                            ${item.token ? ` | TOKEN: <span style="color: #444;">${escapeHtml(item.token)}</span>` : ''}
+                        </div>
+
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; margin-bottom: 10px;">
+                            <span style="font-size: 11px; color: #555; display: block; font-family: monospace; margin-bottom: 4px;">MESSAGE:</span>
+                            <p style="margin: 0; color: #ccc; font-size: 14px; white-space: pre-wrap;">${escapeHtml(item.content)}</p>
+                        </div>
+
+                        <div style="background: rgba(0, 255, 102, 0.02); border: 1px solid rgba(0, 255, 102, 0.05); padding: 12px; border-radius: 4px;">
+                            <span style="font-size: 11px; color: #348a53; display: block; font-family: monospace; margin-bottom: 4px;">REPLY:</span>
+                            <p style="margin: 0; color: #00ff66; font-size: 14px; white-space: pre-wrap;">${item.reply ? escapeHtml(item.reply) : '<span style="color:#444; font-style:italic;">(无回复 / NULL)</span>'}</p>
+                        </div>
+                    </div>
+
+                    <div class="record-footer" style="margin-top: 15px; border-top: 1px solid #1a1a1a; padding-top: 10px; display: flex; justify-content: flex-end;">
                         <button onclick="deleteData('send', ${item.id})" class="delete-btn">DELETE</button>
                     </div>
                 </div>
