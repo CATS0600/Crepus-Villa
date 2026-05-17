@@ -1,49 +1,34 @@
-export const GET = async ({ request, locals }) => {
-  try {
-    const env = locals.runtime?.env;
-    if (!env?.DB) throw new Error('Database not available');
-    
-    const url = new URL(request.url);
-    const token = url.searchParams.get('token');
+export const prerender = false;
 
-    let messages;
+// 统一同步为最新的 SHA-256 密钥
+const ADMIN_HASH = "6524aa49a54679d4e6a2234633fb9b23e33a2ed8724cbf887f0204098b6fd803";
 
-    if (token) {
-      // 场景 A：凭 Token 访问
-      // 逻辑：只要 Token 对上了，哪怕是 ARCHIVED 或 PENDING 都能看
-      const stmt = env.DB.prepare(
-        'SELECT * FROM messages WHERE UPPER(token) = UPPER(?) ORDER BY created_at DESC'
-      );
-      const result = await stmt.bind(token).all();
-      messages = result.results || [];
-    } else {
-      // --- 场景 B：公开留言板 ---
-      // 【关键安全优化】不要使用 SELECT *，必须排除 email, token, reply_method 等敏感字段
-      const stmt = env.DB.prepare(
-        `SELECT id, title, type, content, reply, created_at 
-         FROM messages 
-         WHERE is_public = 1 
-        AND reply IS NOT NULL 
-        AND UPPER(type) = 'COMPLETE' 
-        ORDER BY created_at DESC`
-      );
-      const result = await stmt.all();
-      messages = result.results || [];
+export async function GET({ request, locals }) {
+    try {
+        const token = request.headers.get("X-Admin-Token");
+        if (!token || token !== ADMIN_HASH) {
+            return new Response(JSON.stringify({ error: "UNAUTHORIZED" }), { 
+                status: 401,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        const env = locals.runtime?.env;
+        if (!env?.DB) {
+            throw new Error("Database not available");
+        }
+
+        // 查询真实的 messages 表
+        const result = await env.DB.prepare("SELECT * FROM messages ORDER BY id DESC").all();
+        
+        return new Response(JSON.stringify(result.results || []), {
+            status: 200,
+            headers: { "Content-Type": "application/json" }
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
-
-    return new Response(JSON.stringify({
-      success: true,
-      count: messages.length,
-      messages: messages
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    console.error('Get messages error:', error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' } 
-    });
-  }
-};
+}
