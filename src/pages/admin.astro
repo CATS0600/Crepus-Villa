@@ -99,7 +99,6 @@ import Header from '../components/Header.astro';
                 return;
             }
 
-            // 严格按照：TIME + ID + TITLE + REPLYMETHOD + REPLY + MESSAGE +... 顺序编排输出
             list.innerHTML = data.map(item => `
                 <div class="record-card">
                     <div class="record-meta">
@@ -109,25 +108,26 @@ import Header from '../components/Header.astro';
                     </div>
                     
                     <div class="record-body" style="margin-top: 10px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 8px; font-family: monospace;">
-                            REPLY METHOD: <span style="color: #aaa;">${escapeHtml(item.reply_method || 'web')}</span> 
-                            ${item.email ? ` | EMAIL: <span style="color: #aaa;">${escapeHtml(item.email)}</span>` : ''}
-                            ${item.type ? ` | STATUS: <span style="color: #aaa;">${escapeHtml(item.type)}</span>` : ''}
-                            ${item.token ? ` | TOKEN: <span style="color: #444;">${escapeHtml(item.token)}</span>` : ''}
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px; font-family: monospace; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <label>REPLY METHOD: <input type="text" id="rmethod-${item.id}" value="${escapeHtml(item.reply_method || 'web')}" class="admin-edit-input" style="width:60px;" /></label>
+                            <label>STATUS: <input type="text" id="rtype-${item.id}" value="${escapeHtml(item.type || 'PENDING')}" class="admin-edit-input" style="width:80px;" /></label>
+                            ${item.email ? `<span>| EMAIL: <span style="color: #aaa;">${escapeHtml(item.email)}</span></span>` : ''}
+                            ${item.token ? `<span>| TOKEN: <span style="color: #444;">${escapeHtml(item.token)}</span></span>` : ''}
                         </div>
 
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; margin-bottom: 10px;">
                             <span style="font-size: 11px; color: #555; display: block; font-family: monospace; margin-bottom: 4px;">MESSAGE:</span>
-                            <p style="margin: 0; color: #ccc; font-size: 14px; white-space: pre-wrap;">${escapeHtml(item.content)}</p>
+                            <textarea id="rcontent-${item.id}" class="admin-edit-textarea">${escapeHtml(item.content)}</textarea>
                         </div>
 
                         <div style="background: rgba(0, 255, 102, 0.02); border: 1px solid rgba(0, 255, 102, 0.05); padding: 12px; border-radius: 4px;">
                             <span style="font-size: 11px; color: #348a53; display: block; font-family: monospace; margin-bottom: 4px;">REPLY:</span>
-                            <p style="margin: 0; color: #00ff66; font-size: 14px; white-space: pre-wrap;">${item.reply ? escapeHtml(item.reply) : '<span style="color:#444; font-style:italic;">(无回复 / NULL)</span>'}</p>
+                            <textarea id="rreply-${item.id}" class="admin-edit-textarea" style="color:#00ff66;">${item.reply ? escapeHtml(item.reply) : ''}</textarea>
                         </div>
                     </div>
 
-                    <div class="record-footer" style="margin-top: 15px; border-top: 1px solid #1a1a1a; padding-top: 10px; display: flex; justify-content: flex-end;">
+                    <div class="record-footer" style="margin-top: 15px; border-top: 1px solid #1a1a1a; padding-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+                        <button onclick="updateMessage(${item.id})" class="update-btn">UPDATE</button>
                         <button onclick="deleteData('send', ${item.id})" class="delete-btn">DELETE</button>
                     </div>
                 </div>
@@ -216,6 +216,35 @@ import Header from '../components/Header.astro';
         }
     }
 
+    window.updateMessage = async function(id) {
+        const content = document.getElementById(`rcontent-${id}`).value;
+        const reply = document.getElementById(`rreply-${id}`).value;
+        const reply_method = document.getElementById(`rmethod-${id}`).value;
+        const type = document.getElementById(`rtype-${id}`).value;
+
+        try {
+            const btn = document.querySelector(`button[onclick="updateMessage(${id})"]`);
+            const oldText = btn.innerText;
+            btn.innerText = 'WAIT';
+            
+            const res = await fetch('/api/admin', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                body: JSON.stringify({ id, content, reply, reply_method, type })
+            });
+            
+            if (res.ok) {
+                btn.innerText = 'SAVED';
+                setTimeout(() => { btn.innerText = oldText; }, 1500);
+            } else {
+                alert('UPDATE FAILED');
+                btn.innerText = oldText;
+            }
+        } catch(e) {
+            alert('NETWORK ERROR');
+        }
+    }
+
     window.deleteData = async function(type, id) {
         if (!confirm("CONFIRM DATA DELETION? \n此操作直接作用于 Cloudflare D1 数据库且无法恢复。")) return;
         try {
@@ -263,6 +292,25 @@ import Header from '../components/Header.astro';
     .highlight-text { color: #00ff66; }
     .record-body { color: #ccc; font-size: 14px; line-height: 1.6; }
     .record-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-family: monospace; color: #555; border-top: 1px solid #1a1a1a; padding-top: 10px; margin-top: 15px; }
+    
+    .update-btn { 
+        background: #00ff66; 
+        color: #000; 
+        border: 1px solid #00ff66; 
+        padding: 4px 12px; 
+        border-radius: 4px; 
+        font-size: 10px; 
+        cursor: pointer; 
+        font-family: monospace; 
+        font-weight: bold;
+        transition: all 0.2s ease; 
+    }
+    .update-btn:hover { box-shadow: 0 0 8px rgba(0,255,102,0.4); }
+    .update-btn:active {
+        color: #000;
+        background: #00cc55;
+    }
+
     .delete-btn { background: transparent; border: 1px solid rgba(255,95,86,0.2); color: #ff5f56; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s ease; }
     .delete-btn:hover { background: #ff5f56; color: #000; border-color: #ff5f56; }
     .status-placeholder { text-align: center; padding: 40px; color: #555; font-family: monospace; }
@@ -279,5 +327,38 @@ import Header from '../components/Header.astro';
     .essay-answer-box { margin-top: 12px; border-top: 1px dashed #222; padding-top: 10px; }
     .essay-text { background: rgba(255,255,255,0.01); padding: 10px; border-radius: 4px; margin-top: 5px; color: #eee; line-height: 1.5; font-family: sans-serif; }
     .text-error { color: #ff5f56; font-family: monospace; font-size: 11px; }
+
+    .admin-edit-input {
+        background: rgba(0,0,0,0.3);
+        border: 1px dashed #444;
+        color: #fff;
+        padding: 2px 4px;
+        font-family: monospace;
+        border-radius: 2px;
+        outline: none;
+    }
+    .admin-edit-textarea {
+        width: 100%;
+        min-height: 60px;
+        background: rgba(0,0,0,0.3);
+        border: 1px dashed #444;
+        color: #ccc;
+        padding: 8px;
+        font-family: sans-serif;
+        border-radius: 4px;
+        resize: vertical;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .admin-edit-input:focus, .admin-edit-textarea:focus {
+        border-color: #00ff66;
+    }
+
     @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (prefers-color-scheme: dark) {
+        .update-btn:active {
+            color: #fff;
+        }
+    }
 </style>

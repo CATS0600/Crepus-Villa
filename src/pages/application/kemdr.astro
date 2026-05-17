@@ -10,7 +10,6 @@ import Header from '../../components/Header.astro';
         <section class="content-section reveal active">
             <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
                 
-                <!-- 头部标题区域 (参考 dpmbg 风格) -->
                 <h1 style="text-align: center; margin-bottom: 1rem;">
                     <span>🛡️ VILLA 准入测试</span>
                 </h1>
@@ -19,17 +18,15 @@ import Header from '../../components/Header.astro';
                     <span style="font-size: 0.9em; opacity: 0.8;">请如实作答，系统将根据物理设备标识与社交 ID 建立双向审计映射</span>
                 </p>
 
-                <!-- 表单主容器 -->
                 <div class="form-container" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem;">
                     
-                    <!-- 步骤 1：输入 QQID -->
                     <div id="intro-step">
                         <div class="form-group" style="margin-bottom: 2rem;">
                             <label for="qqid-input" style="display: block; margin-bottom: 0.5rem; color: #eee;">QQ ID (必填) *</label>
                             <input 
                                 type="number" 
                                 id="qqid-input" 
-                                style="width: 100%; padding: 0.8rem 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: sans-serif;"
+                                class="adaptive-input"
                                 placeholder="请输入纯数字 QQ 账号" 
                                 required 
                             />
@@ -42,14 +39,12 @@ import Header from '../../components/Header.astro';
                         </div>
                     </div>
 
-                    <!-- 步骤 2：考试题目 -->
                     <div id="questions-step" style="display: none;">
                         <div class="progress-container" style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;">
                             <div id="progress-bar" style="width: 0%; height: 100%; background: #fff; transition: width 0.3s ease;"></div>
                         </div>
 
                         <form id="exam-form">
-                            <!-- Q1 -->
                             <div class="form-group question-item active-q" data-q="1">
                                 <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">01 / 后端 submit.js 执行双向校验的目的是什么？</label>
                                 <div class="options-group">
@@ -60,7 +55,6 @@ import Header from '../../components/Header.astro';
                                 </div>
                             </div>
 
-                            <!-- Q2 -->
                             <div class="form-group question-item" data-q="2">
                                 <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">02 / 若一个 QQ 在新设备上进行考试，系统会产生什么标记？</label>
                                 <div class="options-group">
@@ -71,7 +65,6 @@ import Header from '../../components/Header.astro';
                                 </div>
                             </div>
 
-                            <!-- Q3 -->
                             <div class="form-group question-item" data-q="3">
                                 <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">03 / Cloudflare D1 底层基于哪种轻量级数据库？</label>
                                 <div class="options-group">
@@ -82,7 +75,6 @@ import Header from '../../components/Header.astro';
                                 </div>
                             </div>
 
-                            <!-- Q4 -->
                             <div class="form-group question-item" data-q="4">
                                 <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">04 / Astro 在 Cloudflare Pages 部署时的渲染模式是？</label>
                                 <div class="options-group">
@@ -93,7 +85,6 @@ import Header from '../../components/Header.astro';
                                 </div>
                             </div>
 
-                            <!-- Q5 -->
                             <div class="form-group question-item" data-q="5">
                                 <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">05 / 在高并发下，如何保证 D1 数据库中访问量自增的准确性？</label>
                                 <div class="options-group">
@@ -104,12 +95,12 @@ import Header from '../../components/Header.astro';
                                 </div>
                             </div>
 
-                            <!-- Q6 (简答) -->
                             <div class="form-group question-item" data-q="6">
                                 <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #fff;">06 / 简答题：请简述你加入 Villa 的契机，以及你对这个社区未来的展望。</label>
                                 <textarea 
                                     name="essay" 
-                                    style="width: 100%; min-height: 120px; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: sans-serif; resize: vertical;"
+                                    class="adaptive-input"
+                                    style="min-height: 120px; resize: vertical;"
                                     placeholder="请在此输入你的回答（限 200 字内）..." 
                                     required
                                 ></textarea>
@@ -123,7 +114,6 @@ import Header from '../../components/Header.astro';
                         </form>
                     </div>
 
-                    <!-- 步骤 3：结果反馈 -->
                     <div id="result-step" style="display: none; text-align: center;">
                         <h2 style="margin-bottom: 0.5rem;">数据已入库</h2>
                         <p style="color: var(--text-muted); margin-bottom: 2rem;">审核员将在后台对简答题部分进行评阅</p>
@@ -139,7 +129,6 @@ import Header from '../../components/Header.astro';
                             </div>
                         </div>
 
-                        <!-- 异常告警框 (与 dpmbg 风格一致的圆角扁平设计) -->
                         <div id="achtung-warning" style="display: none; background: rgba(255, 60, 60, 0.1); border: 1px solid rgba(255, 60, 60, 0.3); border-radius: 8px; padding: 1.2rem; text-align: left; margin-bottom: 2rem;">
                             <h4 style="color: #ff5f56; margin: 0 0 0.5rem 0; font-size: 0.95rem;">⚠️ 审计系统记录</h4>
                             <p id="achtung-text" style="margin: 0; color: #fcc; font-size: 0.85rem; line-height: 1.5;"></p>
@@ -156,7 +145,6 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <script is:inline>
-    // 自动生成或读取 user_uuid
     let userUuid = localStorage.getItem('user_uuid');
     if (!userUuid) {
         userUuid = 'u_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now().toString(36);
@@ -297,7 +285,6 @@ import Header from '../../components/Header.astro';
 </script>
 
 <style>
-    /* 与 dpmbg 保持统一的柔和化表单元素样式 */
     .question-item {
         display: none;
         animation: fadeIn 0.3s ease;
@@ -310,37 +297,75 @@ import Header from '../../components/Header.astro';
         flex-direction: column;
         gap: 0.8rem;
     }
+    .radio-label input[type="radio"] {
+        margin-right: 1rem;
+        accent-color: #000;
+        transform: scale(1.1);
+    }
+    
+    .adaptive-input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border-radius: 6px;
+        font-family: sans-serif;
+        background: #ffffff;
+        color: #000000;
+        border: 1px solid #cccccc;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+    .adaptive-input:focus {
+        outline: none;
+        border-color: #1890ff;
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    }
+
     .radio-label {
         display: flex;
         align-items: center;
-        background: rgba(0,0,0,0.15);
-        border: 1px solid rgba(255,255,255,0.05);
         padding: 1rem 1.2rem;
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.2s ease;
-        color: #ddd;
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        color: #333333;
     }
     .radio-label:hover {
-        background: rgba(255,255,255,0.05);
+        background: #f9f9f9;
     }
-    .radio-label input[type="radio"] {
-        margin-right: 1rem;
-        accent-color: #fff;
-        transform: scale(1.1);
-    }
-    
-    /* 选中状态稍微提亮 */
     .radio-label:has(input[type="radio"]:checked) {
-        background: rgba(255,255,255,0.1);
-        border-color: rgba(255,255,255,0.2);
-        color: #fff;
+        background: #e6f7ff;
+        border-color: #1890ff;
+        color: #000000;
     }
 
-    input:focus, textarea:focus {
-        outline: none;
-        border-color: rgba(255,255,255,0.3) !important;
-        box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+    @media (prefers-color-scheme: dark) {
+        .adaptive-input {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .adaptive-input:focus {
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+        }
+        .radio-label {
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #dddddd;
+        }
+        .radio-label:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .radio-label:has(input[type="radio"]:checked) {
+            background: rgba(255,255,255,0.1);
+            border-color: #00ff66;
+            color: #ffffff;
+        }
+        .radio-label input[type="radio"] {
+            accent-color: #fff;
+        }
     }
 
     @keyframes fadeIn {
