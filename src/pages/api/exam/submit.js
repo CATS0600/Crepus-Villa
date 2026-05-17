@@ -47,23 +47,23 @@ export const POST = async ({ request, locals }) => {
     // 1. 标准答案配置
     // 单选题与判断题 (每题 5 分，共 11 题 = 55 分)
     const standardAnswersSingle = {
-      q2: '2011',
-      q3: '智利',
-      q4: 'M6.9',
+      q2: 'C',
+      q3: 'A',
+      q4: 'A',
       q5: 'B',
       q6: 'Y',
       q7: 'Y',
       q8: 'N',
       q9: 'Y',
       q10: 'N',
-      q14: '鸟取',
-      q15: '北陆地方'
+      q14: 'D',
+      q15: 'C'
     };
 
     // 多选题 (每题 10 分，共 3 题 = 30 分，少选、错选不得分)
     const standardAnswersMulti = {
-      q11: ['Mb', 'Mj', 'Ms'],
-      q12: ['TREM-Lite', 'TREMV'],
+      q11: ['A', 'B', 'C'],
+      q12: ['C', 'D'],
       q13: ['A', 'D']
     };
 
