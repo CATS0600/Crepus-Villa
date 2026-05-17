@@ -66,32 +66,43 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         <section class="photo-gallery-section safe-zone">
             <div class="gallery-stack">
                 
-                {images.map((img, index) => {
-                    // 1. 动态计算尺寸与位置
-                    const isEven = index % 2 === 0;
-                    // 循环定义三种大小档位
-                    const sizes = ['size-s', 'size-m', 'size-l'];
-                    const sizeClass = sizes[index % 3];
-                    const alignClass = isEven ? 'align-left' : 'align-right';
-                    
-                    return (
-                        <div class={`photo-container ${sizeClass} ${alignClass}`}>
-                            {/* 6. 图片旁的注释小字 */}
-                            {photoCaptions[index] && (
-                                <span class="photo-annotation">{photoCaptions[index]}</span>
-                            )}
-                            <div class="photo-wrapper">
-                                <Image 
-                                     src={img.default} 
-                                    alt={`Gallery item ${index}`} 
-                                    width={800} 
-                                    format="webp"
-                                    quality="mid"
-                                />
+                <!-- 新增：图片折叠/展开按钮 -->
+                <div class="toggle-gallery-container">
+                    <button id="toggleGalleryBtn" class="action-button global-button" style="margin: 0 auto; padding: 12px 40px; min-width: 240px;">
+                        <span class="action-icon" id="toggleGalleryIcon">🔽</span>
+                        <span class="action-text" id="toggleGalleryText">展开图片 / Expand Photos</span>
+                    </button>
+                </div>
+
+                <!-- 新增：包裹图片的容器，初始化为折叠状态 (collapsed) -->
+                <div id="galleryImages" class="gallery-images collapsed">
+                    {images.map((img, index) => {
+                        // 1. 动态计算尺寸与位置
+                        const isEven = index % 2 === 0;
+                        // 循环定义三种大小档位
+                        const sizes = ['size-s', 'size-m', 'size-l'];
+                        const sizeClass = sizes[index % 3];
+                        const alignClass = isEven ? 'align-left' : 'align-right';
+                        
+                        return (
+                            <div class={`photo-container ${sizeClass} ${alignClass}`}>
+                                {/* 6. 图片旁的注释小字 */}
+                                {photoCaptions[index] && (
+                                    <span class="photo-annotation">{photoCaptions[index]}</span>
+                                )}
+                                <div class="photo-wrapper">
+                                    <Image 
+                                         src={img.default} 
+                                        alt={`Gallery item ${index}`} 
+                                        width={800} 
+                                        format="webp"
+                                        quality="mid"
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
 
                 <div class="gallery-quote-box" id="galleryQuoteBox">
                     <p class="quote-text">{galleryQuote}</p>
@@ -175,10 +186,16 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         <span class="app-arrow">→</span>
                     </a>
                     -->
-                    <a href="https://ks.wjx.com/vm/e7vWXP0.aspx#" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                    <a href="/application/kemdr" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                         <div class="app-card-icon">📻</div>
                         <h3 class="app-card-title">KEMDR Application</h3>
                         <p class="app-card-desc">Kouno Earthquake Migration and Disaster Reduction Bureau</p>
+                        <span class="app-arrow">↗</span>
+                    </a>
+                    <a href="/application/dpmbg" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                        <div class="app-card-icon">🌍</div>
+                        <h3 class="app-card-title">DPMBG Application (Coming Soon)</h3>
+                        <p class="app-card-desc">Disaster Prevention and Mitigation Basic Group</p>
                         <span class="app-arrow">↗</span>
                     </a>
                 </div>
@@ -352,7 +369,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         letter-spacing: 4px;
         text-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    /* ✅ 修改2：cl16-subtitle 样式保留但已从 HTML 中移除，不影响其他元素 */
 
     /* ✅ 修改3：底部模块间距统一加大 */
     .section-gap {
@@ -656,6 +672,22 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         width: 100%;
         max-width: 2000px;
         gap: 12vh;
+    }
+
+    /* --- 新增：图片折叠控制样式 --- */
+    .toggle-gallery-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .gallery-images {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 12vh;
+    }
+    .gallery-images.collapsed {
+        display: none;
     }
 
     .photo-container {
@@ -1045,6 +1077,30 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     duration: 0.25, 
                     ease: "power2.out" 
                 });
+            });
+        }
+
+        // --- 图片模块展开/折叠交互逻辑 ---
+        const toggleGalleryBtn = document.getElementById('toggleGalleryBtn');
+        const galleryImages = document.getElementById('galleryImages');
+        const toggleGalleryText = document.getElementById('toggleGalleryText');
+        const toggleGalleryIcon = document.getElementById('toggleGalleryIcon');
+
+        if (toggleGalleryBtn && galleryImages && toggleGalleryText && toggleGalleryIcon) {
+            toggleGalleryBtn.addEventListener('click', () => {
+                const isCollapsed = galleryImages.classList.contains('collapsed');
+                if (isCollapsed) {
+                    galleryImages.classList.remove('collapsed');
+                    toggleGalleryText.textContent = 'Collapse Photo Gallery';
+                    toggleGalleryIcon.textContent = '🔼';
+                } else {
+                    galleryImages.classList.add('collapsed');
+                    toggleGalleryText.textContent = 'Expand Photo Gallery';
+                    toggleGalleryIcon.textContent = '🔽';
+                    
+                    // 当折叠时，可以将其滚动到视野中央避免失去焦点
+                    toggleGalleryBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             });
         }
     });

@@ -8,8 +8,9 @@ export const POST = async ({ request, locals }) => {
     }
 
     const body = await request.json();
-    const { user_uuid, qqid, answers } = body || {};
+    const { user_uuid, qqid, app_type, answers } = body || {};
 
+    // 校验必填字段
     if (!user_uuid || !qqid || answers === undefined || answers === null) {
       return new Response(JSON.stringify({ error: 'Missing required fields: user_uuid, qqid, answers' }), {
         status: 400,
@@ -17,7 +18,7 @@ export const POST = async ({ request, locals }) => {
       });
     }
 
-    // 类型安全性防护：强制将 qqid 解析为数值整型，规避 !== 强比对产生的误判
+    // 类型安全性防护：强制将 qqid 解析为数值整型
     const targetQqid = parseInt(qqid, 10);
     if (isNaN(targetQqid)) {
       return new Response(JSON.stringify({ error: 'Invalid QQID' }), {
@@ -25,15 +26,6 @@ export const POST = async ({ request, locals }) => {
         headers: { 'Content-Type': 'application/json' }
       });
     }
-
-    // 1. 选择题标准答案与判分逻辑
-    const standardAnswers = {
-      q1: 'A',
-      q2: 'B',
-      q3: 'C',
-      q4: 'D',
-      q5: 'B'
-    };
 
     let parsedAnswers = answers;
     if (typeof answers === 'string') {
@@ -47,18 +39,58 @@ export const POST = async ({ request, locals }) => {
       }
     }
 
-    const normalizeAnswer = (value) => {
-      if (value === undefined || value === null) return '';
-      return String(value).trim().toUpperCase();
+    // 将申请类型也并入 answers 中方便后续在数据库查看
+    if (app_type) {
+      parsedAnswers.app_type = app_type;
+    }
+
+    // 1. 标准答案配置
+    // 单选题与判断题 (每题 5 分，共 11 题 = 55 分)
+    const standardAnswersSingle = {
+      q2: '2011',
+      q3: '智利',
+      q4: 'M6.9',
+      q5: 'B',
+      q6: 'Y',
+      q7: 'Y',
+      q8: 'N',
+      q9: 'Y',
+      q10: 'N',
+      q14: '鸟取',
+      q15: '北陆地方'
     };
 
-    // 自动对选择题作比对评分（每对一题得 20 分）
+    // 多选题 (每题 10 分，共 3 题 = 30 分，少选、错选不得分)
+    const standardAnswersMulti = {
+      q11: ['Mb', 'Mj', 'Ms'],
+      q12: ['TREM-Lite', 'TREMV'],
+      q13: ['A', 'D']
+    };
+
     let score = 0;
-    Object.keys(standardAnswers).forEach((key) => {
-      if (normalizeAnswer(parsedAnswers[key]) === standardAnswers[key]) {
-        score += 20;
+
+    // 单选题/判断题 评分逻辑
+    Object.keys(standardAnswersSingle).forEach((key) => {
+      const userAns = parsedAnswers[key] ? String(parsedAnswers[key]).trim() : '';
+      if (userAns === standardAnswersSingle[key]) {
+        score += 5;
       }
     });
+
+    // 多选题 评分逻辑
+    Object.keys(standardAnswersMulti).forEach((key) => {
+      const userAnsArray = Array.isArray(parsedAnswers[key]) ? parsedAnswers[key] : [];
+      const correctAnsArray = standardAnswersMulti[key];
+      
+      // 判断长度是否一致，且所有正确答案都在用户答案中（实现精确匹配）
+      if (
+        userAnsArray.length === correctAnsArray.length &&
+        correctAnsArray.every(val => userAnsArray.includes(val))
+      ) {
+        score += 10;
+      }
+    });
+
     const exam_result = score;
 
     // 2. 查询该 QQ 的累计考试次数
@@ -91,10 +123,10 @@ export const POST = async ({ request, locals }) => {
     
     const achtung_notes = notes.length > 0 ? notes.join(' ') : null;
 
-    // 4. 将答题数据转换为安全字符串以备存入 answers 字段（如果表支持）
+    // 4. 将答题数据转换为安全字符串
     const answersString = JSON.stringify(parsedAnswers);
 
-    // 5. 写入数据库（支持向下兼容，即使没有运行 schema 变更增加 answers 列也能平稳过度）
+    // 5. 写入数据库
     try {
       // 优先尝试全字段插入（包含新增的 answers 列）
       await env.DB.prepare(

@@ -9,111 +9,216 @@ import Header from '../../components/Header.astro';
     <main class="main-content">
         <section class="content-section reveal active">
             <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
-                
-                <div class="lang-switch" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                    <button id="toggleLang" class="action-btn-sm">English / 中文</button>
-                </div>
 
-                <h1 style="text-align: center; margin-bottom: 1rem; font-size: 2.4rem;">
-                    <span class="lang-zh">🛡️ VILLA 准入测试</span>
-                    <span class="lang-en">🛡️ VILLA Entry Exam</span>
+                <h1 style="text-align: center; margin-bottom: 1rem; font-size: 2.2rem;">
+                    <span>🛡️ KEMDR 香野放送局 入群考试</span>
                 </h1>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
-                    Gateway Verification Protocol<br/>
-                    <span class="lang-zh" style="font-size: 0.9em; opacity: 0.8;">请如实作答，系统将根据物理设备标识与社交 ID 建立双向审计映射</span>
-                    <span class="lang-en" style="font-size: 0.9em; opacity: 0.8;">Please answer truthfully; the system maps device and social IDs for audit.</span>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95em; line-height: 1.6;">
+                    您需要至少根据申请类型满足相对应的分数，才可以申请进入本群（Q群)。
+                </p>
+                <p style="text-align: center; color: #ff5f56; margin-bottom: 2rem; font-size: 0.85em;">
+                    ⚠️ 您7天只能参加至多2次考试。<br>乱填与发现作弊行为的将会被永久取消申请进群资格。
                 </p>
 
                 <div class="form-container" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2rem;">
                     
                     <div id="intro-step">
                         <div class="form-group" style="margin-bottom: 2rem;">
-                            <label for="qqid-input" style="display: block; margin-bottom: 0.5rem; color: #eee;">QQ ID (必填) *</label>
-                            <input 
-                                type="number" 
-                                id="qqid-input" 
-                                class="adaptive-input"
-                                placeholder="请输入纯数字 QQ 账号" 
-                                required 
-                            />
-                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">此凭证将作为你在本社区的唯一长期标识，请勿随意借用他人设备或账号。</p>
+                            <label for="app-type" style="display: block; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: bold;">I. 申请类型</label>
+                            <select id="app-type" class="adaptive-input" required>
+                                <option value="" disabled selected>请选择申请类型...</option>
+                                <option value="F">F - 原群成员的副号</option>
+                                <option value="EB1">EB 1 - 杰出人才</option>
+                                <option value="EB2">EB 2 - 拥有特殊才能的专业人员</option>
+                                <option value="EB3A">EB 3 A - 拥有防震减灾相关一定经验的技术人员</option>
+                                <option value="EB3B">EB 3 B - 拥有非防震减灾相关一定经验的技术人员</option>
+                                <option value="EB3C">EB 3 C - 无特殊要求的其他人员</option>
+                            </select>
                         </div>
                         <div style="text-align: center;">
                             <button id="start-btn" class="send-button" style="padding: 0.8rem 2.5rem; border: 1px solid #d1d5db; border-radius: 6px; background: #f3f4f6; color: #000; cursor: pointer; transition: all 0.2s;">
-                                开始考核
+                                下一步
                             </button>
                         </div>
                     </div>
 
+                    <div id="bypass-step" style="display: none; text-align: center;">
+                        <h2 style="margin-bottom: 1rem;">无需参加考试</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
+                            您选择的申请类型符合免考标准。您可以发送能够证明自己经验的文件到以下邮箱之一：
+                        </p>
+                        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; display: inline-block; text-align: left; margin-bottom: 2rem;">
+                            <p style="margin-bottom: 0.5rem;">📧 <strong>io@crepus.asia</strong></p>
+                            <p style="margin: 0;">📧 <strong>e-crepuscular@outlook.com</strong> (推荐)</p>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 1rem;">
+                            <button type="button" onclick="location.reload()" style="background: transparent; border: 1px solid #d1d5db; color: #000; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer;">返回重选</button>
+                            <button type="button" id="force-exam-btn" style="background: #fff; border: 1px solid #d1d5db; color: #000; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: bold;">仍参加考试</button>
+                        </div>
+                    </div>
+
                     <div id="questions-step" style="display: none;">
-                        <div class="progress-container" style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;">
-                            <div id="progress-bar" style="width: 0%; height: 100%; background: #fff; transition: width 0.3s ease;"></div>
+                        <div class="progress-container" style="width: 100%; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;">
+                            <div id="progress-bar" style="width: 0%; height: 100%; background: #1890ff; transition: width 0.3s ease;"></div>
                         </div>
 
                         <form id="exam-form">
                             <div class="form-group question-item active-q" data-q="1">
-                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #000;">01 / 后端 submit.js 执行双向校验的目的是什么？</label>
-                                <div class="options-group">
-                                    <label class="radio-label"><input type="radio" name="q1" value="A" required /> <span>A. 追踪设备变化与QQ号对应关系，防止代考或换号刷分</span></label>
-                                    <label class="radio-label"><input type="radio" name="q1" value="B" /> <span>B. 加快数据库读取速率</span></label>
-                                    <label class="radio-label"><input type="radio" name="q1" value="C" /> <span>C. 仅仅为了向玩家展示酷炫的提示语</span></label>
-                                    <label class="radio-label"><input type="radio" name="q1" value="D" /> <span>D. 清除浏览器缓存</span></label>
+                                <label style="display: block; font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: #000;">II. 基本信息</label>
+                                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">我们需要这个来认出您。</p>
+                                
+                                <div style="margin-bottom: 1.2rem;">
+                                    <input type="text" name="username" class="adaptive-input" placeholder="您的姓名（抖音或B站昵称，并附抖音号/B站UID）" required />
+                                </div>
+                                <div style="margin-bottom: 1.2rem;">
+                                    <input type="number" name="qq" class="adaptive-input" placeholder="您的QQ号" required />
+                                </div>
+                                
+                                <div id="cond-exp-a" style="display: none; margin-bottom: 1.2rem;">
+                                    <textarea name="exp_a" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="您对防震减灾相关的一些经验（简略介绍） *必填"></textarea>
+                                </div>
+                                <div id="cond-exp-b" style="display: none; margin-bottom: 1.2rem;">
+                                    <textarea name="exp_b" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="您对非防震减灾相关的经验（简略介绍） *必填"></textarea>
                                 </div>
                             </div>
 
                             <div class="form-group question-item" data-q="2">
-                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #000;">02 / 若一个 QQ 在新设备上进行考试，系统会产生什么标记？</label>
+                                <label class="q-title">III. 单选题<br><br>2. “311大震灾”发生在（）年。</label>
                                 <div class="options-group">
-                                    <label class="radio-label"><input type="radio" name="q2" value="A" required /> <span>A. [ACHTUNG] QQID修改</span></label>
-                                    <label class="radio-label"><input type="radio" name="q2" value="B" /> <span>B. [ACHTUNG] 同用户环境修改</span></label>
-                                    <label class="radio-label"><input type="radio" name="q2" value="C" /> <span>C. 直接封禁账号</span></label>
-                                    <label class="radio-label"><input type="radio" name="q2" value="D" /> <span>D. 不产生任何标记</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="1954" /> <span>1954</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="2018" /> <span>2018</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="2011" /> <span>2011</span></label>
+                                    <label class="radio-label"><input type="radio" name="q2" value="2012" /> <span>2012</span></label>
                                 </div>
                             </div>
 
                             <div class="form-group question-item" data-q="3">
-                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #000;">03 / Cloudflare D1 底层基于哪种轻量级数据库？</label>
+                                <label class="q-title">3. 截止现在，世界上最大的地震发生在（）。</label>
                                 <div class="options-group">
-                                    <label class="radio-label"><input type="radio" name="q3" value="A" required /> <span>A. PostgreSQL</span></label>
-                                    <label class="radio-label"><input type="radio" name="q3" value="B" /> <span>B. MongoDB</span></label>
-                                    <label class="radio-label"><input type="radio" name="q3" value="C" /> <span>C. SQLite</span></label>
-                                    <label class="radio-label"><input type="radio" name="q3" value="D" /> <span>D. Redis</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="智利" /> <span>智利</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="日本" /> <span>日本</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="俄罗斯" /> <span>俄罗斯</span></label>
+                                    <label class="radio-label"><input type="radio" name="q3" value="新西兰" /> <span>新西兰</span></label>
                                 </div>
                             </div>
 
                             <div class="form-group question-item" data-q="4">
-                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #000;">04 / Astro 在 Cloudflare Pages 部署时的渲染模式是？</label>
+                                <label class="q-title">4. 在2025年1月13日，在中国西藏日喀则定日县发生了一次地震，这次地震的震级为（以中国地震台网正式测定为准）（）。</label>
                                 <div class="options-group">
-                                    <label class="radio-label"><input type="radio" name="q4" value="A" required /> <span>A. 只能全静态生成(SSG)</span></label>
-                                    <label class="radio-label"><input type="radio" name="q4" value="B" /> <span>B. 只能客户端纯JS渲染(SPA)</span></label>
-                                    <label class="radio-label"><input type="radio" name="q4" value="C" /> <span>C. 仅支持本地模拟部署</span></label>
-                                    <label class="radio-label"><input type="radio" name="q4" value="D" /> <span>D. 支持混合/按需服务器端渲染(SSR)以及静态生成</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="M6.9" /> <span>M6.9</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="M7.9" /> <span>M7.9</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="M7.7" /> <span>M 7.7</span></label>
+                                    <label class="radio-label"><input type="radio" name="q4" value="M6.6" /> <span>M 6.6</span></label>
                                 </div>
                             </div>
 
                             <div class="form-group question-item" data-q="5">
-                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #000;">05 / 在高并发下，如何保证 D1 数据库中访问量自增的准确性？</label>
+                                <label class="q-title">5. 日本多震的原因是因为（）。</label>
                                 <div class="options-group">
-                                    <label class="radio-label"><input type="radio" name="q5" value="A" required /> <span>A. 在前端把数值自加1后再发给云端</span></label>
-                                    <label class="radio-label"><input type="radio" name="q5" value="B" /> <span>B. 依靠 D1 底层原子 UPDATE RETURNING 语句在云端递增</span></label>
-                                    <label class="radio-label"><input type="radio" name="q5" value="C" /> <span>C. 用 localStorage 本地计数，离线同步</span></label>
-                                    <label class="radio-label"><input type="radio" name="q5" value="D" /> <span>D. 多建几个表分开统计</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="A" /> <span>日本处在张裂拉伸的板块交界地带</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="B" /> <span>日本处在挤压碰撞的版块交界地带</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="C" /> <span>日本处在错动的版块交界地带</span></label>
+                                    <label class="radio-label"><input type="radio" name="q5" value="D" /> <span>日本自找的</span></label>
                                 </div>
                             </div>
 
                             <div class="form-group question-item" data-q="6">
-                                <label style="display: block; font-size: 1.1rem; margin-bottom: 1.5rem; color: #000;">06 / 简答题：请简述你加入 Villa 的契机，以及你对这个社区未来的展望。</label>
-                                <textarea 
-                                    name="essay" 
-                                    class="adaptive-input"
-                                    style="min-height: 120px; resize: vertical;"
-                                    placeholder="请在此输入你的回答（限 200 字内）..." 
-                                    required
-                                ></textarea>
+                                <label class="q-title">IV. 判断题<br><br>6. 日本的震度表为“1,2,3,4-,4+,5-,5+,6-,6+,7”。</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q6" value="Y" /> <span>Y (是)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q6" value="N" /> <span>N (否)</span></label>
+                                </div>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
-                                <button type="button" id="prev-btn" style="background: transparent; border: none; color: #000; cursor: pointer; visibility: hidden; font-size: 0.95rem;">&larr; 上一步</button>
+                            <div class="form-group question-item" data-q="7">
+                                <label class="q-title">7. 在东京都周围发生的地震可以用“首都直下型地震”泛指。</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q7" value="Y" /> <span>Y (是)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q7" value="N" /> <span>N (否)</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="8">
+                                <label class="q-title">8. EEW / 地震预警只有日本 and 中国有，其他国家还没有类似的地震预警系统。</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q8" value="Y" /> <span>Y (是)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q8" value="N" /> <span>N (否)</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="9">
+                                <label class="q-title">9. “2488”地震通常指2024年8月8号在日向滩发生的震级为Mj7.1、震度为6+的地震。</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q9" value="Y" /> <span>Y (是)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q9" value="N" /> <span>N (否)</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="10">
+                                <label class="q-title">10. 目前主流地震学研究表明，通过地震云判断地震发生情况是地震预测的有效方法。</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q10" value="Y" /> <span>Y (是)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q10" value="N" /> <span>N (否)</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="11">
+                                <label class="q-title">V. 附加题（11、13题为多选题，少选、错选不得分）<br><br>11. 下列哪些选项表示的是地震震级的单位【多选】</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="checkbox" name="q11" value="Mb" /> <span>Mb</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q11" value="Mj" /> <span>Mj</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q11" value="Ms" /> <span>Ms</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q11" value="Mp" /> <span>Mp</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="12">
+                                <label class="q-title">12. （）是一个中国台湾地区的地震监测软件【多选】</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="checkbox" name="q12" value="SREV" /> <span>SREV</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q12" value="Jquake" /> <span>Jquake</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q12" value="TREM-Lite" /> <span>TREM-Lite</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q12" value="TREMV" /> <span>TREMV</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="13">
+                                <label class="q-title">13. 下列哪些在QQ群中的发言是合适、合规的？【多选】</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="checkbox" name="q13" value="A" /> <span>（日本发生了强烈地震后）沃趣强烈地震！在日本的群友注意安全！</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q13" value="B" /> <span>（日本发生了强烈地震后）哈哈哈日本这次可是要完蛋了</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q13" value="C" /> <span>阿巴巴考试卷多久送i电脑都i服了</span></label>
+                                    <label class="radio-label"><input type="checkbox" name="q13" value="D" /> <span>哪位大佬能解答一下逆断层和正断层的区别？</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="14">
+                                <label class="q-title">14. （）是一个NHK展示的地震预警(紧急地震速报)地区划分中的县级日本地名。</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q14" value="胆振" /> <span>胆振</span></label>
+                                    <label class="radio-label"><input type="radio" name="q14" value="奄美" /> <span>奄美</span></label>
+                                    <label class="radio-label"><input type="radio" name="q14" value="丰后水道" /> <span>丰后水道</span></label>
+                                    <label class="radio-label"><input type="radio" name="q14" value="鸟取" /> <span>鸟取</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="15">
+                                <label class="q-title">15. 根据日本气象厅（JMA）的地域天气预报划分，以下哪一个是属于地方级（地方予報区）的天气预报区名称？</label>
+                                <div class="options-group">
+                                    <label class="radio-label"><input type="radio" name="q15" value="关东地方" /> <span>关东地方 (Kanto Region)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q15" value="近畿地方" /> <span>近畿地方 (Kinki Region)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q15" value="北陆地方" /> <span>北陆地方 (Hokuriku Region)</span></label>
+                                    <label class="radio-label"><input type="radio" name="q15" value="中部地方" /> <span>中部地方 (Chubu Region)</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group question-item" data-q="16">
+                                <label class="q-title">16. 简答题。请简略解释关于“防震减灾”的定义，至少包括含义、功能和意义等。（满分15分，请等待人工判分）</label>
+                                <textarea name="q16" class="adaptive-input" style="min-height: 120px; resize: vertical;" placeholder="请在此输入你的回答..." required></textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
+                                <button type="button" id="prev-btn" style="background: transparent; border: none; color: #000; cursor: pointer; font-size: 0.95rem;">&larr; 上一步</button>
                                 <button type="button" id="next-btn" style="background: #f3f4f6; border: 1px solid #d1d5db; color: #000; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer;">下一步 &rarr;</button>
                                 <button type="submit" id="submit-btn" style="display: none; background: #fff; color: #000; border: 1px solid #d1d5db; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: bold;">提交答卷</button>
                             </div>
@@ -121,28 +226,22 @@ import Header from '../../components/Header.astro';
                     </div>
 
                     <div id="result-step" style="display: none; text-align: center;">
-                        <h2 style="margin-bottom: 0.5rem;">数据已入库</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 2rem;">审核员将在后台对简答题部分进行评阅</p>
+                        <h2 style="margin-bottom: 0.5rem;">交卷成功</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">审核员将在后台对您的卷面（尤其是简答题部分）进行人工判分</p>
 
                         <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
                             <div style="padding: 1.5rem; background: rgba(243,244,246,0.8); border: 1px solid #e5e7eb; border-radius: 8px; min-width: 120px;">
-                                <div style="font-size: 0.85rem; color: #4b5563; margin-bottom: 0.5rem;">客观题得分</div>
+                                <div style="font-size: 0.85rem; color: #4b5563; margin-bottom: 0.5rem;">客观题预估得分</div>
                                 <div style="font-size: 2.5rem; color: #000;" id="res-score">0</div>
                             </div>
-                            <div style="padding: 1.5rem; background: rgba(243,244,246,0.8); border: 1px solid #e5e7eb; border-radius: 8px; min-width: 120px;">
-                                <div style="font-size: 0.85rem; color: #4b5563; margin-bottom: 0.5rem;">历史记录次数</div>
-                                <div style="font-size: 2.5rem; color: #000;" id="res-times">0</div>
-                            </div>
-                        </div>
-
-                        <div id="achtung-warning" style="display: none; background: rgba(255, 60, 60, 0.1); border: 1px solid rgba(255, 60, 60, 0.3); border-radius: 8px; padding: 1.2rem; text-align: left; margin-bottom: 2rem;">
-                            <h4 style="color: #ff5f56; margin: 0 0 0.5rem 0; font-size: 0.95rem;">⚠️ 审计系统记录</h4>
-                            <p id="achtung-text" style="margin: 0; color: #fcc; font-size: 0.85rem; line-height: 1.5;"></p>
                         </div>
 
                         <a href="/" style="display: inline-block; text-decoration: none; padding: 0.6rem 2rem; border: 1px solid #d1d5db; border-radius: 6px; color: #000; font-size: 0.9rem;">返回主页</a>
                     </div>
+                </div>
 
+                <div style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted); opacity: 0.7;">
+                    Version 4.0.0 “NZXT”，作者：Crepuscular 编辑：小张张, Crepuscular
                 </div>
 
             </div>
@@ -151,64 +250,103 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <script is:inline>
+    // UUID 初始化逻辑
     let userUuid = localStorage.getItem('user_uuid');
     if (!userUuid) {
         userUuid = 'u_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now().toString(36);
         localStorage.setItem('user_uuid', userUuid);
     }
 
-    const html = document.documentElement;
-    const langBtn = document.getElementById('toggleLang');
-
-    function updateLanguageDisplay() {
-        const isEn = html.getAttribute('lang') === 'en';
-        html.setAttribute('lang', isEn ? 'en' : html.getAttribute('lang') || 'zh');
-    }
-
-    langBtn.addEventListener('click', () => {
-        const newLang = html.getAttribute('lang') === 'en' ? 'zh' : 'en';
-        html.setAttribute('lang', newLang);
-    });
-
+    // 逻辑控制变量
     let currentQuestion = 1;
-    const totalQuestions = 6;
-    let userQqid = '';
+    const totalQuestions = 16;
+    let selectedAppType = '';
 
+    // DOM 元素引用
     const introStep = document.getElementById('intro-step');
+    const bypassStep = document.getElementById('bypass-step');
     const questionsStep = document.getElementById('questions-step');
     const resultStep = document.getElementById('result-step');
     
     const startBtn = document.getElementById('start-btn');
-    const qqidInput = document.getElementById('qqid-input');
+    const forceExamBtn = document.getElementById('force-exam-btn');
+    const appTypeSelect = document.getElementById('app-type');
     
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const submitBtn = document.getElementById('submit-btn');
     const progressBar = document.getElementById('progress-bar');
     const examForm = document.getElementById('exam-form');
+    
+    // 基础信息扩展框逻辑
+    const condExpA = document.getElementById('cond-exp-a');
+    const condExpB = document.getElementById('cond-exp-b');
+    const txtExpA = document.querySelector('textarea[name="exp_a"]');
+    const txtExpB = document.querySelector('textarea[name="exp_b"]');
 
+    // 申请类型选择处理
     startBtn.addEventListener('click', () => {
-        const val = qqidInput.value.trim();
-        if (!val || isNaN(parseInt(val, 10))) {
-            alert('请输入有效的纯数字 QQ 账号');
+        selectedAppType = appTypeSelect.value;
+        if (!selectedAppType) {
+            alert('请先选择一种申请类型');
             return;
         }
-        userQqid = val;
+
         introStep.style.display = 'none';
-        questionsStep.style.display = 'block';
-        updateQuestionView();
+
+        if (['F', 'EB1', 'EB2'].includes(selectedAppType)) {
+            // 免考通道
+            bypassStep.style.display = 'block';
+        } else {
+            // 正常进入考试
+            enterExamFlow();
+        }
     });
+
+    // 免考页面“仍参加考试”处理
+    forceExamBtn.addEventListener('click', () => {
+        bypassStep.style.display = 'none';
+        enterExamFlow();
+    });
+
+    function enterExamFlow() {
+        questionsStep.style.display = 'block';
+        currentQuestion = 1;
+        
+        // 重置经验文本域的状态
+        if (selectedAppType === 'EB3A') {
+            condExpA.style.display = 'block';
+            txtExpA.setAttribute('required', 'true');
+            condExpB.style.display = 'none';
+            txtExpB.removeAttribute('required');
+        } else if (selectedAppType === 'EB3B') {
+            condExpB.style.display = 'block';
+            txtExpB.setAttribute('required', 'true');
+            condExpA.style.display = 'none';
+            txtExpA.removeAttribute('required');
+        } else {
+            condExpA.style.display = 'none';
+            txtExpA.removeAttribute('required');
+            condExpB.style.display = 'none';
+            txtExpB.removeAttribute('required');
+        }
+        updateQuestionView();
+    }
 
     prevBtn.addEventListener('click', () => {
         if (currentQuestion > 1) {
             currentQuestion--;
             updateQuestionView();
+        } else if (currentQuestion === 1) {
+            // 从基本信息返回到申请类型选择界面
+            questionsStep.style.display = 'none';
+            introStep.style.display = 'block';
         }
     });
 
     nextBtn.addEventListener('click', () => {
         if (!validateCurrentQuestion()) {
-            alert('请先完成当前题目的作答');
+            alert('请先完成当前题目的作答或填写完整信息');
             return;
         }
         if (currentQuestion < totalQuestions) {
@@ -218,15 +356,39 @@ import Header from '../../components/Header.astro';
     });
 
     function validateCurrentQuestion() {
-        if (currentQuestion <= 5) {
-            return document.querySelector(`input[name="q${currentQuestion}"]:checked`) !== null;
-        } else {
-            return document.querySelector('textarea[name="essay"]').value.trim().length > 0;
+        const currentItem = document.querySelector(`.question-item[data-q="${currentQuestion}"]`);
+        
+        // 校验输入框 (文本/数字)
+        const inputs = currentItem.querySelectorAll('input[type="text"], input[type="number"]');
+        for (let input of inputs) {
+            if (input.required && !input.value.trim()) return false;
         }
+
+        // 校验文本域 (简答)
+        const textareas = currentItem.querySelectorAll('textarea');
+        for (let ta of textareas) {
+            if (ta.hasAttribute('required') && !ta.value.trim()) return false;
+        }
+
+        // 校验单选
+        const radios = currentItem.querySelectorAll('input[type="radio"]');
+        if (radios.length > 0) {
+            const name = radios[0].name;
+            return document.querySelector(`input[name="${name}"]:checked`) !== null;
+        }
+
+        // 校验多选
+        const checkboxes = currentItem.querySelectorAll('input[type="checkbox"]');
+        if (checkboxes.length > 0) {
+            const name = checkboxes[0].name;
+            return document.querySelectorAll(`input[name="${name}"]:checked`).length > 0;
+        }
+
+        return true;
     }
 
     function updateQuestionView() {
-        const percent = ((currentQuestion - 1) / totalQuestions) * 100;
+        const percent = ((currentQuestion - 1) / (totalQuestions - 1)) * 100;
         progressBar.style.width = `${percent}%`;
 
         document.querySelectorAll('.question-item').forEach(item => {
@@ -234,8 +396,6 @@ import Header from '../../components/Header.astro';
             item.style.display = (qNum === currentQuestion) ? 'block' : 'none';
         });
 
-        prevBtn.style.visibility = currentQuestion === 1 ? 'hidden' : 'visible';
-        
         if (currentQuestion === totalQuestions) {
             nextBtn.style.display = 'none';
             submitBtn.style.display = 'inline-block';
@@ -249,25 +409,41 @@ import Header from '../../components/Header.astro';
         e.preventDefault();
 
         if (!validateCurrentQuestion()) {
-            alert('简答题不能为空');
+            alert('请确保所有必填项及题目已完成。');
             return;
         }
 
         submitBtn.disabled = true;
         submitBtn.innerText = '提交中...';
 
-        const q1 = document.querySelector('input[name="q1"]:checked')?.value;
-        const q2 = document.querySelector('input[name="q2"]:checked')?.value;
-        const q3 = document.querySelector('input[name="q3"]:checked')?.value;
-        const q4 = document.querySelector('input[name="q4"]:checked')?.value;
-        const q5 = document.querySelector('input[name="q5"]:checked')?.value;
-        const essay = document.querySelector('textarea[name="essay"]').value.trim();
+        const qqidVal = document.querySelector('input[name="qq"]').value.trim();
 
+        // 组装后端要求的 payload 数据格式
         const payload = {
             user_uuid: userUuid,
-            qqid: parseInt(userQqid, 10),
-            answers: { q1, q2, q3, q4, q5, essay }
+            qqid: qqidVal,
+            app_type: selectedAppType,
+            answers: {}
         };
+
+        // 收集基础信息
+        payload.answers.username = document.querySelector('input[name="username"]').value.trim();
+        payload.answers.qq = qqidVal;
+        payload.answers.exp_a = txtExpA.value.trim();
+        payload.answers.exp_b = txtExpB.value.trim();
+
+        // 收集考题答案
+        for (let i = 2; i <= totalQuestions; i++) {
+            const item = document.querySelector(`.question-item[data-q="${i}"]`);
+            if (item.querySelector('input[type="radio"]')) {
+                payload.answers[`q${i}`] = item.querySelector('input[type="radio"]:checked')?.value || "";
+            } else if (item.querySelector('input[type="checkbox"]')) {
+                const checked = Array.from(item.querySelectorAll(`input[type="checkbox"]:checked`)).map(cb => cb.value);
+                payload.answers[`q${i}`] = checked;
+            } else if (item.querySelector('textarea')) {
+                payload.answers[`q${i}`] = item.querySelector('textarea').value.trim();
+            }
+        }
 
         try {
             const response = await fetch('/api/exam/submit', {
@@ -277,19 +453,12 @@ import Header from '../../components/Header.astro';
             });
 
             const data = await response.json();
-
+            
             if (response.ok && data.success) {
                 progressBar.style.width = '100%';
                 questionsStep.style.display = 'none';
                 resultStep.style.display = 'block';
-
-                document.getElementById('res-score').innerText = data.exam_result;
-                document.getElementById('res-times').innerText = data.exam_times;
-
-                if (data.notes) {
-                    document.getElementById('achtung-text').innerText = `防刷策略被触发，已记录标记：${data.notes}。请确保未恶意借用设备或账号。`;
-                    document.getElementById('achtung-warning').style.display = 'block';
-                }
+                document.getElementById('res-score').innerText = data.exam_result || "未定";
             } else {
                 alert(data.error || '提交异常，请稍后再试。');
                 submitBtn.disabled = false;
@@ -311,23 +480,25 @@ import Header from '../../components/Header.astro';
     .question-item.active-q {
         display: block;
     }
+    .q-title {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        color: #000;
+        line-height: 1.4;
+    }
     .options-group {
         display: flex;
         flex-direction: column;
         gap: 0.8rem;
     }
-    .radio-label input[type="radio"] {
+    .radio-label input[type="radio"],
+    .radio-label input[type="checkbox"] {
         margin-right: 1rem;
-        accent-color: #000;
+        accent-color: #1890ff;
         transform: scale(1.1);
     }
     
-    :root { --lang-zh-display: block; --lang-en-display: none; }
-    :global(html[lang="en"]) { --lang-zh-display: none; --lang-en-display: block; }
-    .lang-zh { display: var(--lang-zh-display); }
-    .lang-en { display: var(--lang-en-display); }
-    .lang-switch { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
-    .action-btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid #d1d5db; background: #f8fafc; color: #111827; cursor: pointer; }
     .form-container { background: #ffffff; border: 1px solid #e5e7eb; color: #000000; }
     .form-container p,
     .form-container label,
@@ -368,7 +539,8 @@ import Header from '../../components/Header.astro';
     .radio-label:hover {
         background: #f9f9f9;
     }
-    .radio-label:has(input[type="radio"]:checked) {
+    .radio-label:has(input[type="radio"]:checked),
+    .radio-label:has(input[type="checkbox"]:checked) {
         background: #e6f7ff;
         border-color: #1890ff;
         color: #000000;
@@ -392,13 +564,11 @@ import Header from '../../components/Header.astro';
         .radio-label:hover {
             background: rgba(255,255,255,0.05);
         }
-        .radio-label:has(input[type="radio"]:checked) {
+        .radio-label:has(input[type="radio"]:checked),
+        .radio-label:has(input[type="checkbox"]:checked) {
             background: rgba(255,255,255,0.1);
-            border-color: #00ff66;
+            border-color: #1890ff;
             color: #ffffff;
-        }
-        .radio-label input[type="radio"] {
-            accent-color: #fff;
         }
     }
 
