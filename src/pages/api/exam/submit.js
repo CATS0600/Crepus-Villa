@@ -79,7 +79,7 @@ export const POST = async ({ request, locals }) => {
       q13: ['A', 'D'],
       q18: ['A','B','C'],
       q19: ['A','B','C'],
-      q201: ['A','C','D'],
+      q20: ['A','C','D'],
     };
 
     let score = 0;
