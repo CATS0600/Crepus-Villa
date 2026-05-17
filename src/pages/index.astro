@@ -59,9 +59,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <h1 class="hero-title">
                     Where Ideas <br/><span id="lineBreak"></span><span id="typewriter" class="accent-text"></span><span class="cursor"></span>
                 </h1>
-                <div class="member-counter-box" style="margin-top: 24px; font-size: 1rem; color: #f8f8f2;">
-                    <span id="member-counter">正在加载 Villa 信息...</span>
-                </div>
             </div>
         </section>
 
@@ -173,6 +170,19 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         </section>
 
         <!-- ✅ 修改3：各模块间距加大，统一使用 section-gap class -->
+         <section class="villa-member-counter-section section-gap">
+            <div class="safe-zone" style="max-width: 1000px; margin: 0 auto;">
+                <div class="member-counter-box" style="padding: 32px 28px; border-radius: 24px; background: rgba(255, 255, 255, 0.96); border: 1px solid rgba(0, 0, 0, 0.08); color: #111; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
+                    <h2 id="member-counter" class="partner-desc" style="margin: 0; font-size: 2rem;">
+                        你是第 <span class="member-counter-value">...</span> 个进入 Villa 的 Member
+                    </h2>
+                    <p id="member-counter" class="partner-desc" style="margin: 0; font-size: 1rem;">
+                        🎉
+                    </p>
+                </div>
+            </div>
+        </section>
+
         <section class="applications-section section-gap">
             <div class="safe-zone" style="max-width: 1000px; margin: 0 auto;">
                 <div class="app-header" style="text-align: center; margin-bottom: 60px;">
@@ -275,14 +285,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             const counterEl = document.getElementById('member-counter');
             if (!counterEl) return;
 
-            const storageValue = localStorage.getItem('isnew');
-            const isFirstVisit = storageValue === null;
-            const method = isFirstVisit ? 'POST' : 'GET';
-            const url = '/api/site-counter';
-
-            if (isFirstVisit) {
-                localStorage.setItem('isnew', 'true');
-            }
+            const storageValue = localStorage.getItem('is_villa_new_member');
+            const isNewMember = storageValue === null || storageValue === 'true';
+            const method = isNewMember ? 'POST' : 'GET';
+            const url = '/api/counter';
 
             try {
                 const response = await fetch(url, { method });
@@ -295,10 +301,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     throw new Error('Invalid response format');
                 }
 
-                counterEl.textContent = `你是第 ${count} 个进入Villa的Member!`;
+                counterEl.textContent = `你是第 ${count} 个进入 Villa 的 Member`;
 
-                if (isFirstVisit) {
-                    localStorage.setItem('isnew', 'false');
+                if (isNewMember) {
+                    localStorage.setItem('is_villa_new_member', 'false');
                 }
             } catch (error) {
                 console.error('site-counter fetch error:', error);
