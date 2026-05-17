@@ -49,7 +49,7 @@ export const DELETE = async ({ request, locals }) => {
         await env.DB.prepare(`DELETE FROM messages WHERE id = ?`).bind(id).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
-    } catch (error) {
+    } catch (error) {a
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
 };
