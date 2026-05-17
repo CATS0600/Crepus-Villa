@@ -1,7 +1,7 @@
 export const prerender = false;
 
-// 保留你原本的加密哈希作为密码验证
-const ADMIN_HASH = "98757df4549e87f22ede90d906cf20ac8a65a6cacf3e95f02533c23772ea351b";
+// 标准 Base64 密文
+const ADMIN_HASH = "dGhpbmcgY291c2luIGRyYXcgc3dhcCBhcm91bmQ=";
 
 function validateAdminPassword(request) {
     const clientToken = request.headers.get('X-Admin-Token');
@@ -25,10 +25,8 @@ export const GET = async ({ request, locals }) => {
         const auth = validateAdminPassword(request);
         if (!auth.valid) return auth.response;
 
-        // 更改为查询新建立的 exam_records 表
         const result = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
 
-        // 直接返回结果数组，以对接新版 admin.astro 的渲染逻辑
         return new Response(JSON.stringify(result.results || []), { 
             status: 200, 
             headers: { 'Content-Type': 'application/json' } 
@@ -47,7 +45,6 @@ export const DELETE = async ({ request, locals }) => {
 
         const { id } = await request.json();
         
-        // 更改为从新表删除
         await env.DB.prepare(`DELETE FROM exam_records WHERE id = ?`).bind(id).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
