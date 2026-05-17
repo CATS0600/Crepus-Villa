@@ -1,6 +1,5 @@
 export const prerender = false;
 
-// 采用 SHA-256 单向不可逆哈希进行鉴权
 const ADMIN_HASH = "6524aa49a54679d4e6a2234633fb9b23e33a2ed8724cbf887f0204098b6fd803";
 
 function validateAdminPassword(request) {
@@ -28,46 +27,36 @@ export const GET = async ({ request, locals }) => {
         const result = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
 
         const records = (result.results || []).map(record => {
-            // 将总分基准调整为客观题实际满分 85 分
-            record.total_score = 85; 
-
             if (record.answers && typeof record.answers === 'string') {
                 try {
                     const parsed = JSON.parse(record.answers);
                     
-                    // 1. 提取核心基础信息
                     const username = parsed.username || '未填写';
                     const qq = parsed.qq || record.qqid || '未填写';
                     const app_type = parsed.app_type || '未选择';
                     
-                    // 2. 提取并排版选择题/判断题作答情况 (Q2 - Q15)
                     let choiceAnswers = [];
                     for (let i = 2; i <= 15; i++) {
                         const val = parsed[`q${i}`];
                         if (val !== undefined && val !== "") {
-                            // 如果是多选题数组，将其平铺为逗号分隔的文本
                             const displayVal = Array.isArray(val) ? val.join(', ') : val;
                             choiceAnswers.push(`${i}: ${displayVal}`);
                         }
                     }
 
-                    // 3. 提取简答题 (Q16)
                     const shortAnswer = parsed.q16 || '未填写';
 
-                    // 4. 组装符合你期望的完美文本输出结构
-                    // 每一个 \n 会在支持 pre-wrap 的前端中自动换行，保持完美的层级结构
-                    let formattedText = `用户名：${username}\n`;
-                    formattedText += `QQID: ${qq}\n`;
-                    formattedText += `申请类型：${app_type}\n`;
-                    formattedText += `作答情况：\n${choiceAnswers.join('\n')}\n\n`;
+                    // 使用 <br> 替代 \n，让 HTML 强行换行
+                    let formattedText = `用户名：${username}<br>`;
+                    formattedText += `QQID: ${qq}<br>`;
+                    formattedText += `申请类型：${app_type}<br>`;
+                    formattedText += `作答情况：<br>${choiceAnswers.join('<br>')}<br><br>`;
                     formattedText += `简答题：${shortAnswer}`;
 
-                    // 将处理好的字符串赋予 record.answers。
-                    // 这样前端渲染时，就不会触发“答卷结构损坏”，同时格式完全符合你的预期。
                     record.answers = formattedText;
 
                 } catch (e) {
-                    // 若解析失败，保留原样
+                    // 解析失败保留原样
                 }
             }
             return record;

@@ -157,27 +157,16 @@ import Header from '../components/Header.astro';
 
                 let answersHtml = '';
                 if (item.answers) {
-                    try {
-                        const parsed = JSON.parse(item.answers);
-                        answersHtml = `
-                            <div class="exam-answers-details">
-                                <span class="toggle-answers" onclick="this.nextElementSibling.classList.toggle('active')">查看完整试卷与简答 &darr;</span>
-                                <div class="answers-content">
-                                    <p><strong>选择 Q1:</strong> ${escapeHtml(parsed.q1 || '未填')}</p>
-                                    <p><strong>选择 Q2:</strong> ${escapeHtml(parsed.q2 || '未填')}</p>
-                                    <p><strong>选择 Q3:</strong> ${escapeHtml(parsed.q3 || '未填')}</p>
-                                    <p><strong>选择 Q4:</strong> ${escapeHtml(parsed.q4 || '未填')}</p>
-                                    <p><strong>选择 Q5:</strong> ${escapeHtml(parsed.q5 || '未填')}</p>
-                                    <div class="essay-answer-box">
-                                        <strong>Q6 简答内容:</strong>
-                                        <p class="essay-text">${escapeHtml(parsed.essay || '未填')}</p>
-                                    </div>
-                                </div>
+                    // 去除旧版强行 JSON.parse 和取特定题号的逻辑
+                    // 直接渲染 admin.js 传来的完美排版 HTML (支持 <br> 换行)
+                    answersHtml = `
+                        <div class="exam-answers-details" style="margin-top: 10px;">
+                            <span class="toggle-answers" onclick="this.nextElementSibling.classList.toggle('active')" style="cursor: pointer; color: #00ff66; font-size: 13px; text-decoration: underline;">查看完整试卷与简答 &darr;</span>
+                            <div class="answers-content" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px dashed #333; border-radius: 4px; color: #ccc; line-height: 1.8; font-family: sans-serif; font-size: 14px;">
+                                ${item.answers}
                             </div>
-                        `;
-                    } catch (e) {
-                        answersHtml = `<p class="text-error">答卷结构损坏: ${escapeHtml(item.answers)}</p>`;
-                    }
+                        </div>
+                    `;
                 }
 
                 return `
@@ -188,19 +177,19 @@ import Header from '../components/Header.astro';
                             <span>第 <strong class="highlight-text">${item.exam_times}</strong> 次考试</span>
                         </div>
                         <div class="record-body">
-                            <div class="exam-score-box">
-                                客观题得分: <span class="score-num">${item.exam_result}</span> / 100 分
+                            <div class="exam-score-box" style="margin-bottom: 10px;">
+                                客观题得分: <span class="score-num" style="font-size: 1.2rem; font-weight: bold; color: #fff;">${item.exam_result}</span> / 85 分
                             </div>
                             
                             ${answersHtml}
 
                             ${isAchtung ? `
-                                <div class="achtung-tag">
+                                <div class="achtung-tag" style="margin-top: 15px; padding: 8px; border: 1px solid rgba(255, 95, 86, 0.5); background: rgba(255, 95, 86, 0.1); color: #ff5f56; font-size: 12px; border-radius: 4px;">
                                     WARNING: ${escapeHtml(item.achtung_notes)}
                                 </div>
                             ` : ''}
 
-                            <div class="uuid-footprint">
+                            <div class="uuid-footprint" style="margin-top: 15px; font-size: 11px; color: #555;">
                                 设备 UUID: <span>${escapeHtml(item.user_uuid)}</span>
                             </div>
                         </div>
