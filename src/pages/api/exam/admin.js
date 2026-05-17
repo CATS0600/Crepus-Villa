@@ -1,6 +1,6 @@
 export const prerender = false;
 
-const ADMIN_HASH = "6524aa49a54679d4e6a2234633fb9b23e33a2ed8724cbf887f0204098b6fd803";
+const ADMIN_HASH = "443d24733cc9f2b66b66639313c5481ce7d35a36bf6523d1c5ab64332ed1b2ab";
 
 function validateAdminPassword(request) {
     const clientToken = request.headers.get('X-Admin-Token');
