@@ -47,7 +47,7 @@ import Header from '../../components/Header.astro';
                         <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
                             您选择的申请类型符合免考标准。您可以发送能够证明自己经验的文件到以下邮箱之一：
                         </p>
-                        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; display: inline-block; text-align: left; margin-bottom: 2rem;">
+                        <div class="bypass-box" style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; display: inline-block; text-align: left; margin-bottom: 2rem;">
                             <p style="margin-bottom: 0.5rem;">📧 <strong>io@crepus.asia</strong></p>
                             <p style="margin: 0;">📧 <strong>e-crepuscular@outlook.com</strong> (推荐)</p>
                         </div>
@@ -414,44 +414,44 @@ import Header from '../../components/Header.astro';
     });
 
     function validateCurrentQuestion() {
-    const currentItem = document.querySelector(`.question-item[data-q="${currentQuestion}"]`); // 
-    
-    // 校验输入框 (文本/数字/邮箱)
-    const inputs = currentItem.querySelectorAll('input[type="text"], input[type="number"], input[type="email"]'); // [cite: 139]
-    for (let input of inputs) { // [cite: 140]
-        if (input.required && !input.value.trim()) return false; // [cite: 140]
+        const currentItem = document.querySelector(`.question-item[data-q="${currentQuestion}"]`); 
         
-        // 新增：显式校验邮箱格式（必须包含 @ 且前后有有效字符）
-        if (input.type === 'email') {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(input.value.trim())) {
-                return false;
+        // 校验输入框 (文本/数字/邮箱)
+        const inputs = currentItem.querySelectorAll('input[type="text"], input[type="number"], input[type="email"]'); 
+        for (let input of inputs) { 
+            if (input.required && !input.value.trim()) return false; 
+            
+            // 新增：显式校验邮箱格式（必须包含 @ 且前后有有效字符）
+            if (input.type === 'email') {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(input.value.trim())) {
+                    return false;
+                }
             }
         }
+
+        // 校验文本域 (简答)
+        const textareas = currentItem.querySelectorAll('textarea'); 
+        for (let ta of textareas) { 
+            if (ta.hasAttribute('required') && !ta.value.trim()) return false; 
+        } 
+
+        // 校验单选
+        const radios = currentItem.querySelectorAll('input[type="radio"]'); 
+        if (radios.length > 0) { 
+            const name = radios[0].name; 
+            return document.querySelector(`input[name="${name}"]:checked`) !== null; 
+        }
+
+        // 校验多选
+        const checkboxes = currentItem.querySelectorAll('input[type="checkbox"]'); 
+        if (checkboxes.length > 0) { 
+            const name = checkboxes[0].name; 
+            return document.querySelectorAll(`input[name="${name}"]:checked`).length > 0; 
+        }
+
+        return true; 
     }
-
-    // 校验文本域 (简答)
-    const textareas = currentItem.querySelectorAll('textarea'); // [cite: 141]
-    for (let ta of textareas) { // [cite: 142]
-        if (ta.hasAttribute('required') && !ta.value.trim()) return false; // [cite: 142]
-    } // [cite: 143]
-
-    // 校验单选
-    const radios = currentItem.querySelectorAll('input[type="radio"]'); // [cite: 143]
-    if (radios.length > 0) { // [cite: 144]
-        const name = radios[0].name; // [cite: 144]
-        return document.querySelector(`input[name="${name}"]:checked`) !== null; // [cite: 145]
-    }
-
-    // 校验多选
-    const checkboxes = currentItem.querySelectorAll('input[type="checkbox"]'); // [cite: 145]
-    if (checkboxes.length > 0) { // [cite: 146]
-        const name = checkboxes[0].name; // [cite: 146]
-        return document.querySelectorAll(`input[name="${name}"]:checked`).length > 0; // [cite: 147]
-    }
-
-    return true; // [cite: 147]
-}
 
     function updateQuestionView() {
         const percent = ((currentQuestion - 1) / (totalQuestions - 1)) * 100;
@@ -540,25 +540,25 @@ import Header from '../../components/Header.astro';
 </script>
 
 <style>
-    /* 基础样式（浅色模式默认值） */
+    /* ==================== 1. 基础样式（默认/浅色模式） ==================== */
     .form-container {
         background: #ffffff;
         border: 1px solid #e5e7eb;
         border-radius: 12px;
-            padding: 2rem;
+        padding: 2rem;
+        color: #000000;
     }
 
-/* 深色模式适配 */
-    @media (prefers-color-scheme: dark) {
-        .form-container {
-            background: #000000;
-            border-color: rgba(255, 255, 255, 0.2); 
-            }
-        .form-container,
-        .form-container * {
-            color: #ffffff !important;
-        }
+    .form-container p,
+    .form-container label,
+    .form-container small,
+    .form-container button,
+    .form-container input,
+    .form-container textarea,
+    .form-container .radio-label {
+        color: #000000;
     }
+
     .question-item {
         display: none;
         animation: fadeIn 0.3s ease;
@@ -570,7 +570,7 @@ import Header from '../../components/Header.astro';
         display: block;
         font-size: 1.1rem;
         margin-bottom: 1.5rem;
-        color: #000;
+        color: #000000;
         line-height: 1.4;
     }
     .options-group {
@@ -584,15 +584,6 @@ import Header from '../../components/Header.astro';
         accent-color: #1890ff;
         transform: scale(1.1);
     }
-    
-    .form-container { background: #ffffff; border: 1px solid #e5e7eb; color: #000000; }
-    .form-container p,
-    .form-container label,
-    .form-container small,
-    .form-container button,
-    .form-container input,
-    .form-container textarea,
-    .form-container .radio-label { color: #000000 !important; }
 
     .adaptive-input {
         width: 100%;
@@ -632,34 +623,56 @@ import Header from '../../components/Header.astro';
         color: #000000;
     }
 
-    @media (prefers-color-scheme: dark) {
-        .adaptive-input {
-            background: #000000;
-            color: #ffffff;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .adaptive-input:focus {
-            border-color: rgba(255,255,255,0.5);
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
-        }
-        .radio-label {
-            background: #000000;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #dddddd;
-        }
-        .radio-label:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        .radio-label:has(input[type="radio"]:checked),
-        .radio-label:has(input[type="checkbox"]:checked) {
-            background: rgba(255,255,255,0.1);
-            border-color: #1890ff;
-            color: #ffffff;
-        }
-    }
-
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(5px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==================== 2. 深色模式适配 ==================== */
+    @media (prefers-color-scheme: dark) {
+        .form-container {
+            background: #000000 !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        .form-container,
+        .form-container *,
+        .form-container p,
+        .form-container label,
+        .form-container small,
+        .form-container button,
+        .form-container input,
+        .form-container textarea,
+        .form-container .radio-label,
+        .q-title,
+        .bypass-box * {
+            color: #ffffff !important;
+        }
+        .adaptive-input {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        .adaptive-input:focus {
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+        }
+        .radio-label {
+            background: #000000 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .radio-label:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+        .radio-label:has(input[type="radio"]:checked),
+        .radio-label:has(input[type="checkbox"]:checked) {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: #1890ff !important;
+            color: #ffffff !important;
+        }
+        .bypass-box {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
     }
 </style>
