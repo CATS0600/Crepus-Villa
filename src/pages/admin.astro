@@ -12,7 +12,6 @@ import Header from '../components/Header.astro';
         <section class="content-section reveal active">
             <div class="container safe-zone" style="max-width: 950px; margin: 2rem auto; position: relative; z-index: 10;">
                 
-                <!-- 权限验证密码框 -->
                 <div id="passwordPanel" style="display: none;">
                     <div style="text-align: center; padding: 60px 20px;">
                         <h2 class="partner-sub-title">ACCESS <span class="accent-text">REQUIRED</span></h2>
@@ -23,7 +22,6 @@ import Header from '../components/Header.astro';
                     </div>
                 </div>
 
-                <!-- 管理后台面板 -->
                 <div id="dashboardPanel" style="display: none;">
                     
                     <div class="horizontal-tabs">
@@ -31,7 +29,6 @@ import Header from '../components/Header.astro';
                         <button class="tab-btn" id="tab-exam" onclick="switchTab('exam')">EXAM RECORDS</button>
                     </div>
 
-                    <!-- 信件/消息选项卡 -->
                     <div id="panel-send" class="admin-tab-content">
                         <h3 class="partner-sub-title">MESSAGE <span class="accent-text">ARCHIVES</span></h3>
                         <div id="messageList" class="records-grid">
@@ -39,7 +36,6 @@ import Header from '../components/Header.astro';
                         </div>
                     </div>
 
-                    <!-- 考试/准入双向审计选项卡 -->
                     <div id="panel-exam" class="admin-tab-content" style="display: none;">
                         <h3 class="partner-sub-title">EXAMINATION <span class="accent-text">AUDITS</span></h3>
                         <div id="examList" class="records-grid">
@@ -93,6 +89,7 @@ import Header from '../components/Header.astro';
 
     async function loadMessages() {
         try {
+            // 修复点：添加有效的鉴权请求头支持
             const res = await fetch('/api/get-messages', {
                 headers: { 'X-Admin-Token': adminToken }
             });
