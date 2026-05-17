@@ -27,12 +27,27 @@ export const GET = async ({ request, locals }) => {
 
         const result = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
 
-        // 针对前两步修改的适配：现在的 answers 字段包含了复杂的 JSON（app_type, username, 简答题及多选题数组）
-        // 在接口返回前进行 JSON 解析，保证后台管理面板拿到的直接是对象，无需在前端二次解析
+        // 修复前端显示 [object Object] 的问题
         const records = (result.results || []).map(record => {
             if (record.answers && typeof record.answers === 'string') {
                 try {
-                    record.answers = JSON.parse(record.answers);
+                    const parsed = JSON.parse(record.answers);
+                    
+                    // 将 JSON 对象拼接成适合人类阅读的纯文本字符串，防止前端直接渲染 Object
+                    let readableArray = [];
+                    for (const [key, value] of Object.entries(parsed)) {
+                        // 针对多选题数组进行合并处理，例如转成 "Mb, Mj, Ms"
+                        const displayValue = Array.isArray(value) ? value.join(', ') : value;
+                        // 过滤掉未填写的空项
+                        if (displayValue !== undefined && displayValue !== "") {
+                            readableArray.push(`【${key}】: ${displayValue}`);
+                        }
+                    }
+                    
+                    // 用换行符或竖线拼接。若你的后台前端是用普通的 <div> 显示的，建议换成 "\n" 并在前端加上 white-space: pre-wrap 样式
+                    // 这里使用 " \n " 拼接可以确保即使前端不支持换行，也不会连成一坨
+                    record.answers = readableArray.join('\n');
+
                 } catch (e) {
                     // 解析失败时回退为原字符串
                 }
