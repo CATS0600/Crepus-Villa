@@ -36,7 +36,7 @@ import Header from '../../components/Header.astro';
                             </select>
                         </div>
                         <div style="text-align: center;">
-                            <button id="start-btn" class="send-button" style="padding: 0.8rem 2.5rem; border: 1px solid #d1d5db; border-radius: 6px; background: #f3f4f6; color: #000; cursor: pointer; transition: all 0.2s;">
+                            <button id="start-btn" class="send-button btn-exam btn-exam-primary" style="padding: 0.8rem 2.5rem;">
                                 下一步
                             </button>
                         </div>
@@ -47,25 +47,25 @@ import Header from '../../components/Header.astro';
                         <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
                             您选择的申请类型符合免考标准。您可以发送能够证明自己经验的文件到以下邮箱之一：
                         </p>
-                        <div class="bypass-box" style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; display: inline-block; text-align: left; margin-bottom: 2rem;">
+                        <div class="bypass-box">
                             <p style="margin-bottom: 0.5rem;">📧 <strong>io@crepus.asia</strong></p>
                             <p style="margin: 0;">📧 <strong>e-crepuscular@outlook.com</strong> (推荐)</p>
                         </div>
                         <div style="display: flex; justify-content: center; gap: 1rem;">
-                            <button type="button" onclick="location.reload()" style="background: transparent; border: 1px solid #d1d5db; color: #000; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer;">返回重选</button>
-                            <button type="button" id="force-exam-btn" style="background: #fff; border: 1px solid #d1d5db; color: #000; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: bold;">仍参加考试</button>
+                            <button type="button" onclick="location.reload()" class="btn-exam btn-exam-outline">返回重选</button>
+                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-secondary">仍参加考试</button>
                         </div>
                     </div>
 
                     <div id="questions-step" style="display: none;">
-                        <div class="progress-container" style="width: 100%; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;">
+                        <div class="progress-container">
                             <div id="progress-bar" style="width: 0%; height: 100%; background: #1890ff; transition: width 0.3s ease;"></div>
                         </div>
 
                         <form id="exam-form">
                             <div class="form-group question-item active-q" data-q="1">
-                                <label style="display: block; font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: #000;">1. 基本信息</label>
-                                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">我们需要这个来辨识您。</p>
+                                <label style="display: block; font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: inherit;">1. 基本信息</label>
+                                <p class="desc-text" style="margin-bottom: 1rem; font-size: 0.9rem;">我们需要这个来辨识您。</p>
                                 
                                 <div style="margin-bottom: 1.2rem;">
                                     <input type="text" name="username" class="adaptive-input" placeholder="1.1 您的姓名（抖音或B站昵称，并附抖音号/B站UID）" required />
@@ -142,7 +142,7 @@ import Header from '../../components/Header.astro';
                             </div>
 
                             <div class="form-group question-item" data-q="8">
-                                <label class="q-title">8. EEW / 地震预警只有日本和中国有，其他国家还没有类似的地震预警系统。</label>
+                                <label class="q-title">8. EEW / 地震预警只有日本 and 中国有，其他国家还没有类似的地震预警系统。</label>
                                 <div class="options-group">
                                     <label class="radio-label"><input type="radio" name="q8" value="Y" /> <span>Y (是)</span></label>
                                     <label class="radio-label"><input type="radio" name="q8" value="N" /> <span>N (否)</span></label>
@@ -276,9 +276,9 @@ import Header from '../../components/Header.astro';
                             </div>
 
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
-                                <button type="button" id="prev-btn" style="background: transparent; border: none; color: #000; cursor: pointer; font-size: 0.95rem;">&larr; 上一步</button>
-                                <button type="button" id="next-btn" style="background: #f3f4f6; border: 1px solid #d1d5db; color: #000; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer;">下一步 &rarr;</button>
-                                <button type="submit" id="submit-btn" style="display: none; background: #fff; color: #000; border: 1px solid #d1d5db; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: bold;">提交答卷</button>
+                                <button type="button" id="prev-btn" class="btn-exam btn-exam-flat">&larr; 上一步</button>
+                                <button type="button" id="next-btn" class="btn-exam btn-exam-primary">下一步 &rarr;</button>
+                                <button type="submit" id="submit-btn" class="btn-exam btn-exam-secondary" style="display: none;">提交答卷</button>
                             </div>
                         </form>
                     </div>
@@ -288,13 +288,13 @@ import Header from '../../components/Header.astro';
                         <p style="color: var(--text-muted); margin-bottom: 2rem;">考试结果将发送至您填写的邮箱中。</p>
 
                         <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
-                            <div style="padding: 1.5rem; background: rgba(243,244,246,0.8); border: 1px solid #e5e7eb; border-radius: 8px; min-width: 120px;">
-                                <div style="font-size: 0.85rem; color: #4b5563; margin-bottom: 0.5rem;">客观题得分（满分100分）</div>
-                                <div style="font-size: 2.5rem; color: #000;" id="res-score">0</div>
+                            <div class="score-card">
+                                <div class="score-label">客观题得分（满分100分）</div>
+                                <div id="res-score" class="score-num">0</div>
                             </div>
                         </div>
 
-                        <a href="/" style="display: inline-block; text-decoration: none; padding: 0.6rem 2rem; border: 1px solid #d1d5db; border-radius: 6px; color: #000; font-size: 0.9rem;">返回主页</a>
+                        <a href="/" class="btn-exam btn-exam-outline" style="text-decoration: none;">返回主页</a>
                     </div>
                 </div>
 
@@ -421,7 +421,7 @@ import Header from '../../components/Header.astro';
         for (let input of inputs) { 
             if (input.required && !input.value.trim()) return false; 
             
-            // 新增：显式校验邮箱格式（必须包含 @ 且前后有有效字符）
+            // 显式校验邮箱格式
             if (input.type === 'email') {
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailPattern.test(input.value.trim())) {
@@ -552,11 +552,13 @@ import Header from '../../components/Header.astro';
     .form-container p,
     .form-container label,
     .form-container small,
-    .form-container button,
     .form-container input,
-    .form-container textarea,
-    .form-container .radio-label {
+    .form-container textarea {
         color: #000000;
+    }
+
+    .desc-text {
+        color: #666666;
     }
 
     .question-item {
@@ -623,6 +625,90 @@ import Header from '../../components/Header.astro';
         color: #000000;
     }
 
+    /* 进度条样式 */
+    .progress-container {
+        width: 100%;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    /* 免考提示盒子 */
+    .bypass-box {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        display: inline-block;
+        text-align: left;
+        margin-bottom: 2rem;
+    }
+
+    /* 结果页卡片 */
+    .score-card {
+        padding: 1.5rem;
+        background: rgba(243, 244, 246, 0.8);
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        min-width: 120px;
+    }
+    .score-label {
+        font-size: 0.85rem;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+    .score-num {
+        font-size: 2.5rem;
+        color: #000000;
+    }
+
+    /* 统一规范后的按钮样式 */
+    .btn-exam {
+        padding: 0.6rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        display: inline-block;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .btn-exam-primary {
+        background: #f3f4f6;
+        border: 1px solid #d1d5db;
+        color: #000000;
+    }
+    .btn-exam-primary:hover {
+        background: #e5e7eb;
+    }
+    .btn-exam-secondary {
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        color: #000000;
+        font-weight: bold;
+    }
+    .btn-exam-secondary:hover {
+        background: #f9fafb;
+    }
+    .btn-exam-flat {
+        background: transparent;
+        border: none;
+        color: #000000;
+    }
+    .btn-exam-flat:hover {
+        opacity: 0.8;
+    }
+    .btn-exam-outline {
+        background: transparent;
+        border: 1px solid #d1d5db;
+        color: #000000;
+    }
+    .btn-exam-outline:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(5px); }
         to { opacity: 1; transform: translateY(0); }
@@ -639,7 +725,6 @@ import Header from '../../components/Header.astro';
         .form-container p,
         .form-container label,
         .form-container small,
-        .form-container button,
         .form-container input,
         .form-container textarea,
         .form-container .radio-label,
@@ -647,10 +732,19 @@ import Header from '../../components/Header.astro';
         .bypass-box * {
             color: #ffffff !important;
         }
+
+        .desc-text {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
         .adaptive-input {
             background: #000000 !important;
             color: #ffffff !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        .adaptive-input option {
+            background-color: #000000 !important;
+            color: #ffffff !important;
         }
         .adaptive-input:focus {
             border-color: rgba(255, 255, 255, 0.5) !important;
@@ -670,9 +764,59 @@ import Header from '../../components/Header.astro';
             border-color: #1890ff !important;
             color: #ffffff !important;
         }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.15) !important;
+        }
+
         .bypass-box {
             background: rgba(255, 255, 255, 0.05) !important;
             border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .score-card {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        .score-label {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        .score-num {
+            color: #ffffff !important;
+        }
+
+        /* 按钮深色模式样式重写 */
+        .btn-exam-primary {
+            background: #1f2937 !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .btn-exam-primary:hover {
+            background: #374151 !important;
+        }
+
+        .btn-exam-secondary {
+            background: #1f2937 !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .btn-exam-secondary:hover {
+            background: #374151 !important;
+        }
+
+        .btn-exam-flat {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        .btn-exam-flat:hover {
+            color: #ffffff !important;
+        }
+
+        .btn-exam-outline {
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .btn-exam-outline:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
         }
     }
 </style>
