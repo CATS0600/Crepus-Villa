@@ -33,10 +33,12 @@ export const GET = async ({ request, locals }) => {
                     
                     const username = parsed.username || '未填写';
                     const qq = parsed.qq || record.qqid || '未填写';
+                    const email = parsed.email || record.email || '未填写'; // 新增：提取邮箱信息
                     const app_type = parsed.app_type || '未选择';
                     
                     let choiceAnswers = [];
-                    for (let i = 2; i <= 15; i++) {
+                    // 更新：循环范围变更为 2 到 21，完整覆盖 20 道非简答题
+                    for (let i = 2; i <= 21; i++) {
                         const val = parsed[`q${i}`];
                         if (val !== undefined && val !== "") {
                             const displayVal = Array.isArray(val) ? val.join(', ') : val;
@@ -44,14 +46,14 @@ export const GET = async ({ request, locals }) => {
                         }
                     }
 
-                    const shortAnswer = parsed.q16 || '未填写';
+                    // 更新：移除了针对 q16 的独立简答题解析逻辑
 
                     // 使用 <br> 替代 \n，让 HTML 强行换行
                     let formattedText = `用户名：${username}<br>`;
                     formattedText += `QQID: ${qq}<br>`;
+                    formattedText += `邮箱地址：${email}<br>`; // 新增：在基本信息区域渲染邮箱
                     formattedText += `申请类型：${app_type}<br>`;
-                    formattedText += `作答情况：<br>${choiceAnswers.join('<br>')}<br><br>`;
-                    formattedText += `简答题：${shortAnswer}`;
+                    formattedText += `作答情况：<br>${choiceAnswers.join('<br>')}`;
 
                     record.answers = formattedText;
 

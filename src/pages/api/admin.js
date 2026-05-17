@@ -31,16 +31,22 @@ export const PATCH = async ({ request, locals }) => {
             `UPDATE messages SET content = ?, reply = ?, reply_method = ?, type = ? WHERE id = ?`
         ).bind(content || '', reply || null, reply_method || 'web', type || 'PENDING', id).run();
 
-        return new Response(JSON.stringify({ success: true }), { status: 200 });
+        return new Response(JSON.stringify({ success: true }), { 
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 };
 
 export const DELETE = async ({ request, locals }) => {
     try {
         const env = locals.runtime?.env;
-        if (!env?.DB) throw new Error('Database not available');
+        if (!env?.DB) throw new Error('DB 暂不可用');
 
         const auth = validateAdminPassword(request);
         if (!auth.valid) return auth.response;
@@ -48,8 +54,14 @@ export const DELETE = async ({ request, locals }) => {
         const { id } = await request.json();
         await env.DB.prepare(`DELETE FROM messages WHERE id = ?`).bind(id).run();
 
-        return new Response(JSON.stringify({ success: true }), { status: 200 });
-    } catch (error) {a
-        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+        return new Response(JSON.stringify({ success: true }), { 
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 };

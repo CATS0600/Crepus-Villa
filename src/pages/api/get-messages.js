@@ -18,8 +18,8 @@ export async function GET({ request, locals }) {
             throw new Error("Database not available");
         }
 
-        // 查询真实的 messages 表
-        const result = await env.DB.prepare("SELECT * FROM messages ORDER BY id DESC").all();
+        // 查询考试结果表 (exam_results)，取代原先的 messages 表
+        const result = await env.DB.prepare("SELECT * FROM exam_results ORDER BY id DESC").all();
         
         return new Response(JSON.stringify(result.results || []), {
             status: 200,

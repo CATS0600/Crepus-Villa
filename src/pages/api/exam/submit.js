@@ -39,13 +39,22 @@ export const POST = async ({ request, locals }) => {
       }
     }
 
+    // 2. 校验邮箱地址格式 (对应需求 2 和 4)
+    const email = parsedAnswers.email ? String(parsedAnswers.email).trim() : '';
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return new Response(JSON.stringify({ error: '邮箱地址未填写或格式不正确' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // 将申请类型也并入 answers 中方便后续在数据库查看
     if (app_type) {
       parsedAnswers.app_type = app_type;
     }
 
     // 1. 标准答案配置
-    // 单选题与判断题 (每题 5 分，共 11 题 = 55 分)
+    // 单选题与判断题 (每题 5 分，包含原 11 题 + 新增的 6 题单选占位 = 17 题)
     const standardAnswersSingle = {
       q2: 'C',
       q3: 'A',
@@ -57,19 +66,26 @@ export const POST = async ({ request, locals }) => {
       q9: 'Y',
       q10: 'N',
       q14: 'D',
-      q15: 'C'
+      q15: 'C',
+      // 1. 将原简答题剔除，新增 16~21 题作为非简答题（单选占位，请根据实际答案修改）
+      q16: 'C',
+      q17: 'B',
+      q21: '-'
     };
 
-    // 多选题 (每题 10 分，共 3 题 = 30 分，少选、错选不得分)
+    // 多选题 (共 3 题。为了满足“总分100分，每题5分”的要求，分值由原来的10分调整为5分)
     const standardAnswersMulti = {
       q11: ['A', 'B', 'C'],
       q12: ['C', 'D'],
-      q13: ['A', 'D']
+      q13: ['A', 'D'],
+      q18: ['A','B','C'],
+      q19: ['A','B','C'],
+      q201: ['A','C','D'],
     };
 
     let score = 0;
 
-    // 单选题/判断题 评分逻辑
+    // 单选题/判断题 评分逻辑 (每题 5 分)
     Object.keys(standardAnswersSingle).forEach((key) => {
       const userAns = parsedAnswers[key] ? String(parsedAnswers[key]).trim() : '';
       if (userAns === standardAnswersSingle[key]) {
@@ -77,7 +93,7 @@ export const POST = async ({ request, locals }) => {
       }
     });
 
-    // 多选题 评分逻辑
+    // 多选题 评分逻辑 (分值改为 5 分，少选、错选不得分)
     Object.keys(standardAnswersMulti).forEach((key) => {
       const userAnsArray = Array.isArray(parsedAnswers[key]) ? parsedAnswers[key] : [];
       const correctAnsArray = standardAnswersMulti[key];
@@ -87,20 +103,20 @@ export const POST = async ({ request, locals }) => {
         userAnsArray.length === correctAnsArray.length &&
         correctAnsArray.every(val => userAnsArray.includes(val))
       ) {
-        score += 10;
+        score += 5; // 3. 修改为每题 5 分
       }
     });
 
-    const exam_result = score;
+    const exam_result = score; // 20 题 × 5 分 = 总分 100 分
 
-    // 2. 查询该 QQ 的累计考试次数
+    // 3. 查询该 QQ 的累计考试次数
     const countResult = await env.DB.prepare(
       'SELECT COUNT(*) as count FROM exam_records WHERE qqid = ?'
     ).bind(targetQqid).first();
     const historyCount = Number(countResult?.count ?? 0);
     const exam_times = historyCount + 1;
 
-    // 3. 提取上一次关联记录进行 [双向校验]
+    // 4. 提取上一次关联记录进行 [双向校验]
     const lastRecordByUuid = await env.DB.prepare(
       'SELECT qqid FROM exam_records WHERE user_uuid = ? ORDER BY id DESC LIMIT 1'
     ).bind(user_uuid).first();
@@ -123,18 +139,33 @@ export const POST = async ({ request, locals }) => {
     
     const achtung_notes = notes.length > 0 ? notes.join(' ') : null;
 
-    // 4. 将答题数据转换为安全字符串
+    // 5. 将答题数据转换为安全字符串（邮箱数据此时已随 `parsedAnswers` 序列化在内）
     const answersString = JSON.stringify(parsedAnswers);
 
-    // 5. 写入数据库
+    // 6. 写入数据库 (采用多层平滑降级，确保即使数据库未添加独立的 email 列也绝不报错)
     try {
-      // 优先尝试全字段插入（包含新增的 answers 列）
+      // 优先尝试全字段插入（包含新增的 email 列）
       await env.DB.prepare(
-        'INSERT INTO exam_records (user_uuid, qqid, exam_times, exam_result, achtung_notes, answers) VALUES (?, ?, ?, ?, ?, ?)'
-      ).bind(user_uuid, targetQqid, exam_times, exam_result, achtung_notes, answersString).run();
+        'INSERT INTO exam_records (user_uuid, qqid, exam_times, exam_result, achtung_notes, answers, email) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      ).bind(user_uuid, targetQqid, exam_times, exam_result, achtung_notes, answersString, email).run();
     } catch (insertError) {
-      // 若因没有 answers 列报错，则平滑降级到无 answers 结构
-      if (String(insertError).includes('no such column: answers')) {
+      const errorStr = String(insertError);
+      if (errorStr.includes('no such column: email')) {
+        // 如果数据库没有独立 email 列，平滑降级到只插入 answers 列（邮箱信息依然完好保存在 answers 的 JSON 字符串中）
+        try {
+          await env.DB.prepare(
+            'INSERT INTO exam_records (user_uuid, qqid, exam_times, exam_result, achtung_notes, answers) VALUES (?, ?, ?, ?, ?, ?)'
+          ).bind(user_uuid, targetQqid, exam_times, exam_result, achtung_notes, answersString).run();
+        } catch (innerError) {
+          if (String(innerError).includes('no such column: answers')) {
+            await env.DB.prepare(
+              'INSERT INTO exam_records (user_uuid, qqid, exam_times, exam_result, achtung_notes) VALUES (?, ?, ?, ?, ?)'
+            ).bind(user_uuid, targetQqid, exam_times, exam_result, achtung_notes).run();
+          } else {
+            throw innerError;
+          }
+        }
+      } else if (errorStr.includes('no such column: answers')) {
         await env.DB.prepare(
           'INSERT INTO exam_records (user_uuid, qqid, exam_times, exam_result, achtung_notes) VALUES (?, ?, ?, ?, ?)'
         ).bind(user_uuid, targetQqid, exam_times, exam_result, achtung_notes).run();
