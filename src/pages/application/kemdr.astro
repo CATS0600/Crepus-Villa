@@ -17,7 +17,7 @@ import Header from '../../components/Header.astro';
                     您需要至少根据申请类型满足相对应的分数，才可以申请进入本群（Q群)。
                 </p>
                 <p style="text-align: center; color: #ff5f56; margin-bottom: 2rem; font-size: 0.85em;">
-                    ⚠️ 您7天只能参加至多2次考试。<br>乱填与发现作弊行为的将会被永久取消申请进群资格。
+                    ⚠️ 您7天只能参加至多2次考试；您在考试资格重置前只有4次考试机会。<br>乱填与发现作弊行为的将会被永久取消申请进群资格。
                 </p>
                 <!-- Neko! -->
                 <div class="form-container">
@@ -78,10 +78,16 @@ import Header from '../../components/Header.astro';
                                 </div>
                                 
                                 <div id="cond-exp-a" style="display: none; margin-bottom: 1.2rem;">
-                                    <textarea name="exp_a" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 您对防震减灾相关的一些经验（简略介绍）"></textarea>
+                                    <textarea name="exp_a" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 您对防震减灾相关的一些经验（简略介绍）" required></textarea>
                                 </div>
                                 <div id="cond-exp-b" style="display: none; margin-bottom: 1.2rem;">
-                                    <textarea name="exp_b" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 您对非防震减灾相关的经验（简略介绍）"></textarea>
+                                    <textarea name="exp_b" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 您对非防震减灾相关的经验（简略介绍）" required></textarea>
+                                </div>
+                                <div id="cond-exp-c" style="display: none; margin-bottom: 1.2rem;">
+                                    <textarea name="exp_c" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 对于原群成员的副号的证明" required></textarea>
+                                </div>
+                                <div id="cond-exp-d" style="display: none; margin-bottom: 1.2rem;">
+                                    <textarea name="exp_d" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 对于杰出人才 / 专业人员的证明" required></textarea>
                                 </div>
                             </div>
 
@@ -339,8 +345,12 @@ import Header from '../../components/Header.astro';
     // 基础信息扩展框逻辑
     const condExpA = document.getElementById('cond-exp-a');
     const condExpB = document.getElementById('cond-exp-b');
+    const condExpC = document.getElementById('cond-exp-c');
+    const condExpD = document.getElementById('cond-exp-d');
     const txtExpA = document.querySelector('textarea[name="exp_a"]');
     const txtExpB = document.querySelector('textarea[name="exp_b"]');
+    const txtExpC = document.querySelector('textarea[name="exp_c"]');
+    const txtExpD = document.querySelector('textarea[name="exp_d"]');
 
     // 申请类型选择处理
     startBtn.addEventListener('click', () => {
@@ -377,11 +387,37 @@ import Header from '../../components/Header.astro';
             txtExpA.setAttribute('required', 'true');
             condExpB.style.display = 'none';
             txtExpB.removeAttribute('required');
+            condExpC.style.display = 'none';
+            txtExpC.removeAttribute('required');
+            condExpD.style.display = 'none';
+            txtExpD.removeAttribute('required');
         } else if (selectedAppType === 'EB3B') {
             condExpB.style.display = 'block';
             txtExpB.setAttribute('required', 'true');
             condExpA.style.display = 'none';
             txtExpA.removeAttribute('required');
+            condExpC.style.display = 'none';
+            txtExpC.removeAttribute('required');
+            condExpD.style.display = 'none';
+            txtExpD.removeAttribute('required');
+        } else if (selectedAppType === 'EB1' || selectedAppType === 'EB2') {
+            condExpD.style.display = 'block';
+            txtExpD.setAttribute('required', 'true');
+            condExpA.style.display = 'none';
+            txtExpA.removeAttribute('required');
+            condExpB.style.display = 'none';
+            txtExpB.removeAttribute('required');
+            condExpC.style.display = 'none';
+            txtExpC.removeAttribute('required');
+        } else if (selectedAppType === 'F') {
+            condExpC.style.display = 'block';
+            txtExpC.setAttribute('required', 'true');
+            condExpA.style.display = 'none';
+            txtExpA.removeAttribute('required');
+            condExpB.style.display = 'none';
+            txtExpB.removeAttribute('required');
+            condExpD.style.display = 'none';
+            txtExpD.removeAttribute('required');
         } else {
             condExpA.style.display = 'none';
             txtExpA.removeAttribute('required');
@@ -498,6 +534,9 @@ import Header from '../../components/Header.astro';
         payload.answers.email = document.querySelector('input[name="email"]').value.trim();
         payload.answers.exp_a = txtExpA.value.trim();
         payload.answers.exp_b = txtExpB.value.trim();
+        payload.answers.exp_c = txtExpC.value.trim();
+        payload.answers.exp_d = txtExpD.value.trim();
+
 
         // 收集考题答案
         for (let i = 2; i <= totalQuestions; i++) {

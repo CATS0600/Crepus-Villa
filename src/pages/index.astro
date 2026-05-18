@@ -68,8 +68,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <!-- 新增：图片折叠/展开按钮 -->
                 <div class="toggle-gallery-container">
                     <button id="toggleGalleryBtn" class="action-button global-button" style="margin: 0 auto; padding: 12px 40px; min-width: 240px;">
-                        <span class="action-icon" id="toggleGalleryIcon">🔽</span>
-                        <span class="action-text" id="toggleGalleryText">展开图片 / Expand Photos</span>
+                        <span class="action-icon" id="toggleGalleryIcon">🏞️</span>
+                        <span class="action-text" id="toggleGalleryText">Villa Gallery</span>
                     </button>
                 </div>
 
@@ -119,17 +119,17 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         <a href="/send" class="send-button">
                             <span class="send-icon">✍️</span>
                             <!-- <span class="send-text">Share Your Message</span> -->
-                            <span class="send-text">Comming Soon</span>
+                            <span class="send-text">In Service</span>
                         </a>
                         <a href="/reply" class="send-button">
                             <span class="send-icon">📫</span>
                             <!-- <span class="send-text">Check The Reply</span> -->
-                            <span class="send-text">Comming Soon</span>
+                            <span class="send-text">In Service</span>
                         </a>
                         <a href="mailto:io@crepus.asia" class="send-button">
                             <span class="send-icon">✉️</span>
-                            <!-- <span class="send-text">Send an Email</span> -->
-                            <span class="send-text">Comming Soon</span>
+                            <span class="send-text">Send an Email</span>
+                            <!-- <span class="send-text">Comming Soon</span> -->
                         </a>
                     </div>
                 </div>
@@ -1121,8 +1121,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     toggleGalleryIcon.textContent = '🔼';
                 } else {
                     galleryImages.classList.add('collapsed');
-                    toggleGalleryText.textContent = 'Expand Photo Gallery';
-                    toggleGalleryIcon.textContent = '🔽';
+                    toggleGalleryText.textContent = 'Villa Gallery';
+                    toggleGalleryIcon.textContent = '🏞️';
                     
                     // 当折叠时，可以将其滚动到视野中央避免失去焦点
                     toggleGalleryBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
