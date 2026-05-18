@@ -525,7 +525,13 @@ import Header from '../../components/Header.astro';
             user_uuid: userUuid,
             qqid: qqidVal,
             app_type: selectedAppType,
-            answers: {}
+            answers: {
+                // ▼ 添加以下四行以收集 1.4 题的数据
+                exp_a: document.querySelector('textarea[name="exp_a"]')?.value.trim() || '',
+                exp_b: document.querySelector('textarea[name="exp_b"]')?.value.trim() || '',
+                exp_c: document.querySelector('textarea[name="exp_c"]')?.value.trim() || '',
+                exp_d: document.querySelector('textarea[name="exp_d"]')?.value.trim() || ''
+            }
         };
 
         // 收集基础信息

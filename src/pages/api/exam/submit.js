@@ -4,7 +4,7 @@ export const POST = async ({ request, locals }) => {
   try {
     const env = locals.runtime?.env;
     if (!env?.DB) {
-      throw new Error('Database not available');
+      throw new Error('数据库无效');
     }
 
     const body = await request.json();
@@ -12,7 +12,7 @@ export const POST = async ({ request, locals }) => {
 
     // 校验必填字段
     if (!user_uuid || !qqid || answers === undefined || answers === null) {
-      return new Response(JSON.stringify({ error: 'Missing required fields: user_uuid, qqid, answers' }), {
+      return new Response(JSON.stringify({ error: '数据缺失: user_uuid, qqid, answers' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -21,7 +21,7 @@ export const POST = async ({ request, locals }) => {
     // 类型安全性防护：强制将 qqid 解析为数值整型
     const targetQqid = parseInt(qqid, 10);
     if (isNaN(targetQqid)) {
-      return new Response(JSON.stringify({ error: 'Invalid QQID' }), {
+      return new Response(JSON.stringify({ error: '无效的QQID' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -32,7 +32,7 @@ export const POST = async ({ request, locals }) => {
       try {
         parsedAnswers = JSON.parse(answers);
       } catch (parseError) {
-        return new Response(JSON.stringify({ error: 'Invalid answers format' }), {
+        return new Response(JSON.stringify({ error: '无效的答案格式' }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
         });

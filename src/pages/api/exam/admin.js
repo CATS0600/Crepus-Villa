@@ -35,7 +35,8 @@ export const GET = async ({ request, locals }) => {
                     const qq = parsed.qq || record.qqid || '未填写';
                     const email = parsed.email || record.email || '未填写'; // 新增：提取邮箱信息
                     const app_type = parsed.app_type || '未选择';
-                    
+                    const exp_info = parsed.exp_a || parsed.exp_b || parsed.exp_c || parsed.exp_d || '未填写';
+
                     let choiceAnswers = [];
                     // 更新：循环范围变更为 2 到 21，完整覆盖 20 道非简答题
                     for (let i = 2; i <= 21; i++) {
@@ -53,6 +54,7 @@ export const GET = async ({ request, locals }) => {
                     formattedText += `QQID: ${qq}<br>`;
                     formattedText += `邮箱地址：${email}<br>`; // 新增：在基本信息区域渲染邮箱
                     formattedText += `申请类型：${app_type}<br>`;
+                    formattedText += `经验与证明(1.4)：${exp_info}<br>`;
                     formattedText += `作答情况：<br>${choiceAnswers.join('<br>')}`;
 
                     record.answers = formattedText;
