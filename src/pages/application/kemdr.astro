@@ -51,9 +51,10 @@ import Header from '../../components/Header.astro';
                             <p style="margin-bottom: 0.5rem;">📧 <strong>io@crepus.asia</strong></p>
                             <p style="margin: 0;">📧 <strong>e-crepuscular@outlook.com</strong> (推荐)</p>
                         </div>
-                        <div style="display: flex; justify-content: center; gap: 1rem;">
+                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                            <button type="button" id="send-email-btn" class="btn-exam btn-exam-secondary">一键生成邮件申请</button>
+                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-primary">仍参加考试</button>
                             <button type="button" onclick="location.reload()" class="btn-exam btn-exam-outline">返回重选</button>
-                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-secondary">仍参加考试</button>
                         </div>
                     </div>
 
@@ -334,6 +335,7 @@ import Header from '../../components/Header.astro';
     
     const startBtn = document.getElementById('start-btn');
     const forceExamBtn = document.getElementById('force-exam-btn');
+    const sendEmailBtn = document.getElementById('send-email-btn');
     const appTypeSelect = document.getElementById('app-type');
     
     const prevBtn = document.getElementById('prev-btn');
@@ -351,6 +353,44 @@ import Header from '../../components/Header.astro';
     const txtExpB = document.querySelector('textarea[name="exp_b"]');
     const txtExpC = document.querySelector('textarea[name="exp_c"]');
     const txtExpD = document.querySelector('textarea[name="exp_d"]');
+
+    // 剪贴板后备方案，应对由于安全限制导致的 navigator.clipboard 失效
+    function copyTextToClipboard(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        // 避免滚动到页面底部
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('Fallback: 复制失败', err);
+        }
+        document.body.removeChild(textArea);
+    }
+
+    // 一键发送邮件逻辑
+    if (sendEmailBtn) {
+        sendEmailBtn.addEventListener('click', () => {
+            const typeText = appTypeSelect.options[appTypeSelect.selectedIndex].text;
+            const subject = `【免考申请】KEMDR 香野放送局 - ${typeText}`;
+            const body = `您好，\n\n我希望通过免考通道申请加入 KEMDR 香野放送局。\n\n【申请信息】\n申请类型：${typeText}\nB站/抖音昵称及UID：\n我的QQ号：\n\n【证明材料/经验简述】\n（请在此处填写您的经验，或在附件中添加截图等证明材料）\n\n期待您的回复！`;
+
+            // 1. 自动将其放入剪贴板，防止客户端不支持长 body 格式
+            copyTextToClipboard(body);
+
+            // 2. 弹窗提示
+            alert('邮件模板已复制到剪贴板！\n\n点击确认将尝试为您打开默认邮箱软件。若内容未自动填写，请在邮件正文处直接粘贴。');
+
+            // 3. 构建 mailto 链接并尝试唤起
+            const mailtoLink = `mailto:e-crepuscular@outlook.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+        });
+    }
 
     // 申请类型选择处理
     startBtn.addEventListener('click', () => {
