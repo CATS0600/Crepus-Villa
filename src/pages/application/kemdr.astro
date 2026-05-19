@@ -27,12 +27,12 @@ import Header from '../../components/Header.astro';
                             <label for="app-type" style="display: block; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: bold;">I. 申请类型</label>
                             <select id="app-type" class="adaptive-input" required>
                                 <option value="" disabled selected>请选择申请类型...</option>
-                                <option value="F">F - 原群成员的副号</option>
                                 <option value="EB1">EB 1 - 杰出人才</option>
                                 <option value="EB2">EB 2 - 拥有特殊才能的专业人员</option>
                                 <option value="EB3A">EB 3 A - 拥有防震减灾相关一定经验的技术人员</option>
                                 <option value="EB3B">EB 3 B - 拥有非防震减灾相关一定经验的技术人员</option>
                                 <option value="EB3C">EB 3 C - 无特殊要求的其他人员</option>
+                                <option value="F">F - 原群成员的副号</option>
                             </select>
                         </div>
                         <div style="text-align: center;">
@@ -53,7 +53,7 @@ import Header from '../../components/Header.astro';
                         </div>
                         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
                             <button type="button" id="send-email-btn" class="btn-exam btn-exam-secondary">一键生成邮件申请</button>
-                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-primary">仍参加考试</button>
+                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-outline">仍参加考试</button>
                             <button type="button" onclick="location.reload()" class="btn-exam btn-exam-outline">返回重选</button>
                         </div>
                     </div>
@@ -377,8 +377,8 @@ import Header from '../../components/Header.astro';
     if (sendEmailBtn) {
         sendEmailBtn.addEventListener('click', () => {
             const typeText = appTypeSelect.options[appTypeSelect.selectedIndex].text;
-            const subject = `【免考申请】KEMDR 香野放送局 - ${typeText}`;
-            const body = `您好，\n\n我希望通过免考通道申请加入 KEMDR 香野放送局。\n\n【申请信息】\n申请类型：${typeText}\nB站/抖音昵称及UID：\n我的QQ号：\n\n【证明材料/经验简述】\n（请在此处填写您的经验，或在附件中添加截图等证明材料）\n\n期待您的回复！`;
+            const subject = `【免考申请】KVIV - ${typeText}`;
+            const body = `KEMDR-Villa Immigrant Visa (KVIV) Application (Exemption from exam)\n\nKEMDR-Villa 移民签证 (KVIV) 免考申请表单\n\n【申请信息】\n申请类型：${typeText}\nB站/抖音昵称：\nB站ID/抖音号：\nQQ号：\n\n【证明材料/经验简述】\n（请在此处填写您的经验，或在附件中添加截图等证明材料）\n\n【署名】`;
 
             // 1. 自动将其放入剪贴板，防止客户端不支持长 body 格式
             copyTextToClipboard(body);
