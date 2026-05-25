@@ -90,14 +90,15 @@ import Header from '../components/Header.astro';
             });
             if (!res.ok) throw new Error();
             const data = await res.json();
-            
+            const messages = data.messages || data;
+
             const list = document.getElementById('messageList');
-            if (!data.length) {
+            if (!messages.length) {
                 list.innerHTML = `<p class="status-placeholder">NO ARCHIVED MESSAGES</p>`;
                 return;
             }
 
-            list.innerHTML = data.map(item => `
+            list.innerHTML = messages.map(item => `
                 <div class="record-card">
                     <div class="record-meta">
                         <span>TIME: ${new Date(item.created_at).toLocaleString()}</span>
