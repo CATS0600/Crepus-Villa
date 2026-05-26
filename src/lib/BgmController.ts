@@ -114,7 +114,6 @@ export class BgmController {
 
     if (!this.audio) {
       this.audio = new Audio();
-      this.audio.crossOrigin = 'anonymous';
       this.audio.preload = 'auto';
       
       this.audio.addEventListener('ended', () => this.handleTrackEnded());
