@@ -174,7 +174,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             <div class="safe-zone" style="max-width: 1000px; margin: 0 auto;">
                 <div class="member-counter-box" style="padding: 32px 28px; border-radius: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
                     <h2 id="member-counter" class="partner-desc" style="margin: 0; font-size: 2rem;">
-                        你是第 <span class="member-counter-value">...</span> 个进入 Villa 的 Member
+                        You are number <span class="member-counter-value">...</span> member visiting the Villa
                     </h2>
                     <p id="member-counter-emoji" class="partner-desc" style="margin: 0; font-size: 1rem;">
                         🎉
@@ -301,7 +301,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     throw new Error('Invalid response format');
                 }
 
-                counterEl.textContent = `你是第 ${count} 个进入 Villa 的 Member`;
+                counterEl.textContent = `You are number ${count} member visiting the Villa`;
 
                 if (isNewMember) {
                     localStorage.setItem('is_villa_new_member', 'false');
