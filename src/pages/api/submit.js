@@ -6,7 +6,7 @@ export const POST = async ({ request, locals }) => {
     if (!env?.DB) throw new Error('Database not available');
 
     const data = await request.json();
-    const { content, is_public, reply_method, email } = data;
+    const { content, is_public, reply_method, email, title } = data;
 
     // 1. 基础校验
     if (!content || typeof content !== 'string' || content.trim() === '') {
@@ -37,7 +37,7 @@ export const POST = async ({ request, locals }) => {
 
     // 5. 执行插入 (注意：这里不需要插入 reply 字段，SQL 里硬编码为 NULL)
     const stmt = env.DB.prepare(
-      'INSERT INTO messages (content, reply, is_public, token, reply_method, email, created_at) VALUES (?, NULL, ?, ?, ?, ?, datetime("now"))'
+      'INSERT INTO messages (content, reply, is_public, token, reply_method, email, title, status, created_at) VALUES (?, NULL, ?, ?, ?, ?, ?, \'PENDING\', datetime("now"))'
     );
 
     const result = await stmt.bind(
@@ -45,7 +45,8 @@ export const POST = async ({ request, locals }) => {
       is_public ? 1 : 0,
       token, // 始终插入 token
       reply_method || 'web',
-      email || null
+      email || null,
+      title || ''
     ).run();
 
     return new Response(JSON.stringify({

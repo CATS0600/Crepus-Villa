@@ -10,51 +10,82 @@ import Header from '../../components/Header.astro';
         <section class="content-section reveal active">
             <div class="container safe-zone" style="max-width: 700px; margin: 2rem auto;">
 
+                <div class="lang-switch" style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+                    <button id="toggleLang" class="action-btn-sm">English / 中文</button>
+                </div>
+
                 <h1 style="text-align: center; margin-bottom: 1rem; font-size: 2.2rem;">
-                    <span>🛡️ KEMDR 香野放送局 入群考试</span>
+                    <span class="lang-zh">🛡️ KEMDR 香野放送局 入群考试</span>
+                    <span class="lang-en">🛡️ KEMDR Entrance Exam</span>
                 </h1>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95em; line-height: 1.6;">
-                    您需要至少根据申请类型满足相对应的分数，才可以申请进入本群（Q群)。
+                <p class="pre-exam-warning" style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95em; line-height: 1.6;">
+                    <span class="lang-zh">您需要至少根据申请类型满足相对应的分数，才可以申请进入本群（Q群)。</span>
+                    <span class="lang-en">You must meet the minimum score for your application type to join the group.</span>
                 </p>
-                <p style="text-align: center; color: #ff5f56; margin-bottom: 2rem; font-size: 0.85em;">
-                    ⚠️ 您7天只能参加至多2次考试；您在考试资格重置前只有4次考试机会。<br>乱填与发现作弊行为的将会被永久取消申请进群资格。
+                <p class="pre-exam-warning" style="text-align: center; color: #ff5f56; margin-bottom: 2rem; font-size: 0.85em;">
+                    <span class="lang-zh">⚠️ 您7天只能参加至多2次考试；您在考试资格重置前只有4次考试机会。<br>乱填与发现作弊行为的将会被永久取消申请进群资格。</span>
+                    <span class="lang-en">⚠️ You can take the exam at most 2 times in 7 days; 4 attempts before reset.<br>Cheating will result in permanent disqualification.</span>
                 </p>
                 <!-- Neko! -->
                 <div class="form-container">
                     
                     <div id="intro-step">
                         <div class="form-group" style="margin-bottom: 2rem;">
-                            <label for="app-type" style="display: block; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: bold;">I. 申请类型</label>
+                            <label for="app-type" style="display: block; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: bold;">
+                                <span class="lang-zh">I. 申请类型</span>
+                                <span class="lang-en">I. Application Type</span>
+                            </label>
                             <select id="app-type" class="adaptive-input" required>
-                                <option value="" disabled selected>请选择申请类型...</option>
-                                <option value="EB1">EB 1 - 杰出人才</option>
-                                <option value="EB2">EB 2 - 拥有特殊才能的专业人员</option>
-                                <option value="EB3A">EB 3 A - 拥有防震减灾相关一定经验的技术人员</option>
-                                <option value="EB3B">EB 3 B - 拥有非防震减灾相关一定经验的技术人员</option>
-                                <option value="EB3C">EB 3 C - 无特殊要求的其他人员</option>
-                                <option value="F">F - 原群成员的副号</option>
+                                <option value="" disabled selected class="lang-zh">请选择申请类型...</option>
+                                <option value="" disabled selected class="lang-en">Select application type...</option>
+                                <option value="EB1" class="lang-zh">EB 1 - 杰出人才</option>
+                                <option value="EB1" class="lang-en">EB 1 - Extraordinary Ability</option>
+                                <option value="EB2" class="lang-zh">EB 2 - 拥有特殊才能的专业人员</option>
+                                <option value="EB2" class="lang-en">EB 2 - Professionals with Special Skills</option>
+                                <option value="EB3A" class="lang-zh">EB 3 A - 拥有防震减灾相关一定经验的技术人员</option>
+                                <option value="EB3A" class="lang-en">EB 3 A - Experienced in Seismic Preparedness</option>
+                                <option value="EB3B" class="lang-zh">EB 3 B - 拥有非防震减灾相关一定经验的技术人员</option>
+                                <option value="EB3B" class="lang-en">EB 3 B - Experienced in Non-Seismic Fields</option>
+                                <option value="EB3C" class="lang-zh">EB 3 C - 无特殊要求的其他人员</option>
+                                <option value="EB3C" class="lang-en">EB 3 C - Other Applicants</option>
+                                <option value="F" class="lang-zh">F - 原群成员的副号</option>
+                                <option value="F" class="lang-en">F - Secondary Account of Existing Member</option>
                             </select>
                         </div>
                         <div style="text-align: center;">
                             <button id="start-btn" class="send-button btn-exam btn-exam-primary" style="padding: 0.8rem 2.5rem;">
-                                下一步
+                                <span class="lang-zh">下一步</span>
+                                <span class="lang-en">Next</span>
                             </button>
                         </div>
                     </div>
 
                     <div id="bypass-step" style="display: none; text-align: center;">
-                        <h2 style="margin-bottom: 1rem;">无需参加考试</h2>
+                        <h2 style="margin-bottom: 1rem;">
+                            <span class="lang-zh">无需参加考试</span>
+                            <span class="lang-en">Exam Not Required</span>
+                        </h2>
                         <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
-                            您选择的申请类型符合免考标准。您可以发送能够证明自己经验的文件到以下邮箱之一：
+                            <span class="lang-zh">您选择的申请类型符合免考标准。您可以发送能够证明自己经验的文件到以下邮箱之一：</span>
+                            <span class="lang-en">Your application type qualifies for exemption. Send supporting documents to:</span>
                         </p>
                         <div class="bypass-box">
                             <p style="margin-bottom: 0.5rem;">📧 <strong>io@crepus.asia</strong></p>
-                            <p style="margin: 0;">📧 <strong>e-crepuscular@outlook.com</strong> (推荐)</p>
+                            <p style="margin: 0;">📧 <strong>e-crepuscular@outlook.com</strong> <span class="lang-zh">(推荐)</span><span class="lang-en">(Recommended)</span></p>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
-                            <button type="button" id="send-email-btn" class="btn-exam btn-exam-secondary">一键生成邮件申请</button>
-                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-outline">仍参加考试</button>
-                            <button type="button" onclick="location.reload()" class="btn-exam btn-exam-outline">返回重选</button>
+                            <button type="button" id="send-email-btn" class="btn-exam btn-exam-secondary">
+                                <span class="lang-zh">一键生成邮件申请</span>
+                                <span class="lang-en">Generate Email</span>
+                            </button>
+                            <button type="button" id="force-exam-btn" class="btn-exam btn-exam-outline">
+                                <span class="lang-zh">仍参加考试</span>
+                                <span class="lang-en">Take Exam Anyway</span>
+                            </button>
+                            <button type="button" onclick="location.reload()" class="btn-exam btn-exam-outline">
+                                <span class="lang-zh">返回重选</span>
+                                <span class="lang-en">Go Back</span>
+                            </button>
                         </div>
                     </div>
 
@@ -65,30 +96,36 @@ import Header from '../../components/Header.astro';
 
                         <form id="exam-form">
                             <div class="form-group question-item active-q" data-q="1">
-                                <label style="display: block; font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: inherit;">1. 基本信息</label>
-                                <p class="desc-text" style="margin-bottom: 1rem; font-size: 0.9rem;">我们需要这个来辨识您。</p>
+                                <label style="display: block; font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: inherit;">
+                                    <span class="lang-zh">1. 基本信息</span>
+                                    <span class="lang-en">1. Basic Information</span>
+                                </label>
+                                <p class="desc-text" style="margin-bottom: 1rem; font-size: 0.9rem;">
+                                    <span class="lang-zh">我们需要这个来辨识您。</span>
+                                    <span class="lang-en">We need this to identify you.</span>
+                                </p>
                                 
                                 <div style="margin-bottom: 1.2rem;">
-                                    <input type="text" name="username" class="adaptive-input" placeholder="1.1 您的姓名（抖音或B站昵称，并附抖音号/B站UID）" required />
+                                    <input type="text" name="username" class="adaptive-input" data-zh-placeholder="1.1 您的姓名（抖音或B站昵称，并附抖音号/B站UID）" data-en-placeholder="1.1 Your name (Douyin/B站 username + ID)" required />
                                 </div>
                                 <div style="margin-bottom: 1.2rem;">
-                                    <input type="number" name="qq" class="adaptive-input" placeholder="1.2 您的QQ号" required />
+                                    <input type="number" name="qq" class="adaptive-input" data-zh-placeholder="1.2 您的QQ号" data-en-placeholder="1.2 Your QQ number" required />
                                 </div>
                                 <div style="margin-bottom: 1.2rem;">
-                                    <input type="email" name="email" class="adaptive-input" placeholder="1.3 您的电子邮箱（用于接收考试结果）" required />
+                                    <input type="email" name="email" class="adaptive-input" data-zh-placeholder="1.3 您的电子邮箱（用于接收考试结果）" data-en-placeholder="1.3 Your email (for exam results)" required />
                                 </div>
                                 
                                 <div id="cond-exp-a" style="display: none; margin-bottom: 1.2rem;">
-                                    <textarea name="exp_a" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 您对防震减灾相关的一些经验（简略介绍）" required></textarea>
+                                    <textarea name="exp_a" class="adaptive-input" style="min-height: 80px; resize: vertical;" data-zh-placeholder="1.4 您对防震减灾相关的一些经验（简略介绍）" data-en-placeholder="1.4 Your experience in seismic/disaster prevention" required></textarea>
                                 </div>
                                 <div id="cond-exp-b" style="display: none; margin-bottom: 1.2rem;">
-                                    <textarea name="exp_b" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 您对非防震减灾相关的经验（简略介绍）" required></textarea>
+                                    <textarea name="exp_b" class="adaptive-input" style="min-height: 80px; resize: vertical;" data-zh-placeholder="1.4 您对非防震减灾相关的经验（简略介绍）" data-en-placeholder="1.4 Your experience in other fields" required></textarea>
                                 </div>
                                 <div id="cond-exp-c" style="display: none; margin-bottom: 1.2rem;">
-                                    <textarea name="exp_c" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 对于原群成员的副号的证明" required></textarea>
+                                    <textarea name="exp_c" class="adaptive-input" style="min-height: 80px; resize: vertical;" data-zh-placeholder="1.4 对于原群成员的副号的证明" data-en-placeholder="1.4 Proof of secondary account for existing member" required></textarea>
                                 </div>
                                 <div id="cond-exp-d" style="display: none; margin-bottom: 1.2rem;">
-                                    <textarea name="exp_d" class="adaptive-input" style="min-height: 80px; resize: vertical;" placeholder="1.4 对于杰出人才 / 专业人员的证明" required></textarea>
+                                    <textarea name="exp_d" class="adaptive-input" style="min-height: 80px; resize: vertical;" data-zh-placeholder="1.4 对于杰出人才 / 专业人员的证明" data-en-placeholder="1.4 Proof of extraordinary ability / professional qualification" required></textarea>
                                 </div>
                             </div>
 
@@ -283,25 +320,46 @@ import Header from '../../components/Header.astro';
                             </div>
 
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
-                                <button type="button" id="prev-btn" class="btn-exam btn-exam-flat">&larr; 上一步</button>
-                                <button type="button" id="next-btn" class="btn-exam btn-exam-primary">下一步 &rarr;</button>
-                                <button type="submit" id="submit-btn" class="btn-exam btn-exam-secondary" style="display: none;">提交答卷</button>
+                                <button type="button" id="prev-btn" class="btn-exam btn-exam-flat">
+                                    <span class="lang-zh">&larr; 上一步</span>
+                                    <span class="lang-en">&larr; Previous</span>
+                                </button>
+                                <button type="button" id="next-btn" class="btn-exam btn-exam-primary">
+                                    <span class="lang-zh">下一步 &rarr;</span>
+                                    <span class="lang-en">Next &rarr;</span>
+                                </button>
+                                <button type="submit" id="submit-btn" class="btn-exam btn-exam-secondary" style="display: none;">
+                                    <span class="lang-zh">提交答卷</span>
+                                    <span class="lang-en">Submit</span>
+                                </button>
                             </div>
                         </form>
                     </div>
 
                     <div id="result-step" style="display: none; text-align: center;">
-                        <h2 style="margin-bottom: 0.5rem;">交卷成功</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 2rem;">考试结果将发送至您填写的邮箱中。</p>
+                        <h2 style="margin-bottom: 0.5rem;">
+                            <span class="lang-zh">交卷成功</span>
+                            <span class="lang-en">Submitted Successfully</span>
+                        </h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                            <span class="lang-zh">考试结果将发送至您填写的邮箱中。</span>
+                            <span class="lang-en">Exam results will be sent to your email.</span>
+                        </p>
 
                         <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
                             <div class="score-card">
-                                <div class="score-label">客观题得分（满分100分）</div>
+                                <div class="score-label">
+                                    <span class="lang-zh">客观题得分（满分100分）</span>
+                                    <span class="lang-en">Score (Max 100)</span>
+                                </div>
                                 <div id="res-score" class="score-num">0</div>
                             </div>
                         </div>
 
-                        <a href="/" class="btn-exam btn-exam-outline" style="text-decoration: none;">返回主页</a>
+                        <a href="/" class="btn-exam btn-exam-outline" style="text-decoration: none;">
+                            <span class="lang-zh">返回主页</span>
+                            <span class="lang-en">Home</span>
+                        </a>
                     </div>
                 </div>
 
@@ -315,6 +373,26 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <script is:inline>
+    // --- 中英文切换逻辑 ---
+    const html = document.documentElement;
+    const langBtn = document.getElementById('toggleLang');
+
+    function updatePlaceholders() {
+        const isEn = html.getAttribute('lang') === 'en';
+        document.querySelectorAll('input, textarea').forEach(el => {
+            const ph = isEn ? el.dataset.enPlaceholder : el.dataset.zhPlaceholder;
+            if (ph) el.placeholder = ph;
+        });
+    }
+
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
+            const newLang = html.getAttribute('lang') === 'en' ? 'zh' : 'en';
+            html.setAttribute('lang', newLang);
+            updatePlaceholders();
+        });
+    }
+
     // UUID 初始化逻辑
     let userUuid = localStorage.getItem('user_uuid');
     if (!userUuid) {
@@ -419,6 +497,8 @@ import Header from '../../components/Header.astro';
 
     function enterExamFlow() {
         questionsStep.style.display = 'block';
+        // 进入考试后隐藏顶部警告文字
+        document.querySelectorAll('.pre-exam-warning').forEach(el => el.style.display = 'none');
         currentQuestion = 1;
 
         // 重置经验文本域的状态
@@ -479,6 +559,8 @@ import Header from '../../components/Header.astro';
             // 从基本信息返回到申请类型选择界面
             questionsStep.style.display = 'none';
             introStep.style.display = 'block';
+            // 返回后重新显示顶部警告文字
+            document.querySelectorAll('.pre-exam-warning').forEach(el => el.style.display = '');
         }
     });
 
@@ -560,7 +642,7 @@ import Header from '../../components/Header.astro';
         }
 
         submitBtn.disabled = true;
-        submitBtn.innerText = '提交中...';
+        submitBtn.innerText = html.getAttribute('lang') === 'en' ? 'Submitting...' : '提交中...';
 
         const qqidVal = document.querySelector('input[name="qq"]').value.trim();
 
@@ -626,9 +708,23 @@ import Header from '../../components/Header.astro';
             submitBtn.innerText = '提交答卷';
         }
     });
+
+    // 初始化占位符
+    updatePlaceholders();
+
+    // 每次页面加载（ViewTransitions 切换后）再次更新
+    document.addEventListener('astro:page-load', updatePlaceholders);
 </script>
 
 <style>
+    /* 双语显示逻辑 */
+    :root { --lang-zh-display: block; --lang-en-display: none; }
+    :global(html[lang="en"]) { --lang-zh-display: none; --lang-en-display: block; }
+    .lang-zh { display: var(--lang-zh-display); }
+    .lang-en { display: var(--lang-en-display); }
+
+    .action-btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; border: 1px solid var(--card-border, #ccc); background: none; color: var(--text-muted, #888); cursor: pointer; }
+
     /* ==================== 1. 基础样式（默认/浅色模式） ==================== */
     .form-container {
         background: #ffffff;

@@ -82,16 +82,6 @@ import Header from '../components/Header.astro';
         margin: 0;
     }
 
-    .type-badge {
-        font-size: 0.7rem;
-        background: #1d1d1f;
-        color: #fff;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-
     .interest-date {
         font-size: 0.75rem;
         color: #86868b;
@@ -145,7 +135,6 @@ import Header from '../components/Header.astro';
         .interest-item:hover { border-color: rgba(255, 255, 255, 0.4); }
         .interest-title { color: #f5f5f7; }
         .interest-desc { color: #e0e0e2; }
-        .type-badge { background: #f5f5f7; color: #000; }
         .reply-box { background: rgba(255, 255, 255, 0.05); border-top-color: #f5f5f7; }
         .reply-text { color: #f5f5f7; }
         .nav-link { background: #1d1d1f; color: #f5f5f7; border-color: rgba(255, 255, 255, 0.1); }
@@ -179,8 +168,7 @@ import Header from '../components/Header.astro';
                 return `
                 <div class="interest-item" style="animation-delay: ${index * 0.05}s">
                     <div class="card-header">
-                        <span class="type-badge">${escapeHtml(msg.type || 'PUBLIC')}</span>
-                        <h3 class="interest-title">${escapeHtml(msg.title || 'Untitled')}</h3>
+                        <h3 class="interest-title" style="font-weight: 700;">${escapeHtml(msg.title || 'Untitled')}</h3>
                         <span class="interest-date">${date}</span>
                     </div>
                     <p class="interest-desc">${escapeHtml(msg.content)}</p>
@@ -194,5 +182,5 @@ import Header from '../components/Header.astro';
             container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ff6b6b;">Failed to load messages.</p>`;
         }
     }
-    document.addEventListener('DOMContentLoaded', loadMessages);
+    document.addEventListener('astro:page-load', loadMessages);
 </script>

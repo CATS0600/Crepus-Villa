@@ -4,10 +4,11 @@
 <header class="apple-header">
     <nav class="safe-zone">
         <a href="/" class="logo">Crepuscular's Villa</a>
+        <div class="nav-spacer"></div>
         <div class="links">
-            <a href="/about" class="nav-about">About</a>
-            <a href="/sponsor" class="nav-sponsor">Sponsor</a>
-            <a href="/application/kemdr" class="nav-application">KVIV</a>
+            <a href="/about" class="nav-about" data-full="About" data-short="Ab.">About</a>
+            <a href="/sponsor" class="nav-sponsor" data-full="Sponsor" data-short="Sp.">Sponsor</a>
+            <a href="/application/kemdr" class="nav-application" data-full="KVIV" data-short="KV.">KVIV</a>
         </div>
     </nav>
 </header>
@@ -30,38 +31,51 @@
         width: 100%;
         max-width: 1200px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
-        padding: 0 var(--container-padding, 1.5rem);
+        padding: 0 var(--safe-area, 20px);
+        gap: 12px;
     }
     
-    /* 核心修改部分 */
+    .nav-spacer {
+        flex: 1;
+        min-width: 8px;
+    }
+
     .logo { 
-        font-family: 'RAGE', cursive; /* 引用全局定义的 RAGE */
-        font-size: 1.5rem; /* RAGE 字体通常偏小，适当放大 */
-        font-weight: normal; /* 书法字体通常不需要额外的加粗 */
+        font-family: 'RAGE', cursive;
+        font-size: 1.5rem;
+        font-weight: normal;
         text-decoration: none; 
         color: var(--text-main, #1d1d1f); 
         transition: opacity 0.3s;
+        flex-shrink: 0;
+        margin-right: 4px;
     }
     .logo:hover {
         opacity: 0.8;
     }
 
-    .links { display: flex; gap: 30px; }
+    .links { 
+        display: flex; 
+        gap: 30px; 
+        flex-shrink: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
     .links a { 
         text-decoration: none; 
         color: #86868b; 
         font-size: 14px; 
         transition: color 0.3s;
+        white-space: nowrap;
     }
     .links a:hover { color: #1d1d1f; }
 
     @media (max-width: 640px) {
-        nav { justify-content: flex-start; }
-        .links { margin-left: auto; gap: 16px; }
+        .links { gap: 16px; }
         .links a { font-size: 13px; }
-        .logo { font-size: 1.3rem; } /* 移动端稍作缩小 */
+        .logo { font-size: 1.3rem; }
     }
 
     @media (prefers-color-scheme: dark) {
@@ -270,10 +284,47 @@ function initBirthdayParticles() {
   };
 }
 
+function abbreviateNavLinks() {
+  const links = document.querySelectorAll('.links a');
+  const nav = document.querySelector('nav');
+  if (!nav || !links.length) return;
+
+  const navRect = nav.getBoundingClientRect();
+  const linksEl = document.querySelector('.links');
+  if (!linksEl) return;
+  const linksRect = linksEl.getBoundingClientRect();
+
+  const overflowRight = linksRect.right > navRect.right;
+  const overflowLeft = linksRect.left < navRect.left;
+
+  if (overflowRight || overflowLeft) {
+    links.forEach(a => {
+      const short = a.getAttribute('data-short');
+      if (short && a.textContent !== short) {
+        a.textContent = short;
+      }
+    });
+  } else {
+    links.forEach(a => {
+      const full = a.getAttribute('data-full');
+      if (full && a.textContent !== full) {
+        a.textContent = full;
+      }
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   attachLogoEasterEgg();
+  abbreviateNavLinks();
   if (isBirthdaySpecialized) {
     initBirthdayParticles();
   }
 });
+
+document.addEventListener('astro:page-load', () => {
+  abbreviateNavLinks();
+});
+
+window.addEventListener('resize', abbreviateNavLinks);
 </script>

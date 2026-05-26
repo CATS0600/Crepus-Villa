@@ -6,6 +6,10 @@
 ALTER TABLE messages ADD COLUMN reply_method TEXT DEFAULT 'web';
 ALTER TABLE messages ADD COLUMN email TEXT;
 
+-- v2 迁移：添加 title 和 status 列
+ALTER TABLE messages ADD COLUMN title TEXT DEFAULT '';
+ALTER TABLE messages ADD COLUMN status TEXT DEFAULT 'PENDING';
+
 -- 验证迁移成功
 -- 运行以下查询检查表结构
 -- PRAGMA table_info(messages);

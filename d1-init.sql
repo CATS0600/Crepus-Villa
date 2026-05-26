@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS messages (
   token TEXT,
   reply_method TEXT DEFAULT 'web',
   email TEXT,
+  title TEXT DEFAULT '',
+  status TEXT DEFAULT 'PENDING',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

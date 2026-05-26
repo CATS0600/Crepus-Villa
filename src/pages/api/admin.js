@@ -11,11 +11,11 @@ export const PATCH = async ({ request, locals }) => {
         const auth = validateAdminPassword(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
-        const { id, content, reply, reply_method, type } = await request.json();
+        const { id, content, reply, reply_method, status, title, is_public } = await request.json();
         
         await env.DB.prepare(
-            `UPDATE messages SET content = ?, reply = ?, reply_method = ?, type = ? WHERE id = ?`
-        ).bind(content || '', reply || null, reply_method || 'web', type || 'PENDING', id).run();
+            `UPDATE messages SET content = ?, reply = ?, reply_method = ?, status = ?, title = ?, is_public = ? WHERE id = ?`
+        ).bind(content || '', reply || null, reply_method || 'web', status || 'PENDING', title || '', is_public !== undefined ? (is_public ? 1 : 0) : 0, id).run();
 
         return new Response(JSON.stringify({ success: true }), { 
             status: 200,

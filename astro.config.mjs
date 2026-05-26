@@ -5,7 +5,8 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   // 核心修复：开启服务端渲染模式，这样 API 路由才能处理 POST 请求
-  output: 'server', 
+  output: 'server',
+  prefetch: true,
   
   integrations: [tailwind()],
   adapter: cloudflare({

@@ -98,18 +98,37 @@ import Header from '../components/Header.astro';
                 return;
             }
 
-            list.innerHTML = messages.map(item => `
-                <div class="record-card">
+                    list.innerHTML = messages.map(item => {
+                const statusVal = item.status || 'PENDING';
+                const pubChecked = item.is_public ? 'checked' : '';
+                return `
+                <div class="record-card status-${statusVal.toLowerCase()}">
                     <div class="record-meta">
                         <span>TIME: ${new Date(item.created_at).toLocaleString()}</span>
                         <span>ID: #${item.id}</span>
-                        <span>TITLE: <strong class="highlight-text">${escapeHtml(item.title || 'Untitled')}</strong></span>
+                        <span>STATUS: <strong class="status-badge status-${statusVal.toLowerCase()}">${statusVal}</strong></span>
                     </div>
                     
                     <div class="record-body" style="margin-top: 10px;">
                         <div style="font-size: 12px; color: #666; margin-bottom: 8px; font-family: monospace; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                            <label>REPLY METHOD: <input type="text" id="rmethod-${item.id}" value="${escapeHtml(item.reply_method || 'web')}" class="admin-edit-input" style="width:60px;" /></label>
-                            <label>STATUS: <input type="text" id="rtype-${item.id}" value="${escapeHtml(item.type || 'PENDING')}" class="admin-edit-input" style="width:80px;" /></label>
+                            <label>TITLE: <input type="text" id="rtitle-${item.id}" value="${escapeHtml(item.title || '')}" class="admin-edit-input" style="width:120px;" placeholder="Untitled" /></label>
+                            <label>REPLY METHOD: 
+                                <select id="rmethod-${item.id}" class="admin-edit-select">
+                                    <option value="web" ${item.reply_method === 'web' ? 'selected' : ''}>Web</option>
+                                    <option value="email" ${item.reply_method === 'email' ? 'selected' : ''}>Email</option>
+                                </select>
+                            </label>
+                            <label>STATUS: 
+                                <select id="rstatus-${item.id}" class="admin-edit-select">
+                                    <option value="PENDING" ${statusVal === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                                    <option value="COMPLETED" ${statusVal === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
+                                    <option value="ARCHIVED" ${statusVal === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
+                                </select>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:4px;">
+                                <input type="checkbox" id="rpublic-${item.id}" ${pubChecked} />
+                                PUBLIC
+                            </label>
                             ${item.email ? `<span>| EMAIL: <span style="color: #aaa;">${escapeHtml(item.email)}</span></span>` : ''}
                             ${item.token ? `<span>| TOKEN: <span style="color: #444;">${escapeHtml(item.token)}</span></span>` : ''}
                         </div>
@@ -129,8 +148,8 @@ import Header from '../components/Header.astro';
                         <button onclick="updateMessage(${item.id})" class="update-btn">UPDATE</button>
                         <button onclick="deleteData('send', ${item.id})" class="delete-btn">DELETE</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         } catch (e) {
             document.getElementById('messageList').innerHTML = `<p class="status-placeholder" style="color: #ff5f56;">ERROR LOADING MESSAGES</p>`;
         }
@@ -208,7 +227,9 @@ import Header from '../components/Header.astro';
         const content = document.getElementById(`rcontent-${id}`).value;
         const reply = document.getElementById(`rreply-${id}`).value;
         const reply_method = document.getElementById(`rmethod-${id}`).value;
-        const type = document.getElementById(`rtype-${id}`).value;
+        const status = document.getElementById(`rstatus-${id}`).value;
+        const title = document.getElementById(`rtitle-${id}`).value;
+        const is_public = document.getElementById(`rpublic-${id}`).checked ? 1 : 0;
 
         try {
             const btn = document.querySelector(`button[onclick="updateMessage(${id})"]`);
@@ -218,7 +239,7 @@ import Header from '../components/Header.astro';
             const res = await fetch('/api/admin', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
-                body: JSON.stringify({ id, content, reply, reply_method, type })
+                body: JSON.stringify({ id, content, reply, reply_method, status, title, is_public })
             });
             
             if (res.ok) {
@@ -330,6 +351,31 @@ import Header from '../components/Header.astro';
         border-radius: 2px;
         outline: none;
     }
+    .admin-edit-select {
+        background: rgba(0,0,0,0.3);
+        border: 1px dashed #444;
+        color: #fff;
+        padding: 2px 4px;
+        font-family: monospace;
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+    }
+    .admin-edit-select option {
+        background: #111;
+        color: #fff;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .status-badge.status-pending { color: #ffa940; background: rgba(255, 169, 64, 0.15); border: 1px solid rgba(255, 169, 64, 0.3); }
+    .status-badge.status-completed { color: #00ff66; background: rgba(0, 255, 102, 0.15); border: 1px solid rgba(0, 255, 102, 0.3); }
+    .status-badge.status-archived { color: #888; background: rgba(136, 136, 136, 0.15); border: 1px solid rgba(136, 136, 136, 0.3); }
     .admin-edit-textarea {
         width: 100%;
         min-height: 60px;
