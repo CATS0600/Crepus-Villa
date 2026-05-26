@@ -14,8 +14,8 @@ import Header from '../../components/Header.astro';
                 </div>
 
                 <h1 style="text-align: center; margin-bottom: 1rem; font-size: 2.4rem;">
-                    <span class="lang-zh">🌍 DPMBG 入群申请(Comming Soon)</span>
-                    <span class="lang-en">🌍 DPMBG Application(Comming Soon)</span>
+                    <span class="lang-zh">🌍 DPMBG 入群申请</span>
+                    <span class="lang-en">🌍 DPMBG Application</span>
                 </h1>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
                     Disaster Prevention and Mitigation Basic Group<br/>
@@ -87,8 +87,8 @@ import Header from '../../components/Header.astro';
 
                         <input type="hidden" id="group_id" name="group_id" value="dpmbg" />
                         <button type="submit" class="submit-btn">
-                            <span class="lang-zh">Coming Soon</span>
-                            <span class="lang-en">Coming Soon</span>
+                            <span class="lang-zh">提交申请</span>
+                            <span class="lang-en">Submit</span>
                         </button>
                     </form>
 
@@ -165,7 +165,6 @@ import Header from '../../components/Header.astro';
 </style>
 
 <script>
-    // @ts-nocheck
     const html = document.documentElement;
     const form = document.getElementById('applicationForm');
     const replyMethod = document.getElementById('reply_method');
@@ -201,15 +200,61 @@ import Header from '../../components/Header.astro';
         }
     });
 
-    // 3. 字数统计与提交逻辑 (保持原逻辑并适配多语言报错)
+    // 3. 字数统计与提交逻辑
+    const submitBtn = form.querySelector('.submit-btn');
+    const successMsg = document.getElementById('successMessage');
+    const errorMsg = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+
+    function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.style.display = 'block';
+        successMsg.style.display = 'none';
+    }
+
+    function showSuccess() {
+        errorMsg.style.display = 'none';
+        form.style.display = 'none';
+        successMsg.style.display = 'block';
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const isEn = html.getAttribute('lang') === 'en';
-        
-        // ... 原有的 fetch 逻辑，可根据 isEn 变量定制报错文本 ...
-        // 示例：showError(isEn ? "Please fill all fields" : "请填写所有必填字段");
-        
-        // 此处省略重复的提交代码以保持简洁，逻辑同你原有的脚本
+
+        const username = document.getElementById('username').value.trim();
+        const social_id = document.getElementById('social_id').value.trim();
+        const answers = document.getElementById('answers').value.trim();
+
+        if (!username || !social_id || !answers) {
+            showError(isEn ? "Please fill all required fields" : "请填写所有必填字段");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = isEn ? 'Submitting...' : '提交中...';
+
+        try {
+            const res = await fetch('/api/apply/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, social_id, answers, group_id: 'dpmbg' })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                showSuccess();
+            } else {
+                showError(data.error || (isEn ? 'Submission failed' : '提交失败'));
+                submitBtn.disabled = false;
+                submitBtn.textContent = isEn ? 'Submit' : '提交申请';
+            }
+        } catch (err) {
+            showError(isEn ? 'Network error, please try again' : '网络错误，请重试');
+            submitBtn.disabled = false;
+            submitBtn.textContent = isEn ? 'Submit' : '提交申请';
+        }
     });
 
     // 初始化占位符

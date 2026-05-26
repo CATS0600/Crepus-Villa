@@ -274,46 +274,8 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <script>
-    // Scroll reveal animation using Intersection Observer
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-
-    // Observe all scroll-reveal elements
-    document.querySelectorAll('.scroll-reveal').forEach(element => {
-        observer.observe(element);
-    });
-
-    // Editable timeline functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const timelineItems = document.querySelectorAll('.timeline li[contenteditable]');
-
-        // Load saved content from localStorage
-        timelineItems.forEach(item => {
-            const key = item.getAttribute('data-key');
-            const savedContent = localStorage.getItem(`timeline_${key}`);
-            if (savedContent) {
-                item.innerHTML = savedContent;
-            }
-        });
-
-        // Save content to localStorage on input
-        timelineItems.forEach(item => {
-            item.addEventListener('input', () => {
-                const key = item.getAttribute('data-key');
-                localStorage.setItem(`timeline_${key}`, item.innerHTML);
-            });
-        });
-    });
+    import { initAboutPage } from '../../lib/about.js';
+    initAboutPage();
 </script>
 
 <style>

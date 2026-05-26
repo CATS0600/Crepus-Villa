@@ -135,6 +135,7 @@ import Header from '../../components/Header.astro';
                     </p>
                     <p class="section-text">
                         Crepuscular symbolizes the gentlest gray-blue hue at the transition between day and night. It belongs neither to the scorching heat of the sun nor the deathly silence of the night, but rather to the dynamism that lingers between dawn and dusk. Choosing this name represents a unique aesthetic of seeking order in chaos and capturing balance between light and shadow.
+                    </p>
                     <p class="section-text">
                         Cyril, on the other hand, is a name that carries a classical resonance. It's like a beautifully bound old book, possessing both academic rigor and gentlemanly gentleness. Even though the name carries a somewhat dignified connotation in Greek, I strive to make my life as serene and refined as the "grandeur" it derives from.
                     </p>
@@ -271,46 +272,8 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <script>
-    // Scroll reveal animation using Intersection Observer
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-
-    // Observe all scroll-reveal elements
-    document.querySelectorAll('.scroll-reveal').forEach(element => {
-        observer.observe(element);
-    });
-
-    // Editable timeline functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const timelineItems = document.querySelectorAll('.timeline li[contenteditable]');
-
-        // Load saved content from localStorage
-        timelineItems.forEach(item => {
-            const key = item.getAttribute('data-key');
-            const savedContent = localStorage.getItem(`timeline_${key}`);
-            if (savedContent) {
-                item.innerHTML = savedContent;
-            }
-        });
-
-        // Save content to localStorage on input
-        timelineItems.forEach(item => {
-            item.addEventListener('input', () => {
-                const key = item.getAttribute('data-key');
-                localStorage.setItem(`timeline_${key}`, item.innerHTML);
-            });
-        });
-    });
+    import { initAboutPage } from '../../lib/about.js';
+    initAboutPage();
 </script>
 
 <style>

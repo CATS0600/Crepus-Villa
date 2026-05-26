@@ -36,7 +36,6 @@ const tracks = getBgmPlaylist();
 </div>
 
 <script>
-  //@ts-nocheck
   import { bgmController } from '../lib/BgmController';
 
   const STORAGE_COLLAPSE_KEY = 'CrepusVilla-BGM-Panel-Collapsed';
@@ -130,7 +129,6 @@ const tracks = getBgmPlaylist();
 
   function updatePanelState() {
     if (!currentTitle || !toggleButton || !bgmController.playlist) return;
-    if (!currentTitle || !toggleButton) return;
     const track = bgmController.playlist[bgmController.currentTrackId];
     currentTitle.textContent = track?.title ?? '未知曲目';
     toggleButton.textContent = bgmController.audio?.paused ? '▶' : '❚❚';

@@ -48,6 +48,17 @@ export const POST = async ({ request, locals }) => {
       });
     }
 
+    // 速率限制：相同 user_uuid 每小时最多提交 3 次
+    const rateResult = await env.DB.prepare(
+      `SELECT COUNT(*) as count FROM exam_records WHERE user_uuid = ? AND created_at > datetime('now', '-1 hour')`
+    ).bind(user_uuid).first();
+    if (rateResult && Number(rateResult.count) >= 3) {
+      return new Response(JSON.stringify({ error: '提交过于频繁，请 1 小时后再试' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // 将申请类型也并入 answers 中方便后续在数据库查看
     if (app_type) {
       parsedAnswers.app_type = app_type;

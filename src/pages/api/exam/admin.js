@@ -1,27 +1,13 @@
+import { validateAdminPassword } from '../../../lib/auth.js';
+
 export const prerender = false;
-
-const ADMIN_HASH = "443d24733cc9f2b66b66639313c5481ce7d35a36bf6523d1c5ab64332ed1b2ab";
-
-function validateAdminPassword(request) {
-    const clientToken = request.headers.get('X-Admin-Token');
-    if (!clientToken || clientToken !== ADMIN_HASH) {
-        return {
-            valid: false,
-            response: new Response(JSON.stringify({ error: 'UNAUTHORIZED' }), { 
-                status: 401, 
-                headers: { 'Content-Type': 'application/json' } 
-            })
-        };
-    }
-    return { valid: true };
-}
 
 export const GET = async ({ request, locals }) => {
     try {
         const env = locals.runtime?.env;
         if (!env?.DB) throw new Error('Database not available');
         
-        const auth = validateAdminPassword(request);
+        const auth = validateAdminPassword(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const result = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
@@ -79,7 +65,7 @@ export const GET = async ({ request, locals }) => {
 export const DELETE = async ({ request, locals }) => {
     try {
         const env = locals.runtime?.env;
-        const auth = validateAdminPassword(request);
+        const auth = validateAdminPassword(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const { id } = await request.json();

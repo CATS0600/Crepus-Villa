@@ -236,12 +236,17 @@ import Header from '../components/Header.astro';
     window.deleteData = async function(type, id) {
         if (!confirm("CONFIRM DATA DELETION? \n此操作直接作用于 Cloudflare D1 数据库且无法恢复。")) return;
         try {
-            await fetch(type === 'send' ? '/api/admin' : '/api/exam/admin', {
+            const res = await fetch(type === 'send' ? '/api/admin' : '/api/exam/admin', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
                 body: JSON.stringify({ id })
             });
-            type === 'send' ? loadMessages() : loadApplications();
+            if (res.ok) {
+                type === 'send' ? loadMessages() : loadApplications();
+            } else {
+                const data = await res.json();
+                alert('删除失败：' + (data.error || '未知错误'));
+            }
         } catch (err) {
             alert('删除异常，请检查权限。');
         }

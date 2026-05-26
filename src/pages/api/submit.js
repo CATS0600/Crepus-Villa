@@ -1,3 +1,5 @@
+import { validateEmail } from '../../lib/validation.js';
+
 export const POST = async ({ request, locals }) => {
   try {
     const env = locals.runtime?.env;
@@ -61,7 +63,3 @@ export const POST = async ({ request, locals }) => {
   }
 };
 
-function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-}
