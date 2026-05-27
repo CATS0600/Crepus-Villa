@@ -480,6 +480,7 @@ import Header from '../../components/Header.astro';
         }
 
         introStep.style.display = 'none';
+        setNavButtonsVisible(false);
 
         if (['F', 'EB1', 'EB2'].includes(selectedAppType)) {
             // 免考通道
@@ -496,8 +497,15 @@ import Header from '../../components/Header.astro';
         enterExamFlow();
     });
 
+    function setNavButtonsVisible(visible) {
+        prevBtn.style.display = visible ? '' : 'none';
+        nextBtn.style.display = visible ? '' : 'none';
+        submitBtn.style.display = 'none';
+    }
+
     function enterExamFlow() {
         questionsStep.style.display = 'block';
+        setNavButtonsVisible(true);
         // 进入考试后隐藏顶部警告文字
         document.querySelectorAll('.pre-exam-warning').forEach(el => el.style.display = 'none');
         currentQuestion = 1;
@@ -559,6 +567,7 @@ import Header from '../../components/Header.astro';
         } else if (currentQuestion === 1) {
             // 从基本信息返回到申请类型选择界面
             questionsStep.style.display = 'none';
+            setNavButtonsVisible(false);
             introStep.style.display = 'block';
             // 返回后重新显示顶部警告文字
             document.querySelectorAll('.pre-exam-warning').forEach(el => el.style.display = '');

@@ -312,6 +312,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
             }
         }
 
+        window.updateMemberCounter = updateMemberCounter;
+
         if (typeof window !== 'undefined') {
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', updateMemberCounter);
@@ -1033,6 +1035,9 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         preloadImages();
         setupScrollToQuoteBtn();
         type();
+        if (typeof window.updateMemberCounter === 'function') {
+            window.updateMemberCounter();
+        }
         window.addEventListener('scroll', handleScroll);
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });

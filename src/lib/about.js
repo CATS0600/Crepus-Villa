@@ -12,9 +12,27 @@ export function initAboutPage() {
     });
   }, observerOptions);
 
-  document.querySelectorAll('.scroll-reveal').forEach(element => {
+  const revealElements = document.querySelectorAll('.scroll-reveal');
+
+  revealElements.forEach(element => {
     observer.observe(element);
   });
+
+  if (revealElements.length > 0) {
+    const viewportHeight = window.innerHeight;
+    revealElements.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < viewportHeight - 100) {
+        el.classList.add('visible');
+      }
+    });
+  }
+
+  setTimeout(() => {
+    document.querySelectorAll('.scroll-reveal:not(.visible)').forEach(el => {
+      el.classList.add('visible');
+    });
+  }, 3000);
 
   document.addEventListener('DOMContentLoaded', () => {
     const timelineItems = document.querySelectorAll('.timeline li[contenteditable]');
