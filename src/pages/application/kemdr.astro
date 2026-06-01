@@ -433,6 +433,9 @@ import Header from '../../components/Header.astro';
     const txtExpC = document.querySelector('textarea[name="exp_c"]');
     const txtExpD = document.querySelector('textarea[name="exp_d"]');
 
+    // 初始隐藏导航按钮（申请类型/免考页面不应显示）
+    setNavButtonsVisible(false);
+
     // 剪贴板后备方案，应对由于安全限制导致的 navigator.clipboard 失效
     function copyTextToClipboard(text) {
         const textArea = document.createElement("textarea");

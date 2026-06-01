@@ -22,7 +22,12 @@ export async function GET({ request, locals }) {
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
-            const recordsResult = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
+            let recordsResult;
+            try {
+                recordsResult = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
+            } catch (_) {
+                recordsResult = { results: [] };
+            }
             let messagesResult;
             try {
                 messagesResult = await env.DB.prepare("SELECT * FROM messages ORDER BY CASE status WHEN 'PENDING' THEN 0 WHEN 'COMPLETED' THEN 1 WHEN 'ARCHIVED' THEN 2 ELSE 3 END, id DESC").all();

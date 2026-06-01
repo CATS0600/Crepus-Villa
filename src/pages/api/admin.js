@@ -13,9 +13,15 @@ export const PATCH = async ({ request, locals }) => {
 
         const { id, content, reply, reply_method, status, title, is_public } = await request.json();
         
-        await env.DB.prepare(
-            `UPDATE messages SET content = ?, reply = ?, reply_method = ?, status = ?, title = ?, is_public = ? WHERE id = ?`
-        ).bind(content || '', reply || null, reply_method || 'web', status || 'PENDING', title || '', is_public !== undefined ? (is_public ? 1 : 0) : 0, id).run();
+        try {
+            await env.DB.prepare(
+                `UPDATE messages SET content = ?, reply = ?, reply_method = ?, status = ?, title = ?, is_public = ? WHERE id = ?`
+            ).bind(content || '', reply || null, reply_method || 'web', status || 'PENDING', title || '', is_public !== undefined ? (is_public ? 1 : 0) : 0, id).run();
+        } catch (_) {
+            await env.DB.prepare(
+                `UPDATE messages SET content = ?, reply = ?, reply_method = ?, title = ?, is_public = ? WHERE id = ?`
+            ).bind(content || '', reply || null, reply_method || 'web', title || '', is_public !== undefined ? (is_public ? 1 : 0) : 0, id).run();
+        }
 
         return new Response(JSON.stringify({ success: true }), { 
             status: 200,
