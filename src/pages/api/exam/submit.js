@@ -59,6 +59,9 @@ export const POST = async ({ request, locals }) => {
       });
     }
 
+    // 校验客户端时间戳（记录作答耗时）
+    const clientTimestamp = body.client_timestamp;
+
     // 将申请类型也并入 answers 中方便后续在数据库查看
     if (app_type) {
       parsedAnswers.app_type = app_type;
@@ -145,6 +148,34 @@ export const POST = async ({ request, locals }) => {
     // 校验 B: qqid 没变，但是提交的物理设备/环境 user_uuid 与之前不符
     if (lastRecordByQqid && lastRecordByQqid.user_uuid !== user_uuid) {
       notes.push('[ACHTUNG] 同用户环境修改');
+    }
+
+    // 校验 C: 提交速度异常检测
+    const singleKeys = Object.keys(standardAnswersSingle);
+    const multiKeys = Object.keys(standardAnswersMulti);
+    let answeredCount = 0;
+    singleKeys.forEach(key => {
+      if (parsedAnswers[key] && String(parsedAnswers[key]).trim()) answeredCount++;
+    });
+    multiKeys.forEach(key => {
+      const arr = Array.isArray(parsedAnswers[key]) ? parsedAnswers[key] : [];
+      if (arr.length > 0) answeredCount++;
+    });
+    const totalExamQuestions = singleKeys.length + multiKeys.length;
+    if (answeredCount < totalExamQuestions && clientTimestamp) {
+      const elapsed = Date.now() - Number(clientTimestamp);
+      if (elapsed < 180000) {
+        notes.push('[ACHTUNG] 极速提交');
+      }
+    }
+
+    // 校验 D: 作答时间过长
+    if (clientTimestamp) {
+      const durationMs = Date.now() - Number(clientTimestamp);
+      const durationMin = Math.floor(durationMs / 60000);
+      if (durationMin > 35) {
+        notes.push(`[ACHTUNG] 作答时间过长:${durationMin}分钟`);
+      }
     }
     
     const achtung_notes = notes.length > 0 ? notes.join(' ') : null;
