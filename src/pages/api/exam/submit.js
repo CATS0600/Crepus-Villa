@@ -177,6 +177,11 @@ export const POST = async ({ request, locals }) => {
         notes.push(`[ACHTUNG] 作答时间过长:${durationMin}分钟`);
       }
     }
+
+    // 校验 E: 多次截屏检测
+    if (body.prtscn_count && Number(body.prtscn_count) > 10) {
+      notes.push(`[ACHTUNG] 多次截屏:${body.prtscn_count}次`);
+    }
     
     const achtung_notes = notes.length > 0 ? notes.join(' ') : null;
 
