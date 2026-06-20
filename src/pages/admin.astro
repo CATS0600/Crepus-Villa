@@ -221,13 +221,13 @@ import Header from '../components/Header.astro';
                         }
                     });
                     answersHtml = `
-                        <div class="exam-answers-details">
-                            <span class="toggle-answers" style="color: #1890ff;">查看作答详情 &darr;</span>
-                            <div class="answers-content" style="display: none;">
+                        <details class="exam-answers-details">
+                            <summary class="toggle-answers" style="color: #1890ff; cursor: pointer;">查看作答详情</summary>
+                            <div class="answers-content" style="padding: 15px; background: #080808; border: 1px solid #161616; border-radius: 4px; margin-top: 10px;">
                                 ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
                                 ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
                             </div>
-                        </div>
+                        </details>
                     `;
                 }
 
@@ -351,12 +351,6 @@ import Header from '../components/Header.astro';
         }
     });
 
-    document.addEventListener('click', (e) => {
-        const toggle = e.target.closest('.toggle-answers');
-        if (!toggle) return;
-        const content = toggle.parentElement.querySelector('.answers-content');
-        if (content) content.style.display = content.style.display === 'none' ? 'block' : 'none';
-    });
 </script>
 
 <style>
@@ -400,9 +394,10 @@ import Header from '../components/Header.astro';
     .uuid-footprint { font-family: monospace; font-size: 10px; color: #444; margin-top: 10px; }
     .uuid-footprint span { color: #666; }
     .exam-answers-details { margin: 15px 0; }
-    .toggle-answers { font-size: 11px; color: #00ff66; font-family: monospace; cursor: pointer; text-decoration: underline; user-select: none; }
-    .answers-content { display: none; margin-top: 10px; background: #080808; border: 1px solid #161616; padding: 15px; border-radius: 4px; font-size: 12px; color: #999; }
-    .answers-content.active { display: block; animation: slideDown 0.2s ease; }
+    .toggle-answers { font-size: 11px; color: #00ff66; font-family: monospace; cursor: pointer; text-decoration: underline; user-select: none; padding: 4px 0; }
+    .toggle-answers::-webkit-details-marker { display: none; }
+    .exam-answers-details[open] .toggle-answers { margin-bottom: 6px; }
+    .answers-content { font-size: 12px; color: #999; }
     .answers-content p { margin-bottom: 6px; }
     .basic-info-section { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #222; }
     .basic-title, .comp-title { font-size: 10px; color: #555; font-family: monospace; margin-bottom: 8px; letter-spacing: 1px; }
