@@ -746,13 +746,10 @@ import Header from '../../components/Header.astro';
             const data = await response.json();
             
             if (response.ok && data.success) {
-                disableExamShortcutBlock();
                 clearExamState();
                 localStorage.removeItem(PRTSCN_STORAGE_KEY);
-                progressBar.style.width = '100%';
-                questionsStep.style.display = 'none';
-                resultStep.style.display = 'block';
-                document.getElementById('res-score').innerText = data.exam_result || "未定";
+                window.location.href = '/application/next';
+                return;
             } else {
                 alert(data.error || '提交异常，请稍后再试。');
                 submitBtn.disabled = false;
@@ -961,7 +958,16 @@ import Header from '../../components/Header.astro';
             startTime: examStartTime,
             appType: selectedAppType,
             currentQuestion: currentQuestion,
-            answers: answers
+            answers: answers,
+            basicInfo: {
+                username: document.querySelector('input[name="username"]')?.value || '',
+                qq: document.querySelector('input[name="qq"]')?.value || '',
+                email: document.querySelector('input[name="email"]')?.value || '',
+                exp_a: txtExpA?.value || '',
+                exp_b: txtExpB?.value || '',
+                exp_c: txtExpC?.value || '',
+                exp_d: txtExpD?.value || ''
+            }
         };
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -1105,6 +1111,21 @@ import Header from '../../components/Header.astro';
             }
         }
 
+        // 恢复基本信息
+        if (saved.basicInfo) {
+            const bi = saved.basicInfo;
+            const nameInput = document.querySelector('input[name="username"]');
+            const qqInput = document.querySelector('input[name="qq"]');
+            const emailInput = document.querySelector('input[name="email"]');
+            if (nameInput) nameInput.value = bi.username || '';
+            if (qqInput) qqInput.value = bi.qq || '';
+            if (emailInput) emailInput.value = bi.email || '';
+            if (txtExpA) txtExpA.value = bi.exp_a || '';
+            if (txtExpB) txtExpB.value = bi.exp_b || '';
+            if (txtExpC) txtExpC.value = bi.exp_c || '';
+            if (txtExpD) txtExpD.value = bi.exp_d || '';
+        }
+
         // 跳转到断点
         if (saved.currentQuestion && saved.currentQuestion > 1) {
             currentQuestion = saved.currentQuestion;
@@ -1115,11 +1136,7 @@ import Header from '../../components/Header.astro';
     // 在页面加载时尝试恢复
     tryRestoreSession();
 
-    // 初始化占位符
     updatePlaceholders();
-
-    // 每次页面加载（ViewTransitions 切换后）再次更新
-    document.addEventListener('astro:page-load', updatePlaceholders);
 </script>
 
 <style>

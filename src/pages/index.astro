@@ -1031,7 +1031,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         galleryObserver.observe(gallerySection);
     }
 
-    document.addEventListener('astro:page-load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         preloadImages();
         setupScrollToQuoteBtn();
         type();
@@ -1085,7 +1085,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     ease: "power2.in" 
                 })
                 .call(() => {
-                    // 随机选择一个文字
                     const randomIndex = Math.floor(Math.random() * cl16Words.length);
                     cl16Title.innerText = cl16Words[randomIndex];
                 })
@@ -1125,7 +1124,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     toggleGalleryText.textContent = 'Villa Gallery';
                     toggleGalleryIcon.textContent = '🏞️';
                     
-                    // 当折叠时，可以将其滚动到视野中央避免失去焦点
                     toggleGalleryBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             });

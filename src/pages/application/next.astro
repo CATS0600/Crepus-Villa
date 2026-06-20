@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+---
+
+<Layout title="Submitted - Crepuscular's Villa">
+    <Header />
+    
+    <main class="main-content">
+        <section class="content-section reveal active">
+            <div class="container safe-zone" style="max-width: 600px; margin: 2rem auto; text-align: center;">
+                <div class="form-container" style="padding: 3rem 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">You are all set!</h1>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
+                        <span class="lang-zh">您的答卷已成功提交。考试结果将发送至您填写的邮箱中。</span>
+                        <span class="lang-en">Your exam has been submitted successfully. Results will be sent to your email.</span>
+                    </p>
+                    <p style="margin-bottom: 2rem;">
+                        <span class="lang-zh">有任何问题？来联系我吧！</span>
+                        <span class="lang-en">Have any issues? Turn into me!</span>
+                    </p>
+                    <a href="https://qm.qq.com/q/Qme3jDzp2G" class="send-button" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: inline-block;">
+                        <span class="send-text">QQ</span>
+                    </a>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="/" class="btn-exam btn-exam-outline" style="text-decoration: none;">
+                            <span class="lang-zh">返回主页</span>
+                            <span class="lang-en">Back to Home</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .form-container {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        color: #000000;
+    }
+    @media (prefers-color-scheme: dark) {
+        .form-container {
+            background: #000000 !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .form-container p { color: rgba(255, 255, 255, 0.7) !important; }
+        .form-container h1 { color: #ffffff !important; }
+    }
+    .btn-exam {
+        padding: 0.6rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        display: inline-block;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .btn-exam-outline {
+        background: transparent;
+        border: 1px solid #d1d5db;
+        color: #000000;
+    }
+    .btn-exam-outline:hover { background: rgba(0, 0, 0, 0.05); }
+    @media (prefers-color-scheme: dark) {
+        .btn-exam-outline {
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .btn-exam-outline:hover { background: rgba(255, 255, 255, 0.05) !important; }
+    }
+</style>

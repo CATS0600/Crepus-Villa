@@ -131,13 +131,7 @@ const tracks = getBgmPlaylist();
     if (!currentTitle || !toggleButton || !bgmController.playlist) return;
     const track = bgmController.playlist[bgmController.currentTrackId];
     currentTitle.textContent = track?.title ?? '未知曲目';
-    if (bgmController.isLoading) {
-      toggleButton.classList.add('bgm-toggle-loading');
-      toggleButton.innerHTML = '<span class="bgm-spinner"></span>';
-    } else {
-      toggleButton.classList.remove('bgm-toggle-loading');
-      toggleButton.textContent = bgmController.audio?.paused ? '▶' : '❚❚';
-    }
+    toggleButton.textContent = bgmController.audio?.paused ? '▶' : '❚❚';
     renderTrackList();
   }
 
@@ -217,8 +211,6 @@ const tracks = getBgmPlaylist();
     sortButton.onclick = toggleSortMode;
 
     attachAudioListeners();
-    window.addEventListener('bgm-ready', updatePanelState);
-    window.addEventListener('bgm-loading', updatePanelState);
     applyCollapsed();
     updatePanelState();
   }
@@ -237,7 +229,7 @@ const tracks = getBgmPlaylist();
 
   document.addEventListener('click', handleFirstUserInteraction);
   document.addEventListener('keydown', handleFirstUserInteraction);
-  document.addEventListener('astro:page-load', initBgmUI);
+  document.addEventListener('DOMContentLoaded', initBgmUI);
 </script>
 
 <style>
@@ -252,25 +244,5 @@ const tracks = getBgmPlaylist();
   
   #bgm-panel.bgm-collapsed .flex.items-center.justify-between.gap-3 .min-w-0 {
     display: none;
-  }
-
-  .bgm-toggle-loading {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .bgm-spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: bgm-spin 0.8s linear infinite;
-  }
-
-  @keyframes bgm-spin {
-    to { transform: rotate(360deg); }
   }
 </style>

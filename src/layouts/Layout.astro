@@ -1,7 +1,6 @@
 ---
 import BgmPanel from '../components/BgmPanel.astro';
 import '../styles/tailwind.css';
-import { ClientRouter } from 'astro:transitions';
 
 interface Props {
     title: string;
@@ -21,8 +20,7 @@ const { title } = Astro.props;
     </head>
     <body>
         <slot />
-        <ClientRouter data-astro-history="replace" disable-scroll-propagation />
-        <BgmPanel client:load transition:persist />
+        <BgmPanel client:load />
         
         <footer class="site-footer">
             <div class="safe-zone footer-content">
@@ -108,20 +106,10 @@ const { title } = Astro.props;
             // 初始化 BGM 控制器
             bgmController.init({ autoplay: true, volume: 0.5 });
 
-            // 每次页面加载（包括初次和 ViewTransitions 切换后）
-            document.addEventListener('astro:page-load', () => {
+            document.addEventListener('DOMContentLoaded', () => {
                 lenisScrollAllowed = true;
                 initScroll();
                 bgmController.restoreStateOnPageSwap();
-            });
-
-            // 页面切换前销毁实例，释放内存和监听器
-            document.addEventListener('astro:before-swap', () => {
-                lenisScrollAllowed = false;
-                if (lenis) {
-                    lenis.destroy();
-                    gsap.ticker.remove(updateLenis);
-                }
             });
         </script>
     </body>

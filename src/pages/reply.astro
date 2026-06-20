@@ -182,5 +182,5 @@ import Header from '../components/Header.astro';
             container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ff6b6b;">Failed to load messages.</p>`;
         }
     }
-    document.addEventListener('astro:page-load', loadMessages);
+    document.addEventListener('DOMContentLoaded', loadMessages);
 </script>
