@@ -222,7 +222,7 @@ import Header from '../components/Header.astro';
                     });
                     answersHtml = `
                         <div class="exam-answers-details">
-                            <span class="toggle-answers" onclick="const el = this.parentElement.querySelector('.answers-content'); el.style.display = el.style.display === 'none' ? 'block' : 'none';">查看作答详情 &darr;</span>
+                            <span class="toggle-answers" style="color: #1890ff;">查看作答详情 &darr;</span>
                             <div class="answers-content" style="display: none;">
                                 ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
                                 ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
@@ -350,13 +350,20 @@ import Header from '../components/Header.astro';
             document.getElementById('passwordPanel').style.display = 'block';
         }
     });
+
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.toggle-answers');
+        if (!toggle) return;
+        const content = toggle.parentElement.querySelector('.answers-content');
+        if (content) content.style.display = content.style.display === 'none' ? 'block' : 'none';
+    });
 </script>
 
 <style>
     .horizontal-tabs { display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 15px; }
     .tab-btn { background: transparent; border: 1px solid #333; color: #777; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-family: monospace; letter-spacing: 1px; transition: all 0.2s ease; }
     .tab-btn.active, .tab-btn:hover { border-color: #00ff66; color: #000000; border-bottom: 2px solid #000000; background: rgba(0, 255, 102, 0.03); }
-    .records-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+    .records-grid { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
     .record-card { background: rgba(10, 10, 10, 0.8); border: 1px solid #222; border-radius: 6px; padding: 20px; transition: border-color 0.2s ease; }
     .record-card:hover { border-color: #444; }
     .record-card.achtung-alert-card { border: 1px solid rgba(255, 95, 86, 0.4); background: rgba(255, 95, 86, 0.02); box-shadow: inset 0 0 10px rgba(255, 95, 86, 0.05); }
@@ -384,8 +391,8 @@ import Header from '../components/Header.astro';
         background: #00cc55;
     }
 
-    .delete-btn { background: transparent; border: 1px solid rgba(255,95,86,0.2); color: #ff5f56; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s ease; }
-    .delete-btn:hover { background: #ff5f56; color: #000; border-color: #ff5f56; }
+    .delete-btn { background: transparent; border: 1px solid rgba(255,95,86,0.2); color: #ff5f56; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s ease; font-weight: bold; }
+    .delete-btn:hover { background: rgba(255,95,86,0.15); color: #ff5f56; border-color: #ff5f56; }
     .status-placeholder { text-align: center; padding: 40px; color: #555; font-family: monospace; }
     .exam-score-box { font-size: 15px; margin-bottom: 15px; color: #eee; }
     .score-num { color: #00ff66; font-weight: bold; font-family: monospace; }
