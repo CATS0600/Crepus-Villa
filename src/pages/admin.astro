@@ -206,6 +206,11 @@ import Header from '../components/Header.astro';
                                     WARNING: ${escapeHtml(item.achtung_notes)}
                                 </div>
                             ` : ''}
+                            ${item.violation ? `
+                                <div class="violation-tag" style="margin-top: 10px; padding: 8px; border: 1px solid rgba(255, 169, 64, 0.6); background: rgba(255, 169, 64, 0.1); color: #ffa940; font-size: 12px; border-radius: 4px; font-weight: bold;">
+                                    ⚠️ ${escapeHtml(item.violation)}
+                                </div>
+                            ` : ''}
 
                             <div class="uuid-footprint" style="margin-top: 15px; font-size: 11px; color: #555;">
                                 设备 UUID: <span>${escapeHtml(item.user_uuid)}</span>

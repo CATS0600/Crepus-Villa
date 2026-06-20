@@ -12,7 +12,39 @@ export const GET = async ({ request, locals }) => {
 
         const result = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
 
-        const records = (result.results || []).map(record => {
+        const rows = result.results || [];
+
+        const uuidGroups = {};
+        for (const row of rows) {
+            const uuid = row.user_uuid || 'unknown';
+            if (!uuidGroups[uuid]) uuidGroups[uuid] = [];
+            uuidGroups[uuid].push(row);
+        }
+
+        const violations = {};
+        for (const [uuid, group] of Object.entries(uuidGroups)) {
+            group.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            const total = group.length;
+            if (total >= 5) {
+                for (const record of group) {
+                    violations[record.id] = '考试次数超出限制';
+                }
+            } else if (total >= 3) {
+                for (let i = 2; i < total; i++) {
+                    const curr = new Date(group[i].created_at);
+                    const twoBefore = new Date(group[i - 2].created_at);
+                    const diffDays = (curr - twoBefore) / (1000 * 60 * 60 * 24);
+                    if (diffDays < 7) {
+                        if (!violations[group[i].id]) {
+                            violations[group[i].id] = '考试次数超出7D限制';
+                        }
+                    }
+                }
+            }
+        }
+
+        const records = rows.map(record => {
+            record.violation = violations[record.id] || null;
             if (record.answers && typeof record.answers === 'string') {
                 try {
                     const parsed = JSON.parse(record.answers);

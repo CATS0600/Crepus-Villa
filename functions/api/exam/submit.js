@@ -1,3 +1,53 @@
+const TOTAL_QUESTIONS = 21;
+const TOTAL_SCORE = 100;
+
+const CORRECT_ANSWERS = {
+  q2: 'C',
+  q3: 'A',
+  q4: 'A',
+  q5: 'B',
+  q6: 'N',
+  q7: 'Y',
+  q8: 'N',
+  q9: 'Y',
+  q10: 'N',
+  q11: ['A', 'B', 'C'],
+  q12: ['C', 'D'],
+  q13: ['A', 'D'],
+  q14: 'D',
+  q15: 'A',
+  q16: 'C',
+  q17: 'B',
+  q18: ['A', 'B', 'C'],
+  q19: ['A', 'B', 'C'],
+  q20: ['A', 'C', 'D'],
+  q21: 'D'
+};
+
+function calculateScore(answers) {
+  let correctCount = 0;
+  const questionCount = Object.keys(CORRECT_ANSWERS).length;
+
+  for (const [key, correct] of Object.entries(CORRECT_ANSWERS)) {
+    const userAnswer = answers[key];
+    if (userAnswer === undefined || userAnswer === null || userAnswer === '') continue;
+
+    if (Array.isArray(correct)) {
+      const userArr = Array.isArray(userAnswer) ? userAnswer.sort() : [userAnswer];
+      const correctArr = [...correct].sort();
+      if (userArr.length === correctArr.length && userArr.every((v, i) => v === correctArr[i])) {
+        correctCount++;
+      }
+    } else {
+      if (String(userAnswer).trim().toUpperCase() === String(correct).trim().toUpperCase()) {
+        correctCount++;
+      }
+    }
+  }
+
+  return Math.round((correctCount / questionCount) * TOTAL_SCORE);
+}
+
 export async function onRequest(context) {
   if (context.request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
@@ -5,59 +55,63 @@ export async function onRequest(context) {
 
   try {
     const data = await context.request.json();
-    const { username, social_id, answers, group_id } = data;
+    const { user_uuid, qqid, app_type, client_timestamp, prtscn_count, answers } = data;
 
-    // 字段验证
-    if (!username || !social_id || !answers || !group_id) {
-      return new Response(JSON.stringify({ error: '所有字段都是必填的' }), { status: 400 });
+    if (!user_uuid || !qqid || !answers) {
+      return new Response(JSON.stringify({ error: '缺少必要字段' }), { status: 400 });
     }
 
-    // 长度限制
-    if (username.length > 100) {
-      return new Response(JSON.stringify({ error: '用户名长度不能超过 100 字' }), { status: 400 });
+    if (!app_type) {
+      return new Response(JSON.stringify({ error: '请选择申请类型' }), { status: 400 });
     }
 
-    if (social_id.length > 100) {
-      return new Response(JSON.stringify({ error: '社媒 ID 长度不能超过 100 字' }), { status: 400 });
+    const username = (answers.username || '').trim();
+    const email = (answers.email || '').trim();
+    const qq = String(qqid).trim();
+
+    if (!username) {
+      return new Response(JSON.stringify({ error: '请填写姓名' }), { status: 400 });
+    }
+    if (!qq) {
+      return new Response(JSON.stringify({ error: '请填写QQ号' }), { status: 400 });
+    }
+    if (!email) {
+      return new Response(JSON.stringify({ error: '请填写邮箱' }), { status: 400 });
     }
 
-    if (answers.length > 2000) {
-      return new Response(JSON.stringify({ error: '回答长度不能超过 2000 字' }), { status: 400 });
-    }
+    const existing = await context.env.DB.prepare(
+      `SELECT COUNT(*) as count FROM exam_records WHERE user_uuid = ?`
+    ).bind(user_uuid).first();
+    const exam_times = (existing?.count || 0) + 1;
 
-    // 防刷处理 - 获取客户端 IP
-    const clientIP = context.request.headers.get('CF-Connecting-IP') || 'unknown';
-    
-    // 简单的防刷逻辑：检查该 IP 在最近 1 小时内的提交次数
-    // 注意：这是一个基础实现，生产环境建议使用专业的速率限制服务
-    const rateKey = `rate:${clientIP}`;
-    const rateLimit = await context.env.DB.prepare(
-      `SELECT COUNT(*) as count FROM exams WHERE created_at > datetime('now', '-1 hour') AND ? LIKE ?`
-    ).bind(clientIP, '%' + clientIP + '%').first();
+    const exam_result = calculateScore(answers);
 
-    // 允许每小时 10 次提交
-    if (rateLimit && rateLimit.count > 10) {
-      return new Response(JSON.stringify({ error: '提交过于频繁，请稍后再试' }), { status: 429 });
-    }
+    const achtung_notes = prtscn_count > 0
+      ? `[ACHTUNG] 检测到 ${prtscn_count} 次截屏行为`
+      : null;
 
-    // 写入数据库
-    const stmt = context.env.DB.prepare(
-      `INSERT INTO exams (username, social_id, answers, group_id, status, created_at) 
-       VALUES (?, ?, ?, ?, 'pending', datetime('now'))`
-    );
-
-    const result = await stmt.bind(username, social_id, answers, group_id).run();
+    await context.env.DB.prepare(
+      `INSERT INTO exam_records (user_uuid, qqid, exam_times, exam_result, achtung_notes, answers, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+    ).bind(
+      user_uuid,
+      qqid,
+      exam_times,
+      exam_result,
+      achtung_notes,
+      JSON.stringify(data)
+    ).run();
 
     return new Response(JSON.stringify({
       success: true,
-      id: result.meta.last_row_id,
-      message: '申请已提交，我们会尽快审核'
+      exam_result: exam_result
     }), {
-      status: 201,
+      status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
+
   } catch (error) {
     console.error('Exam submission error:', error);
-    return new Response(JSON.stringify({ error: '服务器错误，请重试' }), { status: 500 });
+    return new Response(JSON.stringify({ error: '服务器错误，请稍后重试' }), { status: 500 });
   }
 }

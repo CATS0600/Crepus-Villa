@@ -70,6 +70,7 @@ export class BgmController {
   private targetVolume = 0.3;
   private fadeInterval: number | null = null;
   private pendingAutoplay = false;
+  public isLoading = true;
 
   private constructor() {
     this.playlist = getBgmPlaylist();
@@ -118,6 +119,7 @@ export class BgmController {
       
       this.audio.addEventListener('ended', () => this.handleTrackEnded());
       this.audio.addEventListener('timeupdate', () => this.handleTimeUpdate());
+      this.audio.addEventListener('canplaythrough', () => { this.isLoading = false; this.dispatchEvent('ready'); }, { once: true });
       this.audio.addEventListener('play', () => { this.isPlaying = true; this.dispatchEvent('play'); });
       this.audio.addEventListener('pause', () => { this.isPlaying = false; this.dispatchEvent('pause'); });
     }
@@ -205,6 +207,8 @@ export class BgmController {
 
     const track = this.playlist[this.currentTrackId];
     if (this.audio.src !== track.url) {
+      this.isLoading = true;
+      this.dispatchEvent('loading');
       this.audio.src = track.url;
       this.audio.currentTime = startTime;
     }
