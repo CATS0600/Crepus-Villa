@@ -1,5 +1,8 @@
 import { validateAdminPassword } from '../../../lib/auth.js';
 
+const standardAnswersSingle = { q2:'C', q3:'A', q4:'A', q5:'B', q6:'Y', q7:'Y', q8:'N', q9:'Y', q10:'N', q14:'D', q15:'C', q16:'C', q17:'B', q21:'D' };
+const standardAnswersMulti = { q11:['A','B','C'], q12:['C','D'], q13:['A','D'], q18:['A','B','C'], q19:['A','B','C'], q20:['A','C','D'] };
+
 export const prerender = false;
 
 export const GET = async ({ request, locals }) => {
@@ -48,37 +51,41 @@ export const GET = async ({ request, locals }) => {
             if (record.answers && typeof record.answers === 'string') {
                 try {
                     const parsed = JSON.parse(record.answers);
-                    
-                    const username = parsed.username || '未填写';
-                    const qq = parsed.qq || record.qqid || '未填写';
-                    const email = parsed.email || record.email || '未填写'; // 新增：提取邮箱信息
-                    const app_type = parsed.app_type || '未选择';
-                    const exp_info = parsed.exp_a || parsed.exp_b || parsed.exp_c || parsed.exp_d || '未填写';
 
-                    let choiceAnswers = [];
-                    // 更新：循环范围变更为 2 到 21，完整覆盖 20 道非简答题
-                    for (let i = 2; i <= 21; i++) {
-                        const val = parsed[`q${i}`];
-                        if (val !== undefined && val !== "") {
-                            const displayVal = Array.isArray(val) ? val.join(', ') : val;
-                            choiceAnswers.push(`${i}: ${displayVal}`);
-                        }
-                    }
+                    record.basicInfo = {
+                        username: parsed.username || '',
+                        qq: parsed.qq || '',
+                        email: parsed.email || '',
+                        exp_a: parsed.exp_a || '',
+                        exp_b: parsed.exp_b || '',
+                        exp_c: parsed.exp_c || '',
+                        exp_d: parsed.exp_d || ''
+                    };
 
-                    // 更新：移除了针对 q16 的独立简答题解析逻辑
-
-                    // 使用 <br> 替代 \n，让 HTML 强行换行
-                    let formattedText = `用户名：${username}<br>`;
-                    formattedText += `QQID: ${qq}<br>`;
-                    formattedText += `邮箱地址：${email}<br>`; // 新增：在基本信息区域渲染邮箱
-                    formattedText += `申请类型：${app_type}<br>`;
-                    formattedText += `经验与证明(1.4)：${exp_info}<br>`;
-                    formattedText += `作答情况：<br>${choiceAnswers.join('<br>')}`;
-
-                    record.answers_formatted = formattedText;
+                    record.comparison = [];
+                    Object.keys(standardAnswersSingle).forEach(k => {
+                        const userAns = parsed[k] !== undefined ? String(parsed[k]).trim() : '';
+                        record.comparison.push({
+                            q: k,
+                            userAns,
+                            correctAns: standardAnswersSingle[k],
+                            isCorrect: userAns === standardAnswersSingle[k]
+                        });
+                    });
+                    Object.keys(standardAnswersMulti).forEach(k => {
+                        const ua = Array.isArray(parsed[k]) ? parsed[k] : [];
+                        const ca = standardAnswersMulti[k];
+                        const isCorrect = ua.length === ca.length && ca.every(v => ua.includes(v));
+                        record.comparison.push({
+                            q: k,
+                            userAns: ua.join(', '),
+                            correctAns: [...ca].sort().join(', '),
+                            isCorrect
+                        });
+                    });
 
                 } catch (e) {
-                    // 解析失败保留原样
+                    // parsing failed
                 }
             }
             return record;

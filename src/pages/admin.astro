@@ -52,16 +52,6 @@ import Header from '../components/Header.astro';
     const TARGET_HASH = "443d24733cc9f2b66b66639313c5481ce7d35a36bf6523d1c5ab64332ed1b2ab";
     let adminToken = "";
 
-    const standardAnswersSingle = {
-        q2:'C', q3:'A', q4:'A', q5:'B', q6:'Y', q7:'Y', q8:'N', q9:'Y', q10:'N',
-        q14:'D', q15:'C', q16:'C', q17:'B', q21:'D'
-    };
-    const standardAnswersMulti = {
-        q11:['A','B','C'], q12:['C','D'], q13:['A','D'],
-        q18:['A','B','C'], q19:['A','B','C'], q20:['A','C','D']
-    };
-    const ALL_QUESTION_KEYS = Object.keys(standardAnswersSingle).concat(Object.keys(standardAnswersMulti));
-
     async function sha256(string) {
         const utf8 = new TextEncoder().encode(string);
         const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -189,45 +179,25 @@ import Header from '../components/Header.astro';
                 const cardClass = isAchtung ? 'record-card achtung-alert-card' : 'record-card';
 
                 let answersHtml = '';
-                if (item.answers) {
-                    let parsed = {};
-                    try { parsed = JSON.parse(item.answers); } catch(e) {}
-                    const qKeys = ALL_QUESTION_KEYS.filter(k => k in parsed);
-                    let comparisonHtml = '';
-                    if (qKeys.length) {
-                        comparisonHtml = qKeys.map(k => {
-                            const isSingle = k in standardAnswersSingle;
-                            const correct = isSingle ? standardAnswersSingle[k] : standardAnswersMulti[k];
-                            let userAns = parsed[k];
-                            let isCorrect = false;
-                            if (isSingle) {
-                                isCorrect = String(userAns).trim() === correct;
-                            } else {
-                                const ua = Array.isArray(userAns) ? userAns : [];
-                                isCorrect = ua.length === correct.length && correct.every(v => ua.includes(v));
-                            }
-                            const displayUser = Array.isArray(userAns) ? userAns.sort().join(', ') : String(userAns);
-                            const displayCorrect = Array.isArray(correct) ? [...correct].sort().join(', ') : correct;
-                            const cls = isCorrect ? 'ans-correct' : 'ans-wrong';
-                            const extra = isCorrect ? '' : `<span class="ans-correct-answer">✓ ${escapeHtml(displayCorrect)}</span>`;
-                            return `<div class="ans-row ${cls}"><span class="ans-q">${escapeHtml(k)}</span><span class="ans-user">${escapeHtml(displayUser)}</span>${extra}</div>`;
-                        }).join('');
-                    }
+                if (item.comparison || item.basicInfo) {
+                    let comp = item.comparison || [];
+                    let basic = item.basicInfo || {};
+                    let comparisonHtml = comp.map(c => {
+                        const cls = c.isCorrect ? 'ans-correct' : 'ans-wrong';
+                        const extra = c.isCorrect ? '' : `<span class="ans-correct-answer">✓ ${escapeHtml(c.correctAns)}</span>`;
+                        return `<div class="ans-row ${cls}"><span class="ans-q">${escapeHtml(c.q)}</span><span class="ans-user">${escapeHtml(c.userAns)}</span>${extra}</div>`;
+                    }).join('');
                     const basicKeys = ['username','qq','email','exp_a','exp_b','exp_c','exp_d'];
                     let basicHtml = '';
                     basicKeys.forEach(k => {
-                        if (parsed[k] !== undefined && parsed[k] !== null && parsed[k] !== '') {
-                            basicHtml += `<div class="basic-row"><span class="basic-label">${k}</span><span class="basic-val">${escapeHtml(String(parsed[k]))}</span></div>`;
-                        }
+                        if (basic[k]) basicHtml += `<div class="basic-row"><span class="basic-label">${k}</span><span class="basic-val">${escapeHtml(String(basic[k]))}</span></div>`;
                     });
                     answersHtml = `
                         <details class="exam-answers-details">
                             <summary class="toggle-answers" style="color: #1890ff; cursor: pointer;">查看作答详情</summary>
                             <div class="answers-content" style="padding: 15px; background: #080808; border: 1px solid #161616; border-radius: 4px; margin-top: 10px;">
-                                ${basicHtml || comparisonHtml ? `
-                                    ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
-                                    ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
-                                ` : item.answers_formatted ? item.answers_formatted : ''}
+                                ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
+                                ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
                             </div>
                         </details>
                     `;
