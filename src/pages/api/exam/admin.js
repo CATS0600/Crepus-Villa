@@ -75,7 +75,7 @@ export const GET = async ({ request, locals }) => {
                     formattedText += `经验与证明(1.4)：${exp_info}<br>`;
                     formattedText += `作答情况：<br>${choiceAnswers.join('<br>')}`;
 
-                    record.answers = formattedText;
+                    record.answers_formatted = formattedText;
 
                 } catch (e) {
                     // 解析失败保留原样
