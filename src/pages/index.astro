@@ -982,7 +982,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         window.requestAnimationFrame(() => {
             const scrolled = window.scrollY;
             const scrollText = document.getElementById('scrollText');
-            if (scrollText) scrollText.style.transform = `translateX(-${scrolled * 0.4}px)`;
+            if (scrollText) scrollText.style.transform = `translate(${-scrolled * 0.4}px, ${-scrolled * 0.3}px)`;
             scrollPending = false;
         });
     }
