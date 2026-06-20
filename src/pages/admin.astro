@@ -178,29 +178,26 @@ import Header from '../components/Header.astro';
                 const isAchtung = item.achtung_notes && item.achtung_notes.includes('[ACHTUNG]');
                 const cardClass = isAchtung ? 'record-card achtung-alert-card' : 'record-card';
 
-                let answersHtml = '';
-                if (item.comparison || item.basicInfo) {
-                    let comp = item.comparison || [];
+                let infoHtml = '';
+                if (item.basicInfo || item.comparison) {
                     let basic = item.basicInfo || {};
-                    let comparisonHtml = comp.map(c => {
-                        const cls = c.isCorrect ? 'ans-correct' : 'ans-wrong';
-                        const extra = c.isCorrect ? '' : `<span class="ans-correct-answer">✓ ${escapeHtml(c.correctAns)}</span>`;
-                        return `<div class="ans-row ${cls}"><span class="ans-q">${escapeHtml(c.q)}</span><span class="ans-user">${escapeHtml(c.userAns)}</span>${extra}</div>`;
-                    }).join('');
-                    const basicKeys = ['username','qq','email','exp_a','exp_b','exp_c','exp_d'];
-                    let basicHtml = '';
-                    basicKeys.forEach(k => {
-                        if (basic[k]) basicHtml += `<div class="basic-row"><span class="basic-label">${k}</span><span class="basic-val">${escapeHtml(String(basic[k]))}</span></div>`;
-                    });
-                    answersHtml = `
-                        <details class="exam-answers-details">
-                            <summary class="toggle-answers" style="color: #1890ff; cursor: pointer;">查看作答详情</summary>
-                            <div class="answers-content" style="padding: 15px; background: #080808; border: 1px solid #161616; border-radius: 4px; margin-top: 10px;">
-                                ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
-                                ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
-                            </div>
-                        </details>
-                    `;
+                    let comp = item.comparison || [];
+
+                    let basicParts = [];
+                    if (basic.username) basicParts.push(`用户名：${escapeHtml(basic.username)}`);
+                    if (basic.qq) basicParts.push(`QQ号：${escapeHtml(basic.qq)}`);
+                    let basicLine = basicParts.length ? `<div class="info-line">${basicParts.join(' ')}</div>` : '';
+
+                    let answerSpans = comp.map(c => {
+                        if (c.isCorrect) {
+                            return `<span class="ans-correct">${escapeHtml(c.q)}:${escapeHtml(c.userAns)}</span>`;
+                        } else {
+                            return `<span class="ans-wrong">${escapeHtml(c.q)}:${escapeHtml(c.userAns)}/${escapeHtml(c.correctAns)}</span>`;
+                        }
+                    }).join(' ');
+                    let answersLine = answerSpans ? `<div class="answers-line">${answerSpans}</div>` : '';
+
+                    infoHtml = basicLine + answersLine;
                 }
 
                 return `
@@ -215,7 +212,7 @@ import Header from '../components/Header.astro';
                                 客观题得分: <span class="score-num" style="font-size: 1.2rem; font-weight: bold;">${item.exam_result}</span> / 100 分
                             </div>
                             
-                            ${answersHtml}
+                            ${infoHtml}
 
                             ${isAchtung ? `
                                 <button class="achtung-tag dismiss-btn" data-id="${item.id}" onclick="dismissWarning(${item.id})" style="margin-top: 15px; padding: 8px; border: 1px solid rgba(255, 95, 86, 0.5); background: rgba(255, 95, 86, 0.1); color: #ff5f56; font-size: 12px; border-radius: 4px; cursor: pointer; width: 100%; text-align: left; font-family: inherit;">
@@ -365,28 +362,10 @@ import Header from '../components/Header.astro';
     .achtung-tag { background: rgba(255, 95, 86, 0.1); border: 1px solid rgba(255, 95, 86, 0.2); color: #ff5f56; font-family: monospace; padding: 8px 12px; border-radius: 4px; font-size: 11px; margin: 15px 0; }
     .uuid-footprint { font-family: monospace; font-size: 10px; color: #444; margin-top: 10px; }
     .uuid-footprint span { color: #666; }
-    .exam-answers-details { margin: 15px 0; }
-    .toggle-answers { font-size: 11px; color: #00ff66; font-family: monospace; cursor: pointer; text-decoration: underline; user-select: none; padding: 4px 0; }
-    .toggle-answers::-webkit-details-marker { display: none; }
-    .exam-answers-details[open] .toggle-answers { margin-bottom: 6px; }
-    .answers-content { font-size: 12px; color: #999; }
-    .answers-content p { margin-bottom: 6px; }
-    .basic-info-section { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #222; }
-    .basic-title, .comp-title { font-size: 10px; color: #555; font-family: monospace; margin-bottom: 8px; letter-spacing: 1px; }
-    .basic-row { display: flex; gap: 10px; padding: 2px 0; font-size: 12px; }
-    .basic-label { color: #666; font-family: monospace; min-width: 50px; }
-    .basic-val { color: #ccc; word-break: break-all; }
-    .comparison-section { }
-    .ans-row { display: flex; gap: 10px; align-items: center; padding: 3px 6px; border-radius: 3px; margin: 2px 0; font-family: monospace; font-size: 12px; }
-    .ans-correct { background: rgba(0,255,102,0.06); }
-    .ans-wrong { background: rgba(255,95,86,0.08); }
-    .ans-q { color: #666; min-width: 30px; }
-    .ans-correct .ans-user { color: #00ff66; }
-    .ans-wrong .ans-user { color: #ff5f56; text-decoration: line-through; }
-    .ans-correct-answer { color: #ffa940; font-size: 11px; margin-left: 4px; }
-    .essay-answer-box { margin-top: 12px; border-top: 1px dashed #222; padding-top: 10px; }
-    .essay-text { background: rgba(255,255,255,0.01); padding: 10px; border-radius: 4px; margin-top: 5px; color: #eee; line-height: 1.5; font-family: sans-serif; }
-    .text-error { color: #ff5f56; font-family: monospace; font-size: 11px; }
+    .info-line { font-size: 13px; color: #ccc; margin-bottom: 10px; font-family: monospace; padding: 6px 0; border-bottom: 1px solid #1a1a1a; }
+    .answers-line { display: flex; flex-wrap: wrap; gap: 6px 12px; padding: 6px 0; font-family: monospace; font-size: 12px; }
+    .ans-correct { color: #00ff66; }
+    .ans-wrong { color: #ff5f56; }
 
     .admin-edit-input {
         background: rgba(0,0,0,0.3);

@@ -62,10 +62,12 @@ export const GET = async ({ request, locals }) => {
                         exp_d: parsed.exp_d || ''
                     };
 
-                    record.comparison = [];
+                    const qNum = (k) => parseInt(k.replace('q', ''), 10);
+
+                    const allComparisons = [];
                     Object.keys(standardAnswersSingle).forEach(k => {
                         const userAns = parsed[k] !== undefined ? String(parsed[k]).trim() : '';
-                        record.comparison.push({
+                        allComparisons.push({
                             q: k,
                             userAns,
                             correctAns: standardAnswersSingle[k],
@@ -76,13 +78,17 @@ export const GET = async ({ request, locals }) => {
                         const ua = Array.isArray(parsed[k]) ? parsed[k] : [];
                         const ca = standardAnswersMulti[k];
                         const isCorrect = ua.length === ca.length && ca.every(v => ua.includes(v));
-                        record.comparison.push({
+                        allComparisons.push({
                             q: k,
                             userAns: ua.join(', '),
                             correctAns: [...ca].sort().join(', '),
                             isCorrect
                         });
                     });
+
+                    record.comparison = allComparisons
+                        .filter(c => { const n = qNum(c.q); return n >= 2; })
+                        .sort((a, b) => qNum(a.q) - qNum(b.q));
 
                 } catch (e) {
                     // parsing failed
