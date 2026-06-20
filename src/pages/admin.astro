@@ -52,6 +52,16 @@ import Header from '../components/Header.astro';
     const TARGET_HASH = "443d24733cc9f2b66b66639313c5481ce7d35a36bf6523d1c5ab64332ed1b2ab";
     let adminToken = "";
 
+    const standardAnswersSingle = {
+        q2:'C', q3:'A', q4:'A', q5:'B', q6:'Y', q7:'Y', q8:'N', q9:'Y', q10:'N',
+        q14:'D', q15:'C', q16:'C', q17:'B', q21:'D'
+    };
+    const standardAnswersMulti = {
+        q11:['A','B','C'], q12:['C','D'], q13:['A','D'],
+        q18:['A','B','C'], q19:['A','B','C'], q20:['A','C','D']
+    };
+    const ALL_QUESTION_KEYS = Object.keys(standardAnswersSingle).concat(Object.keys(standardAnswersMulti));
+
     async function sha256(string) {
         const utf8 = new TextEncoder().encode(string);
         const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -175,13 +185,42 @@ import Header from '../components/Header.astro';
 
                 let answersHtml = '';
                 if (item.answers) {
-                    // 修复 1：将 onclick 逻辑改为直接操作 style.display，确保能正确展开/折叠
-                    // 顺便优化了背景色使其在日间模式下也能清晰阅读
+                    let parsed = {};
+                    try { parsed = JSON.parse(item.answers); } catch(e) {}
+                    const qKeys = ALL_QUESTION_KEYS.filter(k => k in parsed);
+                    let comparisonHtml = '';
+                    if (qKeys.length) {
+                        comparisonHtml = qKeys.map(k => {
+                            const isSingle = k in standardAnswersSingle;
+                            const correct = isSingle ? standardAnswersSingle[k] : standardAnswersMulti[k];
+                            let userAns = parsed[k];
+                            let isCorrect = false;
+                            if (isSingle) {
+                                isCorrect = String(userAns).trim() === correct;
+                            } else {
+                                const ua = Array.isArray(userAns) ? userAns : [];
+                                isCorrect = ua.length === correct.length && correct.every((v: string) => ua.includes(v));
+                            }
+                            const displayUser = Array.isArray(userAns) ? userAns.sort().join(', ') : String(userAns);
+                            const displayCorrect = Array.isArray(correct) ? [...correct].sort().join(', ') : correct;
+                            const cls = isCorrect ? 'ans-correct' : 'ans-wrong';
+                            const extra = isCorrect ? '' : `<span class="ans-correct-answer">✓ ${escapeHtml(displayCorrect)}</span>`;
+                            return `<div class="ans-row ${cls}"><span class="ans-q">${escapeHtml(k)}</span><span class="ans-user">${escapeHtml(displayUser)}</span>${extra}</div>`;
+                        }).join('');
+                    }
+                    const basicKeys = ['username','qq','email','exp_a','exp_b','exp_c','exp_d'];
+                    let basicHtml = '';
+                    basicKeys.forEach(k => {
+                        if (parsed[k] !== undefined && parsed[k] !== null && parsed[k] !== '') {
+                            basicHtml += `<div class="basic-row"><span class="basic-label">${k}</span><span class="basic-val">${escapeHtml(String(parsed[k]))}</span></div>`;
+                        }
+                    });
                     answersHtml = `
-                        <div class="exam-answers-details" style="margin-top: 10px;">
-                            <span class="toggle-answers" onclick="const el = this.nextElementSibling; el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="cursor: pointer; color: #1890ff; font-size: 13px; text-decoration: underline;">查看完整试卷与简答 &darr;</span>
-                            <div class="answers-content" style="display: none; margin-top: 15px; padding: 15px; background: rgba(128,128,128,0.1); border: 1px dashed #999; border-radius: 4px; line-height: 1.8; font-family: sans-serif; font-size: 14px;">
-                                ${item.answers}
+                        <div class="exam-answers-details">
+                            <span class="toggle-answers" onclick="const el = this.nextElementSibling; el.style.display = el.style.display === 'none' ? 'block' : 'none';">查看作答详情 &darr;</span>
+                            <div class="answers-content">
+                                ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
+                                ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -343,6 +382,19 @@ import Header from '../components/Header.astro';
     .answers-content { display: none; margin-top: 10px; background: #080808; border: 1px solid #161616; padding: 15px; border-radius: 4px; font-size: 12px; color: #999; }
     .answers-content.active { display: block; animation: slideDown 0.2s ease; }
     .answers-content p { margin-bottom: 6px; }
+    .basic-info-section { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #222; }
+    .basic-title, .comp-title { font-size: 10px; color: #555; font-family: monospace; margin-bottom: 8px; letter-spacing: 1px; }
+    .basic-row { display: flex; gap: 10px; padding: 2px 0; font-size: 12px; }
+    .basic-label { color: #666; font-family: monospace; min-width: 50px; }
+    .basic-val { color: #ccc; word-break: break-all; }
+    .comparison-section { }
+    .ans-row { display: flex; gap: 10px; align-items: center; padding: 3px 6px; border-radius: 3px; margin: 2px 0; font-family: monospace; font-size: 12px; }
+    .ans-correct { background: rgba(0,255,102,0.06); }
+    .ans-wrong { background: rgba(255,95,86,0.08); }
+    .ans-q { color: #666; min-width: 30px; }
+    .ans-correct .ans-user { color: #00ff66; }
+    .ans-wrong .ans-user { color: #ff5f56; text-decoration: line-through; }
+    .ans-correct-answer { color: #ffa940; font-size: 11px; margin-left: 4px; }
     .essay-answer-box { margin-top: 12px; border-top: 1px dashed #222; padding-top: 10px; }
     .essay-text { background: rgba(255,255,255,0.01); padding: 10px; border-radius: 4px; margin-top: 5px; color: #eee; line-height: 1.5; font-family: sans-serif; }
     .text-error { color: #ff5f56; font-family: monospace; font-size: 11px; }
