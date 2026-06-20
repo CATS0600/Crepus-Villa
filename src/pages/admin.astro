@@ -179,7 +179,12 @@ import Header from '../components/Header.astro';
                 return;
             }
 
+            let dismissedIds = [];
+            try { dismissedIds = JSON.parse(localStorage.getItem('admin_dismissed_warnings') || '[]'); } catch(e) {}
+            const isDismissed = (id) => dismissedIds.includes(id);
+
             list.innerHTML = data.map(item => {
+                if (isDismissed(item.id)) return '';
                 const isAchtung = item.achtung_notes && item.achtung_notes.includes('[ACHTUNG]');
                 const cardClass = isAchtung ? 'record-card achtung-alert-card' : 'record-card';
 
@@ -217,8 +222,8 @@ import Header from '../components/Header.astro';
                     });
                     answersHtml = `
                         <div class="exam-answers-details">
-                            <span class="toggle-answers" onclick="const el = this.nextElementSibling; el.style.display = el.style.display === 'none' ? 'block' : 'none';">查看作答详情 &darr;</span>
-                            <div class="answers-content">
+                            <span class="toggle-answers" onclick="const el = this.parentElement.querySelector('.answers-content'); el.style.display = el.style.display === 'none' ? 'block' : 'none';">查看作答详情 &darr;</span>
+                            <div class="answers-content" style="display: none;">
                                 ${basicHtml ? `<div class="basic-info-section"><div class="basic-title">基本信息</div>${basicHtml}</div>` : ''}
                                 ${comparisonHtml ? `<div class="comparison-section"><div class="comp-title">题目比对</div>${comparisonHtml}</div>` : ''}
                             </div>
@@ -241,14 +246,14 @@ import Header from '../components/Header.astro';
                             ${answersHtml}
 
                             ${isAchtung ? `
-                                <div class="achtung-tag" style="margin-top: 15px; padding: 8px; border: 1px solid rgba(255, 95, 86, 0.5); background: rgba(255, 95, 86, 0.1); color: #ff5f56; font-size: 12px; border-radius: 4px;">
-                                    WARNING: ${escapeHtml(item.achtung_notes)}
-                                </div>
+                                <button class="achtung-tag dismiss-btn" data-id="${item.id}" onclick="dismissWarning(${item.id})" style="margin-top: 15px; padding: 8px; border: 1px solid rgba(255, 95, 86, 0.5); background: rgba(255, 95, 86, 0.1); color: #ff5f56; font-size: 12px; border-radius: 4px; cursor: pointer; width: 100%; text-align: left; font-family: inherit;">
+                                    WARNING: ${escapeHtml(item.achtung_notes)} — 点击取消标记
+                                </button>
                             ` : ''}
                             ${item.violation ? `
-                                <div class="violation-tag" style="margin-top: 10px; padding: 8px; border: 1px solid rgba(255, 169, 64, 0.6); background: rgba(255, 169, 64, 0.1); color: #ffa940; font-size: 12px; border-radius: 4px; font-weight: bold;">
-                                    ⚠️ ${escapeHtml(item.violation)}
-                                </div>
+                                <button class="violation-tag dismiss-btn" data-id="${item.id}" onclick="dismissWarning(${item.id})" style="margin-top: 10px; padding: 8px; border: 1px solid rgba(255, 169, 64, 0.6); background: rgba(255, 169, 64, 0.1); color: #ffa940; font-size: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; text-align: left; font-family: inherit;">
+                                    ⚠️ ${escapeHtml(item.violation)} — 点击取消标记
+                                </button>
                             ` : ''}
 
                             <div class="uuid-footprint" style="margin-top: 15px; font-size: 11px; color: #555;">
@@ -296,6 +301,16 @@ import Header from '../components/Header.astro';
         } catch(e) {
             alert('NETWORK ERROR');
         }
+    }
+
+    window.dismissWarning = function(id) {
+        if (!confirm('取消此标记？记录 ID 将被忽略，刷新后不再显示。')) return;
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem('admin_dismissed_warnings') || '[]'); } catch(e) {}
+        if (!list.includes(id)) list.push(id);
+        localStorage.setItem('admin_dismissed_warnings', JSON.stringify(list));
+        const card = document.querySelector(`.dismiss-btn[data-id="${id}"]`)?.closest('.record-card');
+        if (card) card.style.display = 'none';
     }
 
     window.deleteData = async function(type, id) {
