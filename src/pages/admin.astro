@@ -199,7 +199,7 @@ import Header from '../components/Header.astro';
                                 isCorrect = String(userAns).trim() === correct;
                             } else {
                                 const ua = Array.isArray(userAns) ? userAns : [];
-                                isCorrect = ua.length === correct.length && correct.every((v: string) => ua.includes(v));
+                                isCorrect = ua.length === correct.length && correct.every(v => ua.includes(v));
                             }
                             const displayUser = Array.isArray(userAns) ? userAns.sort().join(', ') : String(userAns);
                             const displayCorrect = Array.isArray(correct) ? [...correct].sort().join(', ') : correct;
