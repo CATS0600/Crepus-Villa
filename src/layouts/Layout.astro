@@ -2,21 +2,45 @@
 import BgmPanel from '../components/BgmPanel.astro';
 import '../styles/tailwind.css';
 
-interface Props {
-    title: string;
+interface SEO {
+    description?: string;
+    image?: string;
+    url?: string;
 }
 
-const { title } = Astro.props;
+interface Props {
+    title: string;
+    seo?: SEO;
+}
+
+const { title, seo } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="zh-CN">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="Crepus Villa" />
+        <meta name="description" content={seo?.description ?? "Crepus Villa"} />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/CRVL-TypeB.svg" />
+        <link rel="canonical" href={seo?.url ?? "https://crepus.asia"} />
         <title>{title}</title>
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={seo?.description ?? "Crepus Villa"} />
+        <meta property="og:image" content={seo?.image ?? "/CRVL-TypeB.svg"} />
+        <meta property="og:url" content={seo?.url ?? "https://crepus.asia"} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={seo?.description ?? "Crepus Villa"} />
+        <meta name="twitter:image" content={seo?.image ?? "/CRVL-TypeB.svg"} />
+        <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Crepuscular's Villa",
+            "url": "https://crepus.asia",
+            "description": seo?.description ?? "Crepus Villa"
+        })} />
     </head>
     <body>
         <slot />
@@ -94,8 +118,10 @@ const { title } = Astro.props;
                     content: document.documentElement as HTMLElement,
                 });
 
-                lenis.on('scroll', () => {
+                lenis.on('scroll', (e: any) => {
                     safeScrollUpdate();
+                    const st = document.getElementById('scrollText');
+                    if (st) st.style.transform = `translateX(${-e.animatedScroll * 0.45}px)`;
                 });
 
                 gsap.ticker.add(updateLenis);

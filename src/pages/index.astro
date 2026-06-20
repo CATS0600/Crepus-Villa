@@ -47,7 +47,7 @@ const pr_web = [
 const galleryQuote = "It doesn't matter where you start, it's how you progress from there.";
 ---
 
-<Layout title="Crepuscular's Villa">
+<Layout title="Crepuscular's Villa" seo={{ description: "Crepuscular's Villa — a personal space exploring ideas, technology, and creativity.", image: "/CRVL-TypeB.svg", url: "https://crepus.asia" }}>
     <Header />
     <main class="main-content">
         <div class="scrolling-text" id="scrollText">CREPUSCULAR'S VILLA, RELAX AND ENJOY LIFE STYLES.DA BEST PIZZA IN ALL OF AMERICA AND ALL OF GLOBE A DOLLA A SLICE YOU AINT FINDIN THIS TASTE ANYWHERE ELSE ONLY AT NEW YOK</div>
@@ -779,7 +779,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
     /* --- 原有样式 --- */
     .logo-name { font-family: 'RAGE', cursive; font-size: 48px; font-weight: 600; color: #1d1d1f; }
-    .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; transform: translateZ(0); backface-visibility: hidden; }
+    .scrolling-text { position: fixed; top: 25%; left: 0; font-size: 15vw; font-weight: 900; color: rgba(247, 196, 108, 0.12); white-space: nowrap; pointer-events: none; z-index: 0; will-change: transform; backface-visibility: hidden; }
     .content-section { min-height: 100vh; display: flex; align-items: center; position: relative; z-index: 1; }
     .hero-title { font-size: clamp(44px, 12vw, 130px); font-weight: 800; line-height: 1.1; }
     .accent-text { color: var(--accent-color); }
@@ -975,18 +975,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 
     ];
 
-    let scrollPending = false;
-    function handleScroll() {
-        if (scrollPending) return;
-        scrollPending = true;
-        window.requestAnimationFrame(() => {
-            const scrolled = window.scrollY;
-            const scrollText = document.getElementById('scrollText');
-            if (scrollText) scrollText.style.transform = `translate(${-scrolled * 0.4}px, ${-scrolled * 0.3}px)`;
-            scrollPending = false;
-        });
-    }
-
     // 预加载所有图片
     function preloadImages() {
         const images = document.querySelectorAll('.photo-wrapper img');
@@ -1038,7 +1026,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         if (typeof window.updateMemberCounter === 'function') {
             window.updateMemberCounter();
         }
-        window.addEventListener('scroll', handleScroll);
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
