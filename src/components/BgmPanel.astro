@@ -132,10 +132,10 @@ const tracks = getBgmPlaylist();
     const track = bgmController.playlist[bgmController.currentTrackId];
     currentTitle.textContent = track?.title ?? '未知曲目';
     if (bgmController.isLoading) {
-      toggleButton.className = 'bgm-toggle-loading';
+      toggleButton.classList.add('bgm-toggle-loading');
       toggleButton.innerHTML = '<span class="bgm-spinner"></span>';
     } else {
-      toggleButton.className = '';
+      toggleButton.classList.remove('bgm-toggle-loading');
       toggleButton.textContent = bgmController.audio?.paused ? '▶' : '❚❚';
     }
     renderTrackList();

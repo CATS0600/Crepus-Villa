@@ -334,7 +334,7 @@ import Header from '../../components/Header.astro';
                                     <span class="lang-zh">下一步 &rarr;</span>
                                     <span class="lang-en">Next &rarr;</span>
                                 </button>
-                                <button type="submit" id="submit-btn" class="btn-exam btn-exam-secondary" style="display: none;">
+                                <button type="button" id="submit-btn" class="btn-exam btn-exam-secondary" style="display: none;">
                                     <span class="lang-zh">提交答卷</span>
                                     <span class="lang-en">Submit</span>
                                 </button>
@@ -684,8 +684,8 @@ import Header from '../../components/Header.astro';
         }
     }
 
-    examForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    async function handleSubmit() {
+        console.log('[submit] triggered');
 
         if (!validateCurrentQuestion()) {
             alert('请确保所有必填项及题目已完成。');
@@ -763,7 +763,14 @@ import Header from '../../components/Header.astro';
             submitBtn.disabled = false;
             submitBtn.innerText = '提交答卷';
         }
+    }
+
+    examForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleSubmit();
     });
+
+    submitBtn.addEventListener('click', handleSubmit);
 
     // ==================== 反作弊：快捷键拦截（仅考试进行中生效） ====================
     let shortcutController = null;
