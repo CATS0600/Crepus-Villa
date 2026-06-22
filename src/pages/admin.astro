@@ -178,27 +178,40 @@ import Header from '../components/Header.astro';
                 const isAchtung = item.achtung_notes && item.achtung_notes.includes('[ACHTUNG]');
                 const cardClass = isAchtung ? 'record-card achtung-alert-card' : 'record-card';
 
-                let infoHtml = '';
-                if (item.basicInfo || item.comparison) {
-                    let basic = item.basicInfo || {};
-                    let comp = item.comparison || [];
+                    let infoHtml = '';
+                    if (item.basicInfo || item.comparison) {
+                        let basic = item.basicInfo || {};
+                        let comp = item.comparison || [];
 
-                    let basicParts = [];
-                    if (basic.username) basicParts.push(`用户名：${escapeHtml(basic.username)}`);
-                    if (basic.qq) basicParts.push(`QQ号：${escapeHtml(basic.qq)}`);
-                    let basicLine = basicParts.length ? `<div class="info-line">${basicParts.join(' ')}</div>` : '';
+                        let basicParts = [];
+                        if (basic.username) basicParts.push(`用户名：${escapeHtml(basic.username)}`);
+                        if (basic.qq) basicParts.push(`QQ号：${escapeHtml(basic.qq)}`);
+                        if (basic.email) basicParts.push(`邮箱：${escapeHtml(basic.email)}`);
+                        if (basic.app_type) basicParts.push(`类型：${escapeHtml(basic.app_type)}`);
+                        let basicLine = basicParts.length ? `<div class="info-line">${basicParts.join(' | ')}</div>` : '';
 
-                    let answerSpans = comp.map(c => {
-                        if (c.isCorrect) {
-                            return `<span class="ans-correct">${escapeHtml(c.q)}:${escapeHtml(c.userAns)}</span>`;
-                        } else {
-                            return `<span class="ans-wrong">${escapeHtml(c.q)}:${escapeHtml(c.userAns)}/${escapeHtml(c.correctAns)}</span>`;
-                        }
-                    }).join(' ');
-                    let answersLine = answerSpans ? `<div class="answers-line">${answerSpans}</div>` : '';
+                        let expParts = [];
+                        if (basic.exp_a) expParts.push(`<div><strong>exp_a (地震经验):</strong> ${escapeHtml(basic.exp_a)}</div>`);
+                        if (basic.exp_b) expParts.push(`<div><strong>exp_b (非地震经验):</strong> ${escapeHtml(basic.exp_b)}</div>`);
+                        if (basic.exp_c) expParts.push(`<div><strong>exp_c (副号证明):</strong> ${escapeHtml(basic.exp_c)}</div>`);
+                        if (basic.exp_d) expParts.push(`<div><strong>exp_d (杰出人才/专业人员证明):</strong> ${escapeHtml(basic.exp_d)}</div>`);
+                        let expHtml = expParts.length ? `<details class="exam-details"><summary>📋 经验描述（点击展开）</summary><div class="exam-details-body">${expParts.join('')}</div></details>` : '';
 
-                    infoHtml = basicLine + answersLine;
-                }
+                        let tableRows = comp.map(c => {
+                            const rowClass = c.isCorrect ? 'row-correct' : 'row-incorrect';
+                            const icon = c.isCorrect ? '✓' : '✗';
+                            const userAns = escapeHtml(c.userAns) || '(未作答)';
+                            const correctAns = escapeHtml(c.correctAns);
+                            return `<tr class="${rowClass}"><td class="col-q">${escapeHtml(c.q)}</td><td class="col-ans">${userAns}</td><td class="col-ans">${correctAns}</td><td class="col-result">${icon}</td></tr>`;
+                        }).join('');
+                        let tableHtml = tableRows ? `
+                            <table class="comparison-table">
+                                <thead><tr><th>题号</th><th>你的答案</th><th>正确答案</th><th>结果</th></tr></thead>
+                                <tbody>${tableRows}</tbody>
+                            </table>` : '';
+
+                        infoHtml = basicLine + expHtml + tableHtml;
+                    }
 
                 return `
                     <div class="${cardClass}">
@@ -363,9 +376,26 @@ import Header from '../components/Header.astro';
     .uuid-footprint { font-family: monospace; font-size: 10px; color: #444; margin-top: 10px; }
     .uuid-footprint span { color: #666; }
     .info-line { font-size: 13px; color: #ccc; margin-bottom: 10px; font-family: monospace; padding: 6px 0; border-bottom: 1px solid #1a1a1a; }
-    .answers-line { display: flex; flex-wrap: wrap; gap: 6px 12px; padding: 6px 0; font-family: monospace; font-size: 12px; }
-    .ans-correct { color: #00ff66; }
-    .ans-wrong { color: #ff5f56; }
+
+    .comparison-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 12px; margin-top: 12px; }
+    .comparison-table th { background: rgba(255,255,255,0.04); color: #888; font-weight: 700; text-align: left; padding: 8px 10px; border-bottom: 1px solid #333; font-size: 11px; letter-spacing: 0.5px; }
+    .comparison-table td { padding: 6px 10px; border-bottom: 1px solid #1a1a1a; }
+    .comparison-table .col-q { width: 60px; color: #666; }
+    .comparison-table .col-ans { width: auto; color: #ccc; }
+    .comparison-table .col-result { width: 40px; text-align: center; font-weight: bold; }
+    .comparison-table .row-correct td { color: #ccc; }
+    .comparison-table .row-correct .col-result { color: #00ff66; }
+    .comparison-table .row-incorrect td { color: #ff5f56; }
+    .comparison-table .row-incorrect { background: rgba(255, 95, 86, 0.06); }
+    .comparison-table .row-incorrect .col-result { color: #ff5f56; }
+    .comparison-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    .exam-details { margin-top: 12px; border: 1px solid #222; border-radius: 4px; background: rgba(255,255,255,0.01); }
+    .exam-details summary { cursor: pointer; padding: 8px 12px; font-size: 12px; font-family: monospace; color: #888; user-select: none; }
+    .exam-details summary:hover { color: #ccc; }
+    .exam-details-body { padding: 8px 12px 12px; font-size: 12px; color: #aaa; line-height: 1.7; border-top: 1px solid #222; }
+    .exam-details-body div { margin-bottom: 6px; }
+    .exam-details-body strong { color: #888; font-weight: 600; }
 
     .admin-edit-input {
         background: rgba(0,0,0,0.3);

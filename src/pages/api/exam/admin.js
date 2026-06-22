@@ -56,6 +56,7 @@ export const GET = async ({ request, locals }) => {
                         username: parsed.username || '',
                         qq: parsed.qq || '',
                         email: parsed.email || '',
+                        app_type: parsed.app_type || '',
                         exp_a: parsed.exp_a || '',
                         exp_b: parsed.exp_b || '',
                         exp_c: parsed.exp_c || '',
