@@ -106,17 +106,20 @@ export const POST = async ({ request, locals }) => {
       }
     });
 
-    // 多选题 评分逻辑 (分值改为 5 分，少选、错选不得分)
+    // 多选题 评分逻辑 (每题 5 分，全对得 5 分，少选得 3 分，错选不得分)
     Object.keys(standardAnswersMulti).forEach((key) => {
       const userAnsArray = Array.isArray(parsedAnswers[key]) ? parsedAnswers[key] : [];
       const correctAnsArray = standardAnswersMulti[key];
-      
-      // 判断长度是否一致，且所有正确答案都在用户答案中（实现精确匹配）
-      if (
-        userAnsArray.length === correctAnsArray.length &&
-        correctAnsArray.every(val => userAnsArray.includes(val))
-      ) {
-        score += 5; // 3. 修改为每题 5 分
+
+      if (userAnsArray.length === 0) return;
+
+      const hasWrong = userAnsArray.some(val => !correctAnsArray.includes(val));
+      if (hasWrong) return;
+
+      if (userAnsArray.length === correctAnsArray.length) {
+        score += 5;
+      } else {
+        score += 3;
       }
     });
 
@@ -218,6 +221,20 @@ export const POST = async ({ request, locals }) => {
       } else {
         throw insertError;
       }
+    }
+
+    // 7. 传播 is_noted：如果同 user_uuid 有任何已标记记录，新记录也自动标记
+    try {
+      const notedCheck = await env.DB.prepare(
+        'SELECT 1 FROM exam_records WHERE user_uuid = ? AND is_noted = 1 LIMIT 1'
+      ).bind(user_uuid).first();
+      if (notedCheck) {
+        await env.DB.prepare(
+          'UPDATE exam_records SET is_noted = 1 WHERE user_uuid = ?'
+        ).bind(user_uuid).run();
+      }
+    } catch (e) {
+      // is_noted 列可能尚不存在于旧数据库中，忽略
     }
 
     return new Response(JSON.stringify({

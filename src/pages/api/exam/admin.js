@@ -78,12 +78,15 @@ export const GET = async ({ request, locals }) => {
                     Object.keys(standardAnswersMulti).forEach(k => {
                         const ua = Array.isArray(parsed[k]) ? parsed[k] : [];
                         const ca = standardAnswersMulti[k];
-                        const isCorrect = ua.length === ca.length && ca.every(v => ua.includes(v));
+                        const isFull = ua.length === ca.length && ca.every(v => ua.includes(v));
+                        const hasWrong = ua.some(v => !ca.includes(v));
+                        const isPartial = !isFull && !hasWrong && ua.length > 0;
                         allComparisons.push({
                             q: k,
                             userAns: ua.join(', '),
                             correctAns: [...ca].sort().join(', '),
-                            isCorrect
+                            isCorrect: isFull,
+                            isPartial
                         });
                     });
 
@@ -119,6 +122,27 @@ export const DELETE = async ({ request, locals }) => {
         await env.DB.prepare(`DELETE FROM exam_records WHERE id = ?`).bind(id).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    }
+};
+
+export const PATCH = async ({ request, locals }) => {
+    try {
+        const env = locals.runtime?.env;
+        const auth = validateAdminPassword(request, locals.runtime?.env);
+        if (!auth.valid) return auth.response;
+
+        const { id } = await request.json();
+
+        const record = await env.DB.prepare('SELECT user_uuid FROM exam_records WHERE id = ?').bind(id).first();
+        if (!record) {
+            return new Response(JSON.stringify({ error: 'Record not found' }), { status: 404 });
+        }
+
+        await env.DB.prepare('UPDATE exam_records SET is_noted = 1 WHERE user_uuid = ?').bind(record.user_uuid).run();
+
+        return new Response(JSON.stringify({ success: true, user_uuid: record.user_uuid }), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }

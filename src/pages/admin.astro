@@ -36,6 +36,7 @@ import Header from '../components/Header.astro';
 
                     <div id="panel-exam" class="admin-tab-content" style="display: none;">
                         <h3 class="partner-sub-title">EXAMINATION <span class="accent-text">AUDITS</span></h3>
+                        <label class="noted-toggle-label"><input type="checkbox" id="showNoted" onchange="loadApplications()" /> 显示已标记</label>
                         <div id="examList" class="records-grid">
                             <p class="status-placeholder">LOADING EXAM RECORD DATA...</p>
                         </div>
@@ -173,45 +174,63 @@ import Header from '../components/Header.astro';
             try { dismissedIds = JSON.parse(localStorage.getItem('admin_dismissed_warnings') || '[]'); } catch(e) {}
             const isDismissed = (id) => dismissedIds.includes(id);
 
-            list.innerHTML = data.map(item => {
-                if (isDismissed(item.id)) return '';
+            const showNoted = document.getElementById('showNoted').checked;
+
+            let filtered = data.filter(item => {
+                if (isDismissed(item.id)) return false;
+                if (!showNoted && item.is_noted) return false;
+                return true;
+            });
+
+            filtered.sort((a, b) => (a.is_noted ? 1 : 0) - (b.is_noted ? 1 : 0));
+
+            list.innerHTML = filtered.map(item => {
                 const isAchtung = item.achtung_notes && item.achtung_notes.includes('[ACHTUNG]');
-                const cardClass = isAchtung ? 'record-card achtung-alert-card' : 'record-card';
+                const notedClass = item.is_noted ? 'status-noted' : '';
+                const cardClass = isAchtung ? `record-card achtung-alert-card ${notedClass}` : `record-card ${notedClass}`;
 
-                    let infoHtml = '';
-                    if (item.basicInfo || item.comparison) {
-                        let basic = item.basicInfo || {};
-                        let comp = item.comparison || [];
+                let metaNoted = item.is_noted ? `<span class="noted-badge">已标记</span>` : '';
 
-                        let basicParts = [];
-                        if (basic.username) basicParts.push(`用户名：${escapeHtml(basic.username)}`);
-                        if (basic.qq) basicParts.push(`QQ号：${escapeHtml(basic.qq)}`);
-                        if (basic.email) basicParts.push(`邮箱：${escapeHtml(basic.email)}`);
-                        if (basic.app_type) basicParts.push(`类型：${escapeHtml(basic.app_type)}`);
-                        let basicLine = basicParts.length ? `<div class="info-line">${basicParts.join(' | ')}</div>` : '';
+                let infoHtml = '';
+                if (item.basicInfo || item.comparison) {
+                    let basic = item.basicInfo || {};
+                    let comp = item.comparison || [];
 
-                        let expParts = [];
-                        if (basic.exp_a) expParts.push(`<div><strong>exp_a (地震经验):</strong> ${escapeHtml(basic.exp_a)}</div>`);
-                        if (basic.exp_b) expParts.push(`<div><strong>exp_b (非地震经验):</strong> ${escapeHtml(basic.exp_b)}</div>`);
-                        if (basic.exp_c) expParts.push(`<div><strong>exp_c (副号证明):</strong> ${escapeHtml(basic.exp_c)}</div>`);
-                        if (basic.exp_d) expParts.push(`<div><strong>exp_d (杰出人才/专业人员证明):</strong> ${escapeHtml(basic.exp_d)}</div>`);
-                        let expHtml = expParts.length ? `<details class="exam-details"><summary>📋 经验描述（点击展开）</summary><div class="exam-details-body">${expParts.join('')}</div></details>` : '';
+                    let basicParts = [];
+                    if (basic.username) basicParts.push(`用户名：${escapeHtml(basic.username)}`);
+                    if (basic.qq) basicParts.push(`QQ号：${escapeHtml(basic.qq)}`);
+                    if (basic.email) basicParts.push(`邮箱：${escapeHtml(basic.email)}`);
+                    if (basic.app_type) basicParts.push(`类型：${escapeHtml(basic.app_type)}`);
+                    let basicLine = basicParts.length ? `<div class="info-line">${basicParts.join(' | ')}</div>` : '';
 
-                        let tableRows = comp.map(c => {
-                            const rowClass = c.isCorrect ? 'row-correct' : 'row-incorrect';
-                            const icon = c.isCorrect ? '✓' : '✗';
-                            const userAns = escapeHtml(c.userAns) || '(未作答)';
-                            const correctAns = escapeHtml(c.correctAns);
-                            return `<tr class="${rowClass}"><td class="col-q">${escapeHtml(c.q)}</td><td class="col-ans">${userAns}</td><td class="col-ans">${correctAns}</td><td class="col-result">${icon}</td></tr>`;
-                        }).join('');
-                        let tableHtml = tableRows ? `
-                            <table class="comparison-table">
-                                <thead><tr><th>题号</th><th>你的答案</th><th>正确答案</th><th>结果</th></tr></thead>
-                                <tbody>${tableRows}</tbody>
-                            </table>` : '';
+                    let expParts = [];
+                    if (basic.exp_a) expParts.push(`<div><strong>exp_a:</strong> ${escapeHtml(basic.exp_a)}</div>`);
+                    if (basic.exp_b) expParts.push(`<div><strong>exp_b:</strong> ${escapeHtml(basic.exp_b)}</div>`);
+                    if (basic.exp_c) expParts.push(`<div><strong>exp_c:</strong> ${escapeHtml(basic.exp_c)}</div>`);
+                    if (basic.exp_d) expParts.push(`<div><strong>exp_d:</strong> ${escapeHtml(basic.exp_d)}</div>`);
+                    let expHtml = expParts.length ? `<details class="exam-details"><summary>📋 经验描述（点击展开）</summary><div class="exam-details-body">${expParts.join('')}</div></details>` : '';
 
-                        infoHtml = basicLine + expHtml + tableHtml;
-                    }
+                    let tableRows = comp.map(c => {
+                        let rowClass, icon;
+                        if (c.isCorrect) { rowClass = 'row-correct'; icon = '✓'; }
+                        else if (c.isPartial) { rowClass = 'row-partial'; icon = '~'; }
+                        else { rowClass = 'row-incorrect'; icon = '✗'; }
+                        const userAns = escapeHtml(c.userAns) || '(未作答)';
+                        const correctAns = escapeHtml(c.correctAns);
+                        return `<tr class="${rowClass}"><td class="col-q">${escapeHtml(c.q)}</td><td class="col-ans">${userAns}</td><td class="col-ans">${correctAns}</td><td class="col-result">${icon}</td></tr>`;
+                    }).join('');
+                    let tableHtml = tableRows ? `
+                        <table class="comparison-table">
+                            <thead><tr><th>题号</th><th>你的答案</th><th>正确答案</th><th>结果</th></tr></thead>
+                            <tbody>${tableRows}</tbody>
+                        </table>` : '';
+
+                    infoHtml = basicLine + expHtml + tableHtml;
+                }
+
+                const isNoted = item.is_noted;
+                const noteBtnDisabled = isNoted ? 'disabled' : '';
+                const noteBtnText = isNoted ? 'NOTED' : 'NOTE';
 
                 return `
                     <div class="${cardClass}">
@@ -219,6 +238,7 @@ import Header from '../components/Header.astro';
                             <span>ID: #${item.id}</span>
                             <span>QQID: <strong class="highlight-text">${item.qqid}</strong></span>
                             <span>第 <strong class="highlight-text">${item.exam_times}</strong> 次考试</span>
+                            ${metaNoted}
                         </div>
                         <div class="record-body">
                             <div class="exam-score-box" style="margin-bottom: 10px;">
@@ -244,13 +264,34 @@ import Header from '../components/Header.astro';
                         </div>
                         <div class="record-footer">
                             <span>提交时间: ${new Date(item.created_at).toLocaleString()}</span>
-                            <button onclick="deleteData('exam', ${item.id})" class="delete-btn">DELETE</button>
+                            <div style="display:flex;gap:6px;">
+                                <button onclick="noteRecord(${item.id})" class="note-btn" ${noteBtnDisabled}>${noteBtnText}</button>
+                                <button onclick="deleteData('exam', ${item.id})" class="delete-btn">DELETE</button>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
         } catch (e) {
             document.getElementById('examList').innerHTML = `<p class="status-placeholder" style="color: #ff5f56;">ERROR LOADING EXAM ARCHIVES</p>`;
+        }
+    }
+
+    window.noteRecord = async function(id) {
+        try {
+            const res = await fetch('/api/exam/admin', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                body: JSON.stringify({ id })
+            });
+            if (res.ok) {
+                loadApplications();
+            } else {
+                const data = await res.json();
+                alert('标记失败：' + (data.error || '未知错误'));
+            }
+        } catch (e) {
+            alert('标记异常');
         }
     }
 
@@ -369,6 +410,25 @@ import Header from '../components/Header.astro';
 
     .delete-btn { background: transparent; border: 1px solid rgba(255,95,86,0.2); color: #ff5f56; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s ease; font-weight: bold; }
     .delete-btn:hover { background: rgba(255,95,86,0.15); color: #ff5f56; border-color: #ff5f56; }
+
+    .note-btn { background: transparent; border: 1px solid rgba(100,140,255,0.3); color: #648cff; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s ease; font-weight: bold; }
+    .note-btn:hover { background: rgba(100,140,255,0.15); border-color: #648cff; }
+    .note-btn:disabled { opacity: 0.3; cursor: default; background: transparent; border-color: rgba(100,140,255,0.1); }
+    .note-btn:disabled:hover { background: transparent; }
+
+    .record-card.status-noted { opacity: 0.5; border-left: 2px solid #ff4d4f; }
+    .record-card.status-noted:hover { border-color: #444; border-left-color: #ff4d4f; }
+    .record-card.achtung-alert-card.status-noted { border-left: 2px solid #ff4d4f; }
+
+    .noted-badge { color: #ff4d4f; background: rgba(255,77,79,0.15); border: 1px solid rgba(255,77,79,0.3); font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 700; letter-spacing: 0.5px; }
+
+    .noted-toggle-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #888; font-family: monospace; cursor: pointer; margin-bottom: 12px; user-select: none; }
+    .noted-toggle-label input { accent-color: #648cff; }
+
+    .comparison-table .row-partial td { color: #ffa940; }
+    .comparison-table .row-partial { background: rgba(255,169,64,0.06); }
+    .comparison-table .row-partial .col-result { color: #ffa940; }
+
     .status-placeholder { text-align: center; padding: 40px; color: #555; font-family: monospace; }
     .exam-score-box { font-size: 15px; margin-bottom: 15px; color: #eee; }
     .score-num { color: #00ff66; font-weight: bold; font-family: monospace; }
