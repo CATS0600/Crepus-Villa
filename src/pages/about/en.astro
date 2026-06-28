@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 ---
 
-<Layout title="About - Crepuscular's Villa">
+<Layout title="About - Crepuscular's Villa" narrative={{ chapter: "DEFINE", quote: "每个人都有一段故事。这是她的。 / Everyone has a story. This is hers." }}>
     <Header />
     
     <main class="main-content">
@@ -238,8 +238,11 @@ import Header from '../../components/Header.astro';
                     <p class="section-text">
                         Crepus Villa, but it's more than just a villa.<br/>Building this from scratch gave me a real space to figure things out — IDEs, Cloudflare, GitHub, the whole mess. You learn differently when something is actually yours.<br/>It started as a personal homepage and kind of turned into something I keep coming back to. Part playground, part experiment, part the only corner of the internet that's fully mine.<br/>The "villa" part is aspirational. Like imagining you're in Tuscany while your build fails for the third time. (Web dev is genuinely more stressful lol)
                     </p>
+                    <p class="section-text" style="margin-top: 2rem;">
+                        <span style="font-size: 11px; letter-spacing: 0.15em; color: var(--accent-color, #f7c46c); font-weight: 700; text-transform: uppercase;">· MANIFEST ·</span>
+                    </p>
                     <p class="section-text">
-                        A brief timeline of Crepuscular's Villa:
+                        A brief timeline of Crepuscular's Villa — <span style="font-style: italic;">从零建造这座 Villa</span>:
                     </p>
                     <ul class="timeline">
                         <li data-key="timeline-en-1">

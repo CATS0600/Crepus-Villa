@@ -11,9 +11,10 @@ interface SEO {
 interface Props {
     title: string;
     seo?: SEO;
+    narrative?: { chapter: string; quote: string };
 }
 
-const { title, seo } = Astro.props;
+const { title, seo, narrative } = Astro.props;
 ---
 
 <!doctype html>
@@ -44,6 +45,14 @@ const { title, seo } = Astro.props;
     </head>
     <body>
         <slot />
+        {
+            narrative && (
+                <div class="narrative-marker">
+                    <span class="narrative-chapter">· {narrative.chapter} ·</span>
+                    <span class="narrative-quote">{narrative.quote}</span>
+                </div>
+            )
+        }
         <BgmPanel client:load />
         
         <footer class="site-footer">
@@ -245,4 +254,33 @@ const { title, seo } = Astro.props;
     
     .privacy-link { color: inherit; text-decoration: none; }
     .privacy-link:hover { text-decoration: underline; }
+
+    .narrative-marker {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999;
+        text-align: right;
+        pointer-events: none;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+    .narrative-marker:hover {
+        opacity: 1;
+    }
+    .narrative-chapter {
+        display: block;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        color: var(--accent-color, #f7c46c);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .narrative-quote {
+        display: block;
+        font-size: 10px;
+        color: var(--text-muted, #86868b);
+        font-style: italic;
+        margin-top: 2px;
+    }
 </style>

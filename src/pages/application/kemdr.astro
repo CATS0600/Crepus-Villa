@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 ---
 
-<Layout title="Exam - Crepuscular's Villa">
+<Layout title="Exam - Crepuscular's Villa" narrative={{ chapter: "MANIFEST", quote: "把热爱变成社群 / Turning passion into community." }}>
     <Header />
     
     <main class="main-content">
@@ -401,7 +401,7 @@ import Header from '../../components/Header.astro';
                     </div>
                 </div>
 
-                <div style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted); opacity: 0.7;">
+                <div id="kemdrVersion" style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted); opacity: 0.7; cursor: pointer;">
                     Version 4.0.0 “NZXT”，作者：Crepuscular 编辑：小张张, Crepuscular
                 </div>
 
@@ -1137,6 +1137,30 @@ import Header from '../../components/Header.astro';
     tryRestoreSession();
 
     updatePlaceholders();
+
+    // KEMDR version click easter egg
+    const versionEl = document.getElementById('kemdrVersion');
+    if (versionEl) {
+        let versionClickCount = 0;
+        let versionTimer = null;
+        versionEl.addEventListener('click', () => {
+            versionClickCount++;
+            if (versionTimer) clearTimeout(versionTimer);
+            versionTimer = setTimeout(() => { versionClickCount = 0; }, 3000);
+            if (versionClickCount >= 7) {
+                versionClickCount = 0;
+                const quote = document.createElement('div');
+                quote.style.cssText = 'position: fixed; bottom: 80px; right: 24px; background: var(--card-bg, #fff); border: 1px solid var(--accent-color, #f7c46c); border-radius: 12px; padding: 16px 20px; max-width: 280px; font-size: 13px; color: var(--text-main, #1d1d1f); z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.12);';
+                quote.textContent = 'Crepus 的 uno 哲学：当生活给你一副烂牌，那就用 wild draw four 解决。';
+                document.body.appendChild(quote);
+                setTimeout(() => {
+                    quote.style.transition = 'opacity 0.3s ease';
+                    quote.style.opacity = '0';
+                    setTimeout(() => quote.remove(), 300);
+                }, 4000);
+            }
+        });
+    }
 </script>
 
 <style>
