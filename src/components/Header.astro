@@ -1,27 +1,14 @@
 ---
 // src/components/Header.astro
-const currentPath = Astro.url.pathname;
-const chapterMap: Record<string, string> = {
-    '/about': 'define',
-    '/about/en': 'define',
-    '/about/zh': 'define',
-    '/send': 'endure',
-    '/reply': 'endure',
-    '/reply/private': 'endure',
-    '/sponsor': 'endure',
-    '/application/kemdr': 'manifest',
-    '/application/dpmbg': 'manifest',
-};
-const currentChapter = chapterMap[currentPath] || '';
 ---
 <header class="apple-header">
     <nav class="safe-zone">
         <a href="/" class="logo">Crepuscular's Villa</a>
         <div class="nav-spacer"></div>
         <div class="links">
-            <a href="/about" class="nav-about" data-full="About" data-short="Ab." data-chapter="define">About</a>
-            <a href="/sponsor" class="nav-sponsor" data-full="Sponsor" data-short="Sp." data-chapter="endure">Sponsor</a>
-            <a href="/application/kemdr" class="nav-application" data-full="KVIV" data-short="KV." data-chapter="manifest">KVIV</a>
+            <a href="/about" class="nav-about" data-full="About" data-short="Ab.">About</a>
+            <a href="/sponsor" class="nav-sponsor" data-full="Sponsor" data-short="Sp.">Sponsor</a>
+            <a href="/application/kemdr" class="nav-application" data-full="KVIV" data-short="KV.">KVIV</a>
         </div>
     </nav>
 </header>
@@ -99,20 +86,6 @@ const currentChapter = chapterMap[currentPath] || '';
         .links a:hover { color: #f5f5f7; }
     }
 
-    .links a.active-chapter {
-        color: var(--accent-color, #f7c46c);
-        position: relative;
-    }
-    .links a.active-chapter::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: var(--accent-color, #f7c46c);
-        border-radius: 1px;
-    }
 </style>
 
 <script is:inline>
@@ -355,18 +328,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('resize', abbreviateNavLinks);
-
-    // Narrative chapter highlight
-    const navLinks = document.querySelectorAll('.links a');
-    navLinks.forEach(link => {
-        const chapter = link.getAttribute('data-chapter');
-        const path = window.location.pathname;
-        if (chapter === 'define' && (path === '/about' || path.startsWith('/about/'))) {
-            link.classList.add('active-chapter');
-        } else if (chapter === 'endure' && (path === '/sponsor' || path === '/send' || path === '/reply')) {
-            link.classList.add('active-chapter');
-        } else if (chapter === 'manifest' && path.startsWith('/application/')) {
-            link.classList.add('active-chapter');
-        }
-    });
 </script>

@@ -46,28 +46,6 @@ const pr_web = [
 
 const galleryQuote = "It doesn't matter where you start, it's how you progress from there.";
 
-const chapters = [
-    { id: 'define', title: 'DEFINE', subtitle: '每个人都有一段故事。这是她的。', subtitleEn: 'Everyone has a story. This is hers.' },
-    { id: 'spark', title: 'SPARK', subtitle: '一些事物点燃了火光', subtitleEn: 'Certain things lit the flame' },
-    { id: 'breathe', title: 'BREATHE', subtitle: '在路上，在呼吸中', subtitleEn: 'On the road, in the breath' },
-    { id: 'manifest', title: 'MANIFEST', subtitle: '把火花建造成避风港', subtitleEn: 'Build a sanctuary from the sparks' },
-    { id: 'endure', title: 'ENDURE', subtitle: '故事还在继续，你也是它的一部分', subtitleEn: 'The story continues. You\'re part of it.' },
-];
-
-const diaryEntries = [
-    "2026.04.16 今天又大了一岁。Villa 也大了一岁。",
-    "2026.03.12 深夜修 bug 修到崩溃，然后发现是少了个分号。",
-    "2026.01.01 新的一年，想学更多东西。",
-    "2025.12.24 圣诞夜，加了个 BGM 播放器。",
-    "2025.08.15 第一次部署到 Cloudflare，紧张到手抖。",
-    "2026.05.01 五月了，KEMDR 的考试系统终于写完了。",
-    "2026.02.14 今天没人留言，有点冷清。",
-    "2025.10.31 万圣节，给网站加了 dark mode。",
-    "2026.06.01 儿童节快乐。保持好奇心。",
-    "2026.04.01 愚人节，把整个网站变成颠倒的。然后改回来了。",
-    "2026.03.28 今天收到了一条很温暖的留言。",
-    "2025.09.15 开始学 Astro，感觉还不错。",
-];
 ---
 
 <Layout title="Crepuscular's Villa" seo={{ description: "Crepuscular's Villa — a personal space exploring ideas, technology, and creativity.", image: "/CRVL-TypeB.svg", url: "https://crepus.asia" }}>
@@ -86,8 +64,7 @@ const diaryEntries = [
         <section class="chapter-section" data-chapter="define">
             <div class="chapter-header">
                 <span class="chapter-label">· DEFINE ·</span>
-                <span class="chapter-quote">每个人都有一段故事。这是她的。</span>
-                <span class="chapter-quote-en">Everyone has a story. This is hers.</span>
+                <span class="chapter-quote">Everyone has a story. This is hers.</span>
             </div>
             <section class="content-section reveal">
                 <div class="container safe-zone">
@@ -102,8 +79,7 @@ const diaryEntries = [
         <section class="chapter-section" data-chapter="spark">
             <div class="chapter-header">
                 <span class="chapter-label">· SPARK ·</span>
-                <span class="chapter-quote">一些事物点燃了火光</span>
-                <span class="chapter-quote-en">Certain things lit the flame</span>
+                <span class="chapter-quote">Certain things lit the flame</span>
             </div>
             <section class="photo-gallery-section safe-zone">
             <div class="gallery-stack">
@@ -183,8 +159,7 @@ const diaryEntries = [
         <section class="chapter-section" data-chapter="breathe">
             <div class="chapter-header">
                 <span class="chapter-label">· BREATHE ·</span>
-                <span class="chapter-quote">在路上，在呼吸中</span>
-                <span class="chapter-quote-en">On the road, in the breath</span>
+                <span class="chapter-quote">On the road, in the breath</span>
             </div>
             <section class="auto-scroll-section">
                 <div class="horizontal-view">
@@ -227,8 +202,7 @@ const diaryEntries = [
         <section class="chapter-section" data-chapter="manifest">
             <div class="chapter-header">
                 <span class="chapter-label">· MANIFEST ·</span>
-                <span class="chapter-quote">把火花建造成避风港</span>
-                <span class="chapter-quote-en">Build a sanctuary from the sparks</span>
+                <span class="chapter-quote">Build a sanctuary from the sparks</span>
             </div>
         <!-- ✅ 修改3：各模块间距加大，统一使用 section-gap class -->
          <section class="villa-member-counter-section section-gap">
@@ -280,8 +254,7 @@ const diaryEntries = [
         <section class="chapter-section" data-chapter="endure">
             <div class="chapter-header">
                 <span class="chapter-label">· ENDURE ·</span>
-                <span class="chapter-quote">故事还在继续，你也是它的一部分</span>
-                <span class="chapter-quote-en">The story continues. You're part of it.</span>
+                <span class="chapter-quote">The story continues. You're part of it.</span>
             </div>
             <div class="contact-container safe-zone section-gap" style="padding-bottom: 100px;">
                 <h2 class="contact-title">WHAT'S UP ON INTERNET</h2>
@@ -348,8 +321,6 @@ const diaryEntries = [
             </div>
         </section>
 
-        <!-- Diary entry -->
-        <div class="diary-entry" id="diaryEntry"></div>
     </main>
 
     <script type="module">
@@ -1027,13 +998,6 @@ const diaryEntries = [
         color: var(--text-main, #1d1d1f);
         margin-bottom: 4px;
     }
-    .chapter-quote-en {
-        display: block;
-        font-size: 13px;
-        font-style: italic;
-        color: var(--text-muted, #86868b);
-    }
-
     /* Progress dots */
     .chapter-progress {
         position: fixed;
@@ -1065,22 +1029,6 @@ const diaryEntries = [
         opacity: 0.7;
     }
 
-    .diary-entry {
-        text-align: center;
-        padding: 40px 20px 80px;
-        font-size: 13px;
-        font-style: italic;
-        color: var(--text-muted, #86868b);
-        opacity: 0.5;
-        transition: opacity 0.3s ease;
-        cursor: default;
-        max-width: 600px;
-        margin: 0 auto;
-        line-height: 1.6;
-    }
-    .diary-entry:hover {
-        opacity: 0.8;
-    }
 </style>
 
 <script>
@@ -1303,26 +1251,6 @@ const diaryEntries = [
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
-    // Diary entry rotator
-    const diaryEl = document.getElementById('diaryEntry');
-    if (diaryEl) {
-        const entries = [
-            "2026.04.16 今天又大了一岁。Villa 也大了一岁。",
-            "2026.03.12 深夜修 bug 修到崩溃，然后发现是少了个分号。",
-            "2026.01.01 新的一年，想学更多东西。",
-            "2025.12.24 圣诞夜，加了个 BGM 播放器。",
-            "2025.08.15 第一次部署到 Cloudflare，紧张到手抖。",
-            "2026.05.01 五月了，KEMDR 的考试系统终于写完了。",
-            "2026.02.14 今天没人留言，有点冷清。",
-            "2025.10.31 万圣节，给网站加了 dark mode。",
-            "2026.06.01 儿童节快乐。保持好奇心。",
-            "2026.04.01 愚人节，把整个网站变成颠倒的。然后改回来了。",
-            "2026.03.28 今天收到了一条很温暖的留言。",
-            "2025.09.15 开始学 Astro，感觉还不错。",
-        ];
-        diaryEl.textContent = entries[Math.floor(Math.random() * entries.length)];
-    }
-
     // Typewriter click easter egg
     const typewriterEl = document.getElementById('typewriter');
     if (typewriterEl) {
