@@ -1,0 +1,11 @@
+---
+export const prerender = false;
+
+const country = Astro.request.headers.get('cf-ipcountry') ?? '';
+
+if (country.toUpperCase() === 'CN') {
+  return Astro.redirect('/kemdr/zh', 302);
+}
+
+return Astro.redirect('/kemdr/en', 302);
+---

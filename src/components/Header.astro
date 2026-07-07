@@ -8,7 +8,7 @@
         <div class="links">
             <a href="/about" class="nav-about" data-full="About" data-short="Ab.">About</a>
             <a href="/sponsor" class="nav-sponsor" data-full="Sponsor" data-short="Sp.">Sponsor</a>
-            <a href="/application/kemdr" class="nav-application" data-full="KVIV" data-short="KV.">KVIV</a>
+            <a href="/kemdr" class="nav-application" data-full="KEMDR" data-short="K.">KEMDR</a>
         </div>
     </nav>
 </header>
@@ -29,11 +29,11 @@
     }
     nav {
         width: 100%;
-        max-width: 1200px;
+        max-width: 1400px;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 0 var(--safe-area, 20px);
+        padding: 0 var(--safe-area, 12px);
         gap: 12px;
     }
     
@@ -285,7 +285,7 @@ function initBirthdayParticles() {
   };
 }
 
-function abbreviateNavLinks() {
+ function abbreviateNavLinks() {
   const links = document.querySelectorAll('.links a');
   const nav = document.querySelector('nav');
   if (!nav || !links.length) return;
@@ -313,19 +313,19 @@ function abbreviateNavLinks() {
       }
     });
   }
-}
+} 
 
 document.addEventListener('DOMContentLoaded', () => {
   attachLogoEasterEgg();
-  abbreviateNavLinks();
+  // abbreviateNavLinks();
   if (isBirthdaySpecialized) {
     initBirthdayParticles();
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
   abbreviateNavLinks();
 });
 
-window.addEventListener('resize', abbreviateNavLinks);
+window.addEventListener('resize', abbreviateNavLinks); 
 </script>
