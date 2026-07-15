@@ -1,6 +1,6 @@
 import { validateAdminPassword } from '../../../lib/auth.js';
 
-const standardAnswersSingle = { q2:'C', q3:'A', q4:'A', q5:'B', q6:'Y', q7:'Y', q8:'N', q9:'Y', q10:'N', q14:'D', q15:'C', q16:'C', q17:'B', q21:'D' };
+const standardAnswersSingle = { q2:'C', q3:'A', q4:'A', q5:'B', q6:'N', q7:'Y', q8:'N', q9:'Y', q10:'N', q14:'D', q15:'C', q16:'C', q17:'B', q21:'D' };
 const standardAnswersMulti = { q11:['A','B','C'], q12:['C','D'], q13:['A','D'], q18:['A','B','C'], q19:['A','B','C'], q20:['A','C','D'] };
 
 export const prerender = false;
