@@ -36,7 +36,6 @@ import Header from '../components/Header.astro';
 
                     <div id="panel-exam" class="admin-tab-content" style="display: none;">
                         <h3 class="partner-sub-title">EXAMINATION <span class="accent-text">AUDITS</span></h3>
-                        <label class="noted-toggle-label"><input type="checkbox" id="showNoted" onchange="loadApplications()" /> 显示已标记</label>
                         <div id="examList" class="records-grid">
                             <p class="status-placeholder">LOADING EXAM RECORD DATA...</p>
                         </div>
@@ -174,11 +173,8 @@ import Header from '../components/Header.astro';
             try { dismissedIds = JSON.parse(localStorage.getItem('admin_dismissed_warnings') || '[]'); } catch(e) {}
             const isDismissed = (id) => dismissedIds.includes(id);
 
-            const showNoted = document.getElementById('showNoted').checked;
-
             let filtered = data.filter(item => {
                 if (isDismissed(item.id)) return false;
-                if (!showNoted && item.is_noted) return false;
                 return true;
             });
 
@@ -210,33 +206,44 @@ import Header from '../components/Header.astro';
                     if (basic.exp_d) expParts.push(`<div><strong>exp_d:</strong> ${escapeHtml(basic.exp_d)}</div>`);
                     let expHtml = expParts.length ? `<details class="exam-details"><summary>📋 经验描述（点击展开）</summary><div class="exam-details-body">${expParts.join('')}</div></details>` : '';
 
-                    let tableRows = comp.map(c => {
-                        let rowClass, icon;
-                        if (c.isCorrect) { rowClass = 'row-correct'; icon = '✓'; }
-                        else if (c.isPartial) { rowClass = 'row-partial'; icon = '~'; }
-                        else { rowClass = 'row-incorrect'; icon = '✗'; }
-                        const userAns = escapeHtml(c.userAns) || '(未作答)';
-                        const correctAns = escapeHtml(c.correctAns);
-                        return `<tr class="${rowClass}"><td class="col-q">${escapeHtml(c.q)}</td><td class="col-ans">${userAns}</td><td class="col-ans">${correctAns}</td><td class="col-result">${icon}</td></tr>`;
-                    }).join('');
-                    let tableHtml = tableRows ? `
-                        <table class="comparison-table">
-                            <thead><tr><th>题号</th><th>你的答案</th><th>正确答案</th><th>结果</th></tr></thead>
-                            <tbody>${tableRows}</tbody>
-                        </table>` : '';
+                    let tableHtml;
+                    if (item.is_noted) {
+                        let mutedRows = comp.map(c => {
+                            return `<tr class="row-muted"><td class="col-q">${escapeHtml(c.q)}</td><td colspan="3" class="col-muted">（已标记，作答内容已隐藏）</td></tr>`;
+                        }).join('');
+                        tableHtml = `
+                            <table class="comparison-table">
+                                <thead><tr><th>题号</th><th>你的答案</th><th>正确答案</th><th>结果</th></tr></thead>
+                                <tbody>${mutedRows}</tbody>
+                            </table>`;
+                    } else {
+                        let tableRows = comp.map(c => {
+                            let rowClass, icon;
+                            if (c.isCorrect) { rowClass = 'row-correct'; icon = '✓'; }
+                            else if (c.isPartial) { rowClass = 'row-partial'; icon = '~'; }
+                            else { rowClass = 'row-incorrect'; icon = '✗'; }
+                            const userAns = escapeHtml(c.userAns) || '(未作答)';
+                            const correctAns = escapeHtml(c.correctAns);
+                            return `<tr class="${rowClass}"><td class="col-q">${escapeHtml(c.q)}</td><td class="col-ans">${userAns}</td><td class="col-ans">${correctAns}</td><td class="col-result">${icon}</td></tr>`;
+                        }).join('');
+                        tableHtml = tableRows ? `
+                            <table class="comparison-table">
+                                <thead><tr><th>题号</th><th>你的答案</th><th>正确答案</th><th>结果</th></tr></thead>
+                                <tbody>${tableRows}</tbody>
+                            </table>` : '';
+                    }
 
                     infoHtml = basicLine + expHtml + tableHtml;
                 }
 
                 const isNoted = item.is_noted;
-                const noteBtnDisabled = isNoted ? 'disabled' : '';
-                const noteBtnText = isNoted ? 'NOTED' : 'NOTE';
+                const noteBtnText = isNoted ? 'DISNOTE' : 'NOTE';
 
                 return `
                     <div class="${cardClass}">
                         <div class="record-meta">
                             <span>ID: #${item.id}</span>
-                            <span>QQID: <strong class="highlight-text">${item.qqid}</strong></span>
+                            <span>${isNoted ? '*QQID*' : 'QQID'}: <strong class="highlight-text">${item.qqid}</strong></span>
                             <span>第 <strong class="highlight-text">${item.exam_times}</strong> 次考试</span>
                             ${metaNoted}
                         </div>
@@ -265,7 +272,7 @@ import Header from '../components/Header.astro';
                         <div class="record-footer">
                             <span>提交时间: ${new Date(item.created_at).toLocaleString()}</span>
                             <div style="display:flex;gap:6px;">
-                                <button onclick="noteRecord(${item.id})" class="note-btn" ${noteBtnDisabled}>${noteBtnText}</button>
+                                <button onclick="${isNoted ? `disnoteRecord(${item.id})` : `noteRecord(${item.id})`}" class="note-btn">${noteBtnText}</button>
                                 <button onclick="deleteData('exam', ${item.id})" class="delete-btn">DELETE</button>
                             </div>
                         </div>
@@ -292,6 +299,24 @@ import Header from '../components/Header.astro';
             }
         } catch (e) {
             alert('标记异常');
+        }
+    }
+
+    window.disnoteRecord = async function(id) {
+        try {
+            const res = await fetch('/api/exam/admin', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                body: JSON.stringify({ id, disnote: true })
+            });
+            if (res.ok) {
+                loadApplications();
+            } else {
+                const data = await res.json();
+                alert('取消标记失败：' + (data.error || '未知错误'));
+            }
+        } catch (e) {
+            alert('取消标记异常');
         }
     }
 
@@ -413,21 +438,18 @@ import Header from '../components/Header.astro';
 
     .note-btn { background: transparent; border: 1px solid rgba(100,140,255,0.3); color: #648cff; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s ease; font-weight: bold; }
     .note-btn:hover { background: rgba(100,140,255,0.15); border-color: #648cff; }
-    .note-btn:disabled { opacity: 0.3; cursor: default; background: transparent; border-color: rgba(100,140,255,0.1); }
-    .note-btn:disabled:hover { background: transparent; }
-
     .record-card.status-noted { opacity: 0.5; border-left: 2px solid #ff4d4f; }
     .record-card.status-noted:hover { border-color: #444; border-left-color: #ff4d4f; }
     .record-card.achtung-alert-card.status-noted { border-left: 2px solid #ff4d4f; }
 
     .noted-badge { color: #ff4d4f; background: rgba(255,77,79,0.15); border: 1px solid rgba(255,77,79,0.3); font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 700; letter-spacing: 0.5px; }
 
-    .noted-toggle-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #888; font-family: monospace; cursor: pointer; margin-bottom: 12px; user-select: none; }
-    .noted-toggle-label input { accent-color: #648cff; }
-
     .comparison-table .row-partial td { color: #ffa940; }
     .comparison-table .row-partial { background: rgba(255,169,64,0.06); }
     .comparison-table .row-partial .col-result { color: #ffa940; }
+
+    .comparison-table .row-muted td { color: #555; font-style: italic; }
+    .comparison-table .col-muted { color: #555; font-size: 11px; }
 
     .status-placeholder { text-align: center; padding: 40px; color: #555; font-family: monospace; }
     .exam-score-box { font-size: 15px; margin-bottom: 15px; color: #eee; }

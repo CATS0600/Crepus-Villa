@@ -133,16 +133,17 @@ export const PATCH = async ({ request, locals }) => {
         const auth = validateAdminPassword(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
-        const { id } = await request.json();
+        const { id, disnote } = await request.json();
 
         const record = await env.DB.prepare('SELECT user_uuid FROM exam_records WHERE id = ?').bind(id).first();
         if (!record) {
             return new Response(JSON.stringify({ error: 'Record not found' }), { status: 404 });
         }
 
-        await env.DB.prepare('UPDATE exam_records SET is_noted = 1 WHERE user_uuid = ?').bind(record.user_uuid).run();
+        const isNoted = disnote ? 0 : 1;
+        await env.DB.prepare('UPDATE exam_records SET is_noted = ? WHERE user_uuid = ?').bind(isNoted, record.user_uuid).run();
 
-        return new Response(JSON.stringify({ success: true, user_uuid: record.user_uuid }), { status: 200 });
+        return new Response(JSON.stringify({ success: true, user_uuid: record.user_uuid, is_noted: isNoted }), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
