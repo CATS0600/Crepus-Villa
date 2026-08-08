@@ -1,4 +1,4 @@
-import { validateAdminPassword } from '../../lib/auth.js';
+import { validateAdminSession } from '../../lib/auth.js';
 
 export const prerender = false;
 
@@ -8,7 +8,7 @@ export const PATCH = async ({ request, locals }) => {
         const env = locals.runtime?.env;
         if (!env?.DB) throw new Error('Database not available');
 
-        const auth = validateAdminPassword(request, locals.runtime?.env);
+        const auth = await validateAdminSession(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const { id, content, reply, reply_method, status, title, is_public } = await request.json();
@@ -40,7 +40,7 @@ export const DELETE = async ({ request, locals }) => {
         const env = locals.runtime?.env;
         if (!env?.DB) throw new Error('DB 暂不可用');
 
-        const auth = validateAdminPassword(request, locals.runtime?.env);
+        const auth = await validateAdminSession(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const { id } = await request.json();

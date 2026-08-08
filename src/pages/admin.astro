@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 ---
 
-<Layout title="Core System Admin - Crepuscular's Villa">
+<Layout lang="en" title="Core System Admin - Crepuscular's Villa">
     <Header />
     
     <main class="main-content">
@@ -49,23 +49,16 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <script is:inline>
-    const TARGET_HASH = "443d24733cc9f2b66b66639313c5481ce7d35a36bf6523d1c5ab64332ed1b2ab";
-    let adminToken = "";
-
-    async function sha256(string) {
-        const utf8 = new TextEncoder().encode(string);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
     async function authenticate() {
         const input = document.getElementById('adminPassword').value;
-        const encoded = await sha256(input);
-        
-        if (encoded === TARGET_HASH) {
-            sessionStorage.setItem('adminToken', encoded);
-            adminToken = encoded;
+        const response = await fetch('/api/auth/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ password: input })
+        });
+
+        if (response.ok) {
             document.getElementById('passwordPanel').style.display = 'none';
             document.getElementById('dashboardPanel').style.display = 'block';
             loadMessages();
@@ -85,9 +78,7 @@ import Header from '../components/Header.astro';
 
     async function loadMessages() {
         try {
-            const res = await fetch('/api/get-messages', {
-                headers: { 'X-Admin-Token': adminToken }
-            });
+            const res = await fetch('/api/get-messages', { credentials: 'same-origin' });
             if (!res.ok) throw new Error();
             const data = await res.json();
             const messages = data.messages || data;
@@ -157,9 +148,7 @@ import Header from '../components/Header.astro';
 
     async function loadApplications() {
         try {
-            const res = await fetch('/api/exam/admin', {
-                headers: { 'X-Admin-Token': adminToken }
-            });
+            const res = await fetch('/api/exam/admin', { credentials: 'same-origin' });
             if (!res.ok) throw new Error();
             const data = await res.json();
             
@@ -288,7 +277,8 @@ import Header from '../components/Header.astro';
         try {
             const res = await fetch('/api/exam/admin', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
                 body: JSON.stringify({ id })
             });
             if (res.ok) {
@@ -306,7 +296,8 @@ import Header from '../components/Header.astro';
         try {
             const res = await fetch('/api/exam/admin', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
                 body: JSON.stringify({ id, disnote: true })
             });
             if (res.ok) {
@@ -335,7 +326,8 @@ import Header from '../components/Header.astro';
             
             const res = await fetch('/api/admin', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
                 body: JSON.stringify({ id, content, reply, reply_method, status, title, is_public })
             });
             
@@ -366,7 +358,8 @@ import Header from '../components/Header.astro';
         try {
             const res = await fetch(type === 'send' ? '/api/admin' : '/api/exam/admin', {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
                 body: JSON.stringify({ id })
             });
             if (res.ok) {
@@ -387,9 +380,9 @@ import Header from '../components/Header.astro';
         return d.innerHTML; 
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (sessionStorage.getItem('adminToken') === TARGET_HASH) {
-            adminToken = TARGET_HASH;
+    document.addEventListener('DOMContentLoaded', async () => {
+        const response = await fetch('/api/auth/admin', { credentials: 'same-origin' });
+        if (response.ok) {
             document.getElementById('passwordPanel').style.display = 'none';
             document.getElementById('dashboardPanel').style.display = 'block';
             loadMessages();

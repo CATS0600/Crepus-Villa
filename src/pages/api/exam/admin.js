@@ -1,4 +1,4 @@
-import { validateAdminPassword } from '../../../lib/auth.js';
+import { validateAdminSession } from '../../../lib/auth.js';
 
 const standardAnswersSingle = { q2:'C', q3:'A', q4:'A', q5:'B', q6:'N', q7:'Y', q8:'N', q9:'Y', q10:'N', q14:'D', q15:'C', q16:'C', q17:'B', q21:'D' };
 const standardAnswersMulti = { q11:['A','B','C'], q12:['C','D'], q13:['A','D'], q18:['A','B','C'], q19:['A','B','C'], q20:['A','C','D'] };
@@ -10,7 +10,7 @@ export const GET = async ({ request, locals }) => {
         const env = locals.runtime?.env;
         if (!env?.DB) throw new Error('Database not available');
         
-        const auth = validateAdminPassword(request, locals.runtime?.env);
+        const auth = await validateAdminSession(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const result = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
@@ -114,7 +114,7 @@ export const GET = async ({ request, locals }) => {
 export const DELETE = async ({ request, locals }) => {
     try {
         const env = locals.runtime?.env;
-        const auth = validateAdminPassword(request, locals.runtime?.env);
+        const auth = await validateAdminSession(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const { id } = await request.json();
@@ -130,7 +130,7 @@ export const DELETE = async ({ request, locals }) => {
 export const PATCH = async ({ request, locals }) => {
     try {
         const env = locals.runtime?.env;
-        const auth = validateAdminPassword(request, locals.runtime?.env);
+        const auth = await validateAdminSession(request, locals.runtime?.env);
         if (!auth.valid) return auth.response;
 
         const { id, disnote } = await request.json();

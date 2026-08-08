@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://crepus.asia/sitemap-index.xml
+Sitemap: https://crepus.asia/sitemap.xml

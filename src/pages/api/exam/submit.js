@@ -48,13 +48,23 @@ export const POST = async ({ request, locals }) => {
       });
     }
 
-    // 速率限制：相同 user_uuid 每小时最多提交 3 次
-    const rateResult = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM exam_records WHERE user_uuid = ? AND created_at > datetime('now', '-1 hour')`
-    ).bind(user_uuid).first();
-    if (rateResult && Number(rateResult.count) >= 3) {
-      return new Response(JSON.stringify({ error: '提交过于频繁，请 1 小时后再试' }), {
+    // 考试次数必须按服务端认可的 QQ 号限制，不能依赖可被清除的 localStorage UUID。
+    const sevenDayResult = await env.DB.prepare(
+      `SELECT COUNT(*) as count FROM exam_records WHERE qqid = ? AND created_at > datetime('now', '-7 days')`
+    ).bind(targetQqid).first();
+    if (sevenDayResult && Number(sevenDayResult.count) >= 2) {
+      return new Response(JSON.stringify({ error: '您在 7 天内最多参加 2 次考试' }), {
         status: 429,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const totalResult = await env.DB.prepare(
+      'SELECT COUNT(*) as count FROM exam_records WHERE qqid = ?'
+    ).bind(targetQqid).first();
+    if (totalResult && Number(totalResult.count) >= 4) {
+      return new Response(JSON.stringify({ error: '您的考试次数已达到上限，请联系管理员重置资格' }), {
+        status: 403,
         headers: { 'Content-Type': 'application/json' }
       });
     }
@@ -125,7 +135,7 @@ export const POST = async ({ request, locals }) => {
 
     const exam_result = score; // 20 题 × 5 分 = 总分 100 分
 
-    // 3. 查询该 QQ 的累计考试次数
+    // 查询该 QQ 的累计考试次数
     const countResult = await env.DB.prepare(
       'SELECT COUNT(*) as count FROM exam_records WHERE qqid = ?'
     ).bind(targetQqid).first();

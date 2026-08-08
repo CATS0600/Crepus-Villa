@@ -11,25 +11,29 @@ interface SEO {
 interface Props {
     title: string;
     seo?: SEO;
+    lang?: string;
+    alternates?: { lang: string; url: string }[];
     narrative?: { chapter: string; quote: string };
 }
 
-const { title, seo, narrative } = Astro.props;
+const { title, seo, lang = 'zh-CN', alternates = [], narrative } = Astro.props;
+const canonicalUrl = seo?.url ?? new URL(Astro.url.pathname, 'https://crepus.asia').href;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang={lang}>
     <head>
         <meta charset="UTF-8" />
         <meta name="description" content={seo?.description ?? "Crepus Villa"} />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/CRVL-TypeB.svg" />
-        <link rel="canonical" href={seo?.url ?? "https://crepus.asia"} />
+        <link rel="canonical" href={canonicalUrl} />
+        {alternates.map((alternate) => <link rel="alternate" hreflang={alternate.lang} href={alternate.url} />)}
         <title>{title}</title>
         <meta property="og:title" content={title} />
         <meta property="og:description" content={seo?.description ?? "Crepus Villa"} />
         <meta property="og:image" content={seo?.image ?? "/CRVL-TypeB.svg"} />
-        <meta property="og:url" content={seo?.url ?? "https://crepus.asia"} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />

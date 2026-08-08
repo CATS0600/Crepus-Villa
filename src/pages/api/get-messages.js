@@ -1,4 +1,4 @@
-import { getAdminHash } from '../../lib/auth.js';
+import { validateAdminSession } from '../../lib/auth.js';
 
 export const prerender = false;
 
@@ -11,17 +11,9 @@ export async function GET({ request, locals }) {
 
         const url = new URL(request.url);
         const tokenParam = url.searchParams.get('token');
-        const adminToken = request.headers.get("X-Admin-Token");
-        const adminHash = getAdminHash(env);
-
         // 管理员访问：返回全部数据
-        if (adminToken) {
-            if (adminToken !== adminHash) {
-                return new Response(JSON.stringify({ error: "UNAUTHORIZED" }), { 
-                    status: 401,
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            }
+        const auth = await validateAdminSession(request, env);
+        if (auth.valid) {
             let recordsResult;
             try {
                 recordsResult = await env.DB.prepare("SELECT * FROM exam_records ORDER BY id DESC").all();
