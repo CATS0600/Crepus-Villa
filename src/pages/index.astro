@@ -37,11 +37,10 @@ const photoCaptions = [
 
 // Neko!
 
-const partners = ["Paramecium", "Hydrolight", "Odysphere", "J Zhang", "Roblox", "Google", "CloudFlare", "Astro", "Github", "Gemini", "You can be next"];
+const partners = ["Paramecium", "Hydrolight", "Odysphere", "J Zhang", "CloudFlare", "Github", "Gemini", "You can be next", "LMG"];
 const pr_web = [
-    "https://paramecium2010.top", "https://www.bilibili.com/video/BV1AU4y1i7Vr/", "https://www.odysphere.tech", "https://official.kounoeew.top", "https://www.roblox.com",
-    "https://www.google.com", "https://www.cloudflare.com", "https://astro.build",
-    "https://github.com", "https://gemini.google.com", "./sponsor"
+    "https://paramecium2010.top", "https://www.bilibili.com/video/BV1AU4y1i7Vr/", "https://www.odysphere.tech", "https://official.kounoeew.top", 
+     "https://www.cloudflare.com" , "https://github.com", "https://gemini.google.com", "./sponsor", ""
 ];
 
 const galleryQuote = "It doesn't matter where you start, it's how you progress from there.";
@@ -144,7 +143,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                             <span class="send-icon">📫</span>
                             <span class="send-text">Check the Reply</span>
                         </a>
-                        <a href="mailto:io@crepus.asia" class="send-button">
+                        <a href="mailto:e-crepuscular@outlook.com" class="send-button">
                             <span class="send-icon">✉️</span>
                             <span class="send-text">Send an Email</span>
                             <!-- <span class="send-text">Comming Soon</span> -->
@@ -171,14 +170,26 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     <div class="infinite-scroll-container">
                         <div class="partner-list">
                                     {partners.map((p, i) => (
+                                pr_web[i] ? (
                                 <a href={pr_web[i]} class="logo-card" target="_blank" rel="noopener noreferrer">
                                     <span class="logo-name">{p}</span>
                                 </a>
+                                ) : (
+                                <div class="logo-card logo-card-static">
+                                    <span class="logo-name">{p}</span>
+                                </div>
+                                )
                             ))}
                             {partners.map((p, i) => (
+                                pr_web[i] ? (
                                 <a href={pr_web[i]} class="logo-card" target="_blank" rel="noopener noreferrer">
                                     <span class="logo-name">{p}</span>
                                 </a>
+                                ) : (
+                                <div class="logo-card logo-card-static">
+                                    <span class="logo-name">{p}</span>
+                                </div>
+                                )
                             ))}
                         </div>
                     </div>
@@ -293,15 +304,15 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                 <!-- ✅ 修改3：Radio check 与上方间距加大 -->
                 <p class="partner-desc" style="margin-top: 240px; margin-bottom: 30px;">Radio check? send me</p>
                 <div class="email-container" style="margin-top: 50px;">
-                    <a href="mailto:io@crepus.asia" class="email-button">
+                    <a href="mailto:e-crepuscular@outlook.com" class="email-button">
                         <span class="email-icon">✉</span>
-                        <span class="email-text">io@crepus.asia</span>
+                        <span class="email-text">e-crepuscular@outlook.com</span>
                     </a>
                 </div>
 
                 <!-- ✅ 修改3：explore something random 与上方间距加大 -->
                 <div style="margin-top: 240px; margin-bottom: 60px;">
-                    <p class="partner-desc" style="margin-bottom: 20px;">Explore.</p>
+                    <p class="partner-desc" style="margin-bottom: 20px;">Explore more</p>
                     <div class="explore-buttons" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
                         <button id="jumpBtnCN" class="action-button cn-button">
                             <span class="action-icon">🐍</span>
@@ -834,6 +845,8 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
     .partner-list { display: flex; gap: 40px; padding: 20px 0; animation: scroll-left 30s linear infinite; width: max-content; }
     .logo-card { width: 320px; height: 200px; background: #fff; border-radius: 30px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex-shrink: 0; transition: all 0.3s ease; text-decoration: none; }
     .logo-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+    .logo-card-static { cursor: default; }
+    .logo-card-static:hover { transform: none; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
     .contact-section { padding: 100px 0; background: #f5f5f7; }
     @media (prefers-color-scheme: dark) {
         .contact-section { background: #000000; }
@@ -1037,19 +1050,20 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
 </style>
 
 <script>
+    
     const jumpWebsiteCN = [
         "https://www.bilibili.com/video/BV18SFyzoEwn/",
         "https://www.bilibili.com/video/BV1CqP1zbEiJ/",
-        "https://www.bilibili.com/video/BV1PEZXBPEM4/",
-        "https://v.douyin.com/mcHOL2GE6EE/",
-        "https://lab.magiconch.com/nbnhhsh/",
+        "https://www.bilibili.com/video/BV1GJ411x7h7/",
+        "https://www.bilibili.com/video/BV1V6iDBREbc/",
+        "https://www.bilibili.com/video/BV1HS421R7uz/",
 
     ];
 
     const jumpWebsiteGlobal = [
-        "https://youtu.be/fMjZJZ5c-6U?si=k0gwh7myLX6ljdBb",
+        "https://youtu.be/-PPE72_n48M?si=RvtDAK3xiTcnpf8k",
         "https://gemini.google.com/",
-        "https://www.youtube.com/@comgg-s7x",
+        "https://youtu.be/dQw4w9WgXcQ?si=cO-Wd1cRPuD8--am",
         "https://claude.ai/",
     ];
 
@@ -1082,7 +1096,6 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         "You are a work in progress, and that is enough.",
         "Success is measured by the obstacles you've overcome, not the finish line.",
         "Bloom where you are planted, even in the shadows.",
-        "这座 Villa 不是一天建成的。但每一块砖，都有它的故事。 / This Villa wasn't built in a day. But every brick has its story."
     ];
 
     // 预加载所有图片
