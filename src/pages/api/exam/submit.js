@@ -87,7 +87,7 @@ export const POST = async ({ request, locals }) => {
       q6: 'N',
       q7: 'Y',
       q8: 'N',
-      q9: 'Y',
+      q9: 'N',
       q10: 'N',
       q14: 'D',
       q15: 'C',
