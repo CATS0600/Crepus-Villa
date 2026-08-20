@@ -1,9 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
+
+export const prerender = false;
+const country = Astro.request.headers.get('cf-ipcountry') ?? '';
+const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
 ---
 
-<Layout lang="en" title="Submitted - Crepuscular's Villa">
+<Layout lang={initialLang} title="Submitted - Crepuscular's Villa">
     <Header />
     
     <main class="main-content">
@@ -11,7 +15,10 @@ import Header from '../../components/Header.astro';
             <div class="container safe-zone" style="max-width: 600px; margin: 2rem auto; text-align: center;">
                 <div class="form-container" style="padding: 3rem 2rem;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                    <h1 style="font-size: 2rem; margin-bottom: 1rem;">You are all set!</h1>
+                    <h1 style="font-size: 2rem; margin-bottom: 1rem;">
+                        <span class="lang-zh">一切就绪！</span>
+                        <span class="lang-en">You are all set!</span>
+                    </h1>
                     <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
                         <span class="lang-zh">您的答卷已成功提交。考试结果将发送至您填写的邮箱中。</span>
                         <span class="lang-en">Your exam has been submitted successfully. Results will be sent to your email.</span>
@@ -21,7 +28,8 @@ import Header from '../../components/Header.astro';
                         <span class="lang-en">Have any issues? Turn into me!</span>
                     </p>
                     <a href="https://qm.qq.com/q/Qme3jDzp2G" class="btn-exam btn-exam-outline" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-                        添加 QQ DM Me
+                        <span class="lang-zh">添加 QQ DM Me</span>
+                        <span class="lang-en">Add QQ DM Me</span>
                     </a>
                     <div style="margin-top: 1.5rem;">
                         <a href="/" class="btn-exam btn-exam-outline" style="text-decoration: none;">
@@ -36,6 +44,12 @@ import Header from '../../components/Header.astro';
 </Layout>
 
 <style>
+    /* 双语显示逻辑 */
+    :root { --lang-zh-display: block; --lang-en-display: none; }
+    :global(html[lang="en"]) { --lang-zh-display: none; --lang-en-display: block; }
+    .lang-zh { display: var(--lang-zh-display); }
+    .lang-en { display: var(--lang-en-display); }
+
     .form-container {
         background: #ffffff;
         border: 1px solid #e5e7eb;

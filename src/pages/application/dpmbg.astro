@@ -1,9 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
+
+export const prerender = false;
+const country = Astro.request.headers.get('cf-ipcountry') ?? '';
+const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
 ---
 
-<Layout lang="en" title="DPMBG Application - Crepus Villa">
+<Layout lang={initialLang} title="DPMBG Application - Crepus Villa">
     <Header />
     
     <main class="main-content">
