@@ -404,6 +404,35 @@ const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
                     </div>
                 </div>
 
+                <div id="consentModalOverlay" class="modal-overlay" style="display: none;">
+                    <div class="modal-card consent-modal-card" role="dialog" aria-modal="true">
+                        <h3 class="modal-title">
+                            <span class="lang-zh">⚠️ 进行考试前，请先阅读以下须知</span>
+                            <span class="lang-en">⚠️ Please read the following before taking the exam</span>
+                        </h3>
+                        <ul class="consent-list">
+                            <li>
+                                <span class="lang-zh">1. 参加并提交本考试，即表示您同意向 Cloudflare 云端传输您的 QQ 号、电子邮箱与昵称，用于判卷、发送考试结果及核实成员身份。</span>
+                                <span class="lang-en">1. By taking and submitting this exam, you agree that your QQ number, email and nickname will be transmitted to the Cloudflare cloud for grading, sending results and identity verification.</span>
+                            </li>
+                            <li>
+                                <span class="lang-zh">2. 群聊中可能包含 PG-13（建议家长指导） 的内容，建议您年满 14 周岁后再申请入群。</span>
+                                <span class="lang-en">2. The group chat may contain PG-13 Parents Strongly Cautioned content. We recommend you be at least 14 years old before joining.</span>
+                            </li>
+                        </ul>
+                        <div class="modal-actions">
+                            <button id="consentModalCancel" class="btn-exam btn-exam-flat modal-btn">
+                                <span class="lang-zh">取消</span>
+                                <span class="lang-en">Cancel</span>
+                            </button>
+                            <button id="consentModalConfirm" class="btn-exam btn-exam-primary modal-btn modal-btn-primary">
+                                <span class="lang-zh">同意并继续</span>
+                                <span class="lang-en">Agree &amp; Continue</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="kemdrVersion" style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted); opacity: 0.7; cursor: pointer;">
                     Version 4.3.0 “URANUS”，作者：Crepuscular 编辑：小张张, Crepuscular
                 </div>
@@ -473,6 +502,12 @@ const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
     const txtExpC = document.querySelector('textarea[name="exp_c"]');
     const txtExpD = document.querySelector('textarea[name="exp_d"]');
 
+    // 知情同意弹窗
+    const consentModalOverlay = document.getElementById('consentModalOverlay');
+    const consentModalConfirm = document.getElementById('consentModalConfirm');
+    const consentModalCancel = document.getElementById('consentModalCancel');
+    let consentGiven = false;
+
     // 初始隐藏导航按钮（申请类型/免考页面不应显示）
     setNavButtonsVisible(false);
 
@@ -535,7 +570,12 @@ const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
     });
 
     // 免考页面“仍参加考试”处理
-    forceExamBtn.addEventListener('click', () => {
+    forceExamBtn.addEventListener('click', async () => {
+        if (!consentGiven) {
+            const agreed = await showConsentModal();
+            if (!agreed) return;
+            consentGiven = true;
+        }
         bypassStep.style.display = 'none';
         enterExamFlow();
     });
@@ -618,10 +658,15 @@ const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
         }
     });
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', async () => {
         if (!validateCurrentQuestion()) {
             alert('请先完成当前题目的作答或填写完整信息');
             return;
+        }
+        if (currentQuestion === 1 && !consentGiven) {
+            const agreed = await showConsentModal();
+            if (!agreed) return;
+            consentGiven = true;
         }
         if (currentQuestion < totalQuestions) {
             currentQuestion++;
@@ -1020,6 +1065,34 @@ const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
             cancelBtn.addEventListener('click', onCancel);
             document.addEventListener('keydown', onKeydown);
             overlay.addEventListener('click', onBackdrop);
+        });
+    }
+
+    function showConsentModal() {
+        return new Promise((resolve) => {
+            let resolved = false;
+
+            function cleanup(result) {
+                if (resolved) return;
+                resolved = true;
+                consentModalOverlay.style.display = 'none';
+                document.removeEventListener('keydown', onKeydown);
+                consentModalConfirm.removeEventListener('click', onConfirm);
+                consentModalCancel.removeEventListener('click', onCancel);
+                consentModalOverlay.removeEventListener('click', onBackdrop);
+                resolve(result);
+            }
+
+            function onConfirm() { cleanup(true); }
+            function onCancel() { cleanup(false); }
+            function onKeydown(e) { if (e.key === 'Escape') cleanup(false); }
+            function onBackdrop(e) { if (e.target === consentModalOverlay) cleanup(false); }
+
+            consentModalOverlay.style.display = 'flex';
+            consentModalConfirm.addEventListener('click', onConfirm);
+            consentModalCancel.addEventListener('click', onCancel);
+            document.addEventListener('keydown', onKeydown);
+            consentModalOverlay.addEventListener('click', onBackdrop);
         });
     }
 
@@ -1477,11 +1550,50 @@ const initialLang = country.toUpperCase() === 'CN' ? 'zh' : 'en';
     .modal-btn-primary:hover {
         background: #40a9ff;
     }
+
+    .consent-modal-card {
+        max-width: 520px;
+        text-align: left;
+    }
+    .consent-modal-card .modal-title {
+        font-size: 1.15rem;
+        font-weight: bold;
+        margin: 0 0 1.2rem 0;
+        color: #ff4d4f;
+        text-align: center;
+        line-height: 1.5;
+    }
+    .consent-list {
+        padding: 0;
+        margin: 0 0 1.5rem 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .consent-list li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: #333333;
+    }
+    .consent-list .lang-zh,
+    .consent-list .lang-en {
+        display: block;
+    }
+    .consent-modal-card .modal-actions {
+        justify-content: flex-end;
+    }
     @media (prefers-color-scheme: dark) {
         .modal-card {
             background: #1c1c1e;
         }
         .modal-msg {
+            color: #ffffff;
+        }
+        .consent-modal-card .modal-title {
+            color: #ff7875;
+        }
+        .consent-list li {
             color: #ffffff;
         }
     }
