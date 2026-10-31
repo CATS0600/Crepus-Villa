@@ -84,7 +84,6 @@ const canonicalUrl = seo?.url ?? new URL(Astro.url.pathname, 'https://crepus.asi
             let lenis: Lenis | null = null;
             let lenisScrollAllowed = true;
             let lastFrameTime = 0;
-            let scrollBlockerInstalled = false;
 
             const safeScrollUpdate = () => {
                 if (!lenisScrollAllowed) return;
@@ -100,23 +99,6 @@ const canonicalUrl = seo?.url ?? new URL(Astro.url.pathname, 'https://crepus.asi
                 lastFrameTime = time;
                 lenis?.raf(time * 1000);
             };
-
-            function installScrollBlockers() {
-                if (scrollBlockerInstalled) return;
-                scrollBlockerInstalled = true;
-
-                window.addEventListener('scroll', (event) => {
-                    if (lenis) {
-                        event.stopImmediatePropagation();
-                    }
-                }, { capture: true, passive: true });
-
-                window.addEventListener('scrollend', (event) => {
-                    if (lenis) {
-                        event.stopImmediatePropagation();
-                    }
-                }, { capture: true, passive: true });
-            }
 
             function initScroll() {
                 if (lenis) {
@@ -139,7 +121,6 @@ const canonicalUrl = seo?.url ?? new URL(Astro.url.pathname, 'https://crepus.asi
 
                 gsap.ticker.add(updateLenis);
                 gsap.ticker.lagSmoothing(0);
-                installScrollBlockers();
             }
 
             // 初始化 BGM 控制器
