@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import villav5icon from '../icon/villav5icon.webp';
-// 引入位于 switchphoto 中的电影比例图片
 import switchImg from '../switchphoto/a.jpg';
 import { Image } from 'astro:assets';
 
@@ -33,14 +32,16 @@ const photoCaptions = [
     "Way To You, Virtual, Apr 2026",
     "Abandoned Station, Virtual, Apr 2026",
     "Hanoi, Vietnam, May 2026",
+    "Singapore, Aug 2026",
+    "Guangdong, China, Oct 2026",
 ];
 
 // Neko!
 
-const partners = ["Paramecium", "Hydrolight", "Odysphere", "J Zhang", "CloudFlare", "Github", "Gemini", "You can be next", "LMG"];
+const partners = ["Paramecium", "Hydrolight", "Odysphere", "J Zhang", "CloudFlare", "Github", "Gemini", "LMG", "wrnac", "Bakasix", "You can be next", ];
 const pr_web = [
-    "https://paramecium2010.top", "https://www.bilibili.com/video/BV1AU4y1i7Vr/", "https://www.odysphere.tech", "https://official.kounoeew.top", 
-     "https://www.cloudflare.com" , "https://github.com", "https://gemini.google.com", "./sponsor", ""
+    "https://paramecium2010.top", "", "https://www.odysphere.tech", "https://official.kounoeew.top", 
+     "https://www.cloudflare.com" , "https://github.com", "https://gemini.google.com", "", "", "", "./sponsor"
 ];
 
 const galleryQuote = "It doesn't matter where you start, it's how you progress from there.";
@@ -63,7 +64,7 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
         <section class="chapter-section" data-chapter="define">
             <div class="chapter-header">
                 <span class="chapter-label">· DEFINE ·</span>
-                <span class="chapter-quote">Life goes on</span>
+                <span class="chapter-quote">What exceeds a quiet shore?</span>
             </div>
             <section class="content-section reveal">
                 <div class="container safe-zone">
@@ -250,12 +251,12 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                         <p class="app-card-desc">Kouno Earthquake Migration and Disaster Reduction Bureau</p>
                         <span class="app-arrow">↗</span>
                     </a>
-                    <a href="/application/dpmbg" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                    <!-- <a href="/application/dpmbg" class="app-card" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                         <div class="app-card-icon">🌍</div>
                         <h3 class="app-card-title">DPMBG Application (Coming Soon)</h3>
                         <p class="app-card-desc">Disaster Prevention and Mitigation Basic Group</p>
                         <span class="app-arrow">↗</span>
-                    </a>
+                    </a> -->
                 </div>
             </div>
         </section>
@@ -298,6 +299,10 @@ const galleryQuote = "It doesn't matter where you start, it's how you progress f
                     <a href="https://steamcommunity.com/profiles/76561199143828026/" class="social-card" target="_blank" rel="noopener noreferrer">
                         <span class="social-icon">⚙️</span>
                         <span class="social-name">Steam</span>
+                    </a>
+                    <a href="https://discord.com/users/1275477917190586419" class="social-card" target="_blank" rel="noopener noreferrer">
+                        <span class="social-icon">💬</span>
+                        <span class="social-name">Discord</span>
                     </a>
                 </div>
 
